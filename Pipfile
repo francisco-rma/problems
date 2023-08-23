@@ -1,0 +1,24 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+numpy = "*"
+pandas = "*"
+matplotlib = "*"
+scikit-learn = "*"
+line-profiler = "*"
+memory-profiler = "*"
+flask = "*"
+ipympl = "*"
+pillow = "*"
+customtkinter = "*"
+
+[dev-packages]
+pylint = "*"
+ipykernel = "*"
+flake8 = "*"
+
+[requires]
+python_version = "3.10"

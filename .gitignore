@@ -9,3 +9,5 @@
 *.exe
 *.ipynb
 *.pyc
+*.lock
+pipfile
