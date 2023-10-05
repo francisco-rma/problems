@@ -5,7 +5,7 @@ from matplotlib import patches
 import numpy as np
 import matplotlib.pyplot as plt
 
-size = 100
+size = 1000
 repeats = 10
 refinement = 10
 
