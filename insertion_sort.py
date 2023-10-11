@@ -1,13 +1,12 @@
 from operator import concat
 import timeit
-from turtle import color
 from matplotlib import patches
 import numpy as np
 import matplotlib.pyplot as plt
 
-size = 1000
-repeats = 10
-refinement = 10
+ARRAY_SIZE: int = 1000
+REPEATS: int = 10
+REFINEMENT: int = 10
 
 numpy_sort_times: list[float] = []
 insertion_sort_times: list[float] = []
@@ -20,7 +19,7 @@ def generate_tests():
     i = 0
 
     while i < 1000:
-        tests.append(rng.randint(low=0, high=1000, size=size))
+        tests.append(rng.randint(low=0, high=1000, size=ARRAY_SIZE))
         i += 1
 
     return tests
@@ -37,10 +36,10 @@ def insertion_sort(list: list[int], n: int) -> list[int]:
         j = i - 1
 
         while j >= 0 and list[j] > key:
-            list[j+1] = list[j]
+            list[j + 1] = list[j]
             j -= 1
 
-        list[j+1] = key
+        list[j + 1] = key
         i += 1
 
     # in real life just use:
@@ -50,60 +49,60 @@ def insertion_sort(list: list[int], n: int) -> list[int]:
 
 
 def insertion_sort_time():
-    SETUP_CODE = '''
+    SETUP_CODE = """
 from __main__ import insertion_sort, size, index_ref, tests
-'''
+"""
 
-    TEST_CODE = '''
+    TEST_CODE = """
 mylist = tests[index_ref[0]]
-insertion_sort(mylist, size)'''
+insertion_sort(mylist, size)"""
 
     global insertion_sort_times
-    global repeats
-    global refinement
+    global REPEATS
+    global REFINEMENT
 
     tests = generate_tests()
 
     for case in tests:
-        times = timeit.repeat(setup=SETUP_CODE,
-                              stmt=TEST_CODE,
-                              repeat=repeats,
-                              number=refinement)
+        times = timeit.repeat(
+            setup=SETUP_CODE, stmt=TEST_CODE, repeat=REPEATS, number=REFINEMENT
+        )
 
         insertion_sort_times = concat(insertion_sort_times, times)
 
-        print(f'Test number {index_ref[0]}')
+        print(f"Test number {index_ref[0]}")
         print(
-            f'Mean time for insertion sort:\n {np.format_float_positional(np.mean(times), precision=5)} seconds')
+            f"Mean time for insertion sort:\n {np.format_float_positional(np.mean(times), precision=5)} seconds"
+        )
         index_ref[0] += 1
 
 
 def numpy_sort_time():
-    SETUP_CODE = '''
+    SETUP_CODE = """
 from __main__ import insertion_sort, size, index_ref, tests
 import numpy as np
-'''
+"""
 
-    TEST_CODE = '''
-np.sort(tests[index_ref[0]])'''
+    TEST_CODE = """
+np.sort(tests[index_ref[0]])"""
 
     global numpy_sort_times
-    global repeats
-    global refinement
+    global REPEATS
+    global REFINEMENT
 
     tests = generate_tests()
 
     for case in tests:
-        times = timeit.repeat(setup=SETUP_CODE,
-                              stmt=TEST_CODE,
-                              repeat=repeats,
-                              number=refinement)
+        times = timeit.repeat(
+            setup=SETUP_CODE, stmt=TEST_CODE, repeat=REPEATS, number=REFINEMENT
+        )
 
         numpy_sort_times = concat(numpy_sort_times, times)
 
-        print(f'Test number {index_ref[0]}')
+        print(f"Test number {index_ref[0]}")
         print(
-            f'Mean time for numpy sort (quicksort):\n {np.format_float_positional(np.mean(times), precision=5)} seconds')
+            f"Mean time for numpy sort (quicksort):\n {np.format_float_positional(np.mean(times), precision=5)} seconds"
+        )
         index_ref[0] += 1
 
 
@@ -119,7 +118,7 @@ def validity_test(numbers: list[int]) -> bool:
 
 
 def performance_test(numbers: list[int], index: list[int]):
-    print(f'Test number: {index[0]}')
+    print(f"Test number: {index[0]}")
     index[0] += 1
     numbers = insertion_sort(list=numbers, n=len(numbers))
     return
@@ -132,26 +131,24 @@ if __name__ == "__main__":
     fig = plt.figure()
 
     data = zip(insertion_sort_times, numpy_sort_times)
-    insertion_color = 'red'
-    numpy_color = 'green'
+    insertion_color = "red"
+    numpy_color = "green"
     ax1 = fig.add_subplot(1, 1, 1)
 
     # scatter plot
-    ax1.set_xlim(right=size, left=len(tests))
+    ax1.set_xlim(right=ARRAY_SIZE, left=len(tests))
     ax1.set_ylim(top=np.max(insertion_sort_times), bottom=0)
-    ax1.set_title('Mean test time')
-    ax1.set_xlabel('Test')
-    ax1.set_ylabel('Time (s)')
+    ax1.set_title("Mean test time")
+    ax1.set_xlabel("Test")
+    ax1.set_ylabel("Time (s)")
 
-    patch_insertion = patches.Patch(
-        color=insertion_color, label=f'Insertion sort')
+    patch_insertion = patches.Patch(color=insertion_color, label="Insertion sort")
 
-    patch_numpy = patches.Patch(
-        color=numpy_color, label=f'Numpy sort')
+    patch_numpy = patches.Patch(color=numpy_color, label="Numpy sort")
 
     ax1.legend(handles=[patch_insertion, patch_numpy])
 
-    x = np.arange(0, repeats*len(tests), 1)
+    x = np.arange(0, REPEATS * len(tests), 1)
 
     ax1.plot(x, insertion_sort_times, color=insertion_color)
     ax1.plot(x, numpy_sort_times, color=numpy_color)
