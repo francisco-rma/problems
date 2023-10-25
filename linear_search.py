@@ -1,4 +1,5 @@
-"""Module providing tools to measure execution time"""
+# pylint: disable=global-statement,missing-module-docstring
+
 import timeit
 from matplotlib import patches, pyplot as plt
 import numpy as np
