@@ -14,6 +14,7 @@ flask = "*"
 ipympl = "*"
 pillow = "*"
 customtkinter = "*"
+cython = "*"
 
 [dev-packages]
 pylint = "*"
