@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import gman
 
 ARRAY_SIZE: int = 1000
-TESTS_NUMBER: int = 10
+TESTS_NUMBER: int = 100
 REFINEMENT: int = 10
 # REPEATS: int = 1
 
