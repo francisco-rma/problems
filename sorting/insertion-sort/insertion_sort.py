@@ -11,9 +11,9 @@ TESTS_NUMBER: int = 100
 REFINEMENT: int = 10
 # REPEATS: int = 1
 
-numpy_sort_times: list[float] = []
 insertion_sort_times: list[float] = []
 c_insertion_sort_times: list[float] = []
+numpy_sort_times: list[float] = []
 index_ref = [0]
 
 
