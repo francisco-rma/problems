@@ -1,11 +1,12 @@
 import collections
 import timeit
+from typing import Sequence
 from matplotlib import patches
 import numpy as np
 import matplotlib.pyplot as plt
 
 ARRAY_SIZE: int = 1000
-TESTS_NUMBER: int = 10
+TESTS_NUMBER: int = 100
 REFINEMENT: int = 10
 
 merge_sort_times: list[float] = []
@@ -27,11 +28,57 @@ def generate_tests():
     return test_list
 
 
-tests = generate_tests()
+def generate_n_tests():
+    """Generation of lists for performance tests"""
+    rng = np.random
+    test_list = []
+    i = 0
+
+    while i < TESTS_NUMBER:
+        test_list.append(rng.randint(low=0, high=1000, size=i))
+        i += 1
+
+    return test_list
 
 
-def merge_sort(numbers: collections, n: int):
-    return numbers
+tests = generate_n_tests()
+
+
+def merge_sort(my_list: Sequence):
+    """Merge sort"""
+
+    if len(my_list) > 1:
+        midpoint = len(my_list) // 2
+        left_array = my_list[:midpoint]
+        right_array = my_list[midpoint:]
+
+        merge_sort(left_array)
+
+        merge_sort(right_array)
+
+        i = 0
+        j = 0
+        k = 0
+
+        while i < len(left_array) and j < len(right_array):
+            if left_array[i] <= right_array[j]:
+                my_list[k] = left_array[i]
+                i += 1
+            else:
+                my_list[k] = right_array[j]
+                j += 1
+
+            k += 1
+
+        while i < len(left_array):
+            my_list[k] = left_array[i]
+            i += 1
+            k += 1
+
+        while j < len(right_array):
+            my_list[k] = right_array[j]
+            j += 1
+            k += 1
 
 
 def c_merge_sort(numbers: collections, n: int):
@@ -46,7 +93,7 @@ from __main__ import merge_sort, ARRAY_SIZE, index_ref, tests
 
     test_code = """
 mylist = tests[index_ref[0]]
-merge_sort(mylist, ARRAY_SIZE)"""
+merge_sort(mylist)"""
 
     test_list = generate_tests()
 
@@ -71,6 +118,33 @@ merge_sort(mylist, ARRAY_SIZE)"""
         index_ref[0] += 1
 
 
+def validity_test() -> bool:
+    """Checks whether or not the input sequence is sorted"""
+
+    for index, numbers in enumerate(tests):
+        print(f"Test number: {index}\n")
+        start_size = len(numbers)
+        unique, count = np.unique(numbers, return_counts=True)
+        start_count = dict(zip(unique, count))
+
+        merge_sort(numbers)
+        end_size = len(numbers)
+        unique, count = np.unique(numbers, return_counts=True)
+        end_count = dict(zip(unique, count))
+
+        is_sorted = np.all(numbers[:-1] <= numbers[1:])
+
+        is_complete = (start_count == end_count) and (start_size == end_size)
+
+        check = is_sorted and is_complete
+        if not check:
+            print("Array not sorted, aborting!")
+            return False
+        print("Array succesfully sorted, moving on")
+
+    return True
+
+
 def numpy_sort_time():
     """Numpy sorting function for performance comparison (defaults to quicksort)"""
     setup_code = """
@@ -79,7 +153,7 @@ import numpy as np
 """
 
     test_code = """
-np.sort(tests[index_ref[0]])"""
+np.sort(tests[index_ref[0]], kind='mergersort')"""
 
     test_list = generate_tests()
 
@@ -101,6 +175,7 @@ np.sort(tests[index_ref[0]])"""
 
 
 if __name__ == "__main__":
+    print(validity_test())
     merge_sort_time()
     index_ref[0] = 0
 
@@ -113,7 +188,7 @@ if __name__ == "__main__":
 
     merge_sort_times = np.array(merge_sort_times).astype(float)
     numpy_sort_times = np.array(numpy_sort_times).astype(float)
-    c_merge_sort_times = np.array(c_merge_sort_times).astype(float)
+    # c_merge_sort_times = np.array(c_merge_sort_times).astype(float)
 
     data = zip(
         merge_sort_times,
@@ -123,7 +198,7 @@ if __name__ == "__main__":
 
     MERGE_COLOR = "red"
     NUMPY_COLOR = "green"
-    CYTHON_COLOR = "blue"
+    # CYTHON_COLOR = "blue"
 
     ax1 = fig.add_subplot(1, 1, 1)
 
