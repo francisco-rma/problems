@@ -30,7 +30,20 @@ def generate_tests():
     return test_list
 
 
-tests = generate_tests()
+def generate_n_tests():
+    """Generation of lists for performance tests"""
+    rng = np.random
+    test_list = []
+    i = 0
+
+    while i < TESTS_NUMBER:
+        test_list.append(rng.randint(low=0, high=1000, size=i))
+        i += 1
+
+    return test_list
+
+
+tests = generate_n_tests()
 
 
 def insertion_sort(numbers: list[int], n: int) -> list[int]:
@@ -62,9 +75,9 @@ from __main__ import insertion_sort, ARRAY_SIZE, index_ref, tests
 
     test_code = """
 mylist = tests[index_ref[0]]
-insertion_sort(mylist, ARRAY_SIZE)"""
+insertion_sort(mylist, len(mylist))"""
 
-    test_list = generate_tests()
+    test_list = generate_n_tests()
 
     for _ in test_list:
         i = 0
@@ -130,9 +143,9 @@ from __main__ import c_insertion_sort, ARRAY_SIZE, index_ref, tests
 
     test_code = """
 mylist = tests[index_ref[0]]
-c_insertion_sort(mylist, ARRAY_SIZE)"""
+c_insertion_sort(mylist, len(mylist))"""
 
-    test_list = generate_tests()
+    test_list = generate_n_tests()
 
     for _ in test_list:
         i = 0
@@ -217,5 +230,5 @@ if __name__ == "__main__":
     ax1.plot(x, c_insertion_sort_times, color=CYTHON_COLOR)
 
     fig.show()
-    fig.savefig(f"insertion_sort_n={ARRAY_SIZE}")
+    fig.savefig(f"sorting/insertion-sort/insertion_sort_n={ARRAY_SIZE}")
     plt.show()
