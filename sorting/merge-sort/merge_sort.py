@@ -49,8 +49,8 @@ def merge_sort(my_list: Sequence):
 
     if len(my_list) > 1:
         midpoint = len(my_list) // 2
-        left_array = my_list[:midpoint]
-        right_array = my_list[midpoint:]
+        left_array = np.ndarray.copy(my_list[:midpoint])
+        right_array = np.ndarray.copy(my_list[midpoint:])
 
         merge_sort(left_array)
 
@@ -139,7 +139,7 @@ def validity_test() -> bool:
         check = is_sorted and is_complete
         if not check:
             print("Array not sorted, aborting!")
-            return False
+            raise RuntimeError("Array not sorted")
         print("Array succesfully sorted, moving on")
 
     return True
