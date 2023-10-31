@@ -1,4 +1,3 @@
-import collections
 import timeit
 from typing import Sequence
 from matplotlib import patches
@@ -49,39 +48,46 @@ def merge_sort(my_list: Sequence):
 
     if len(my_list) > 1:
         midpoint = len(my_list) // 2
-        left_array = np.ndarray.copy(my_list[:midpoint])
-        right_array = np.ndarray.copy(my_list[midpoint:])
+        left_array = my_list[:midpoint]
+        right_array = my_list[midpoint:]
 
         merge_sort(left_array)
 
         merge_sort(right_array)
 
-        i = 0
-        j = 0
-        k = 0
+        merge(my_list=my_list, midpoint=midpoint)
 
-        while i < len(left_array) and j < len(right_array):
-            if left_array[i] <= right_array[j]:
-                my_list[k] = left_array[i]
-                i += 1
-            else:
-                my_list[k] = right_array[j]
-                j += 1
 
-            k += 1
-
-        while i < len(left_array):
-            my_list[k] = left_array[i]
+def merge(my_list: Sequence, midpoint: int):
+    """Merge"""
+    i = 0
+    j = 0
+    k = 0
+    left = np.ndarray.copy(my_list[:midpoint])
+    right = np.ndarray.copy(my_list[midpoint:])
+    while i < len(left) and j < len(right):
+        if left[i] <= right[j]:
+            my_list[k] = left[i]
             i += 1
-            k += 1
-
-        while j < len(right_array):
-            my_list[k] = right_array[j]
+        else:
+            my_list[k] = right[j]
             j += 1
-            k += 1
+
+        k += 1
+
+    while i < len(left):
+        my_list[k] = left[i]
+        i += 1
+        k += 1
+
+    while j < len(right):
+        my_list[k] = right[j]
+        j += 1
+        k += 1
 
 
-def c_merge_sort(numbers: collections, n: int):
+def c_merge_sort(numbers: Sequence, n: int):
+    """Cython merge sort"""
     return numbers
 
 
@@ -108,7 +114,6 @@ merge_sort(mylist)"""
 
         time: float = np.format_float_positional(np.mean(times), precision=5)
 
-        global merge_sort_times
         merge_sort_times.append(time)
 
         print(f"Test number {index_ref[0]}")
