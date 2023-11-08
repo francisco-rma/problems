@@ -29,6 +29,17 @@ def group_anagrams(terms: List[str]) -> List[List[str]]:
     return grouped_list
 
 
+def group_anagramsV2(terms: List[str]) -> List[List[str]]:
+    counts = {}
+    for _, value in enumerate(terms):
+        count = tuple(sorted(valid_anagram.count_char(value).items()))
+        if not count in counts:
+            counts[count] = []
+        counts[count].append(value)
+
+    return counts.values()
+
+
 str_list = ["eat", "tea", "tan", "ate", "nat", "bat"]
 
-print(group_anagrams(str_list))
+print(group_anagramsV2(str_list))
