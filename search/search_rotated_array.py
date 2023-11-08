@@ -1,6 +1,4 @@
 from typing import List
-
-from pandas import pivot
 import binary_search
 
 
