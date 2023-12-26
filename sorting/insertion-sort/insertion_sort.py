@@ -4,7 +4,8 @@ import timeit
 from matplotlib import patches
 import numpy as np
 import matplotlib.pyplot as plt
-import gman
+
+# import gman
 
 ARRAY_SIZE: int = 1000
 TESTS_NUMBER: int = 100
@@ -132,7 +133,7 @@ np.sort(tests[index_ref[0]])"""
 def c_insertion_sort(numbers: list[int], n: int) -> list[int]:
     """Insertion Sort"""
 
-    return gman.insertion_sort(numbers, n)
+    # return gman.insertion_sort(numbers, n)
 
 
 def c_insertion_sort_time():
