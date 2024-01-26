@@ -4,7 +4,7 @@ from matplotlib import patches
 import numpy as np
 import matplotlib.pyplot as plt
 
-ARRAY_SIZE: int = 1000
+ARRAY_SIZE: int = 10
 TESTS_NUMBER: int = 100
 REFINEMENT: int = 10
 
@@ -40,7 +40,8 @@ def generate_n_tests():
     return test_list
 
 
-tests = generate_n_tests()
+# tests = generate_n_tests()
+tests = generate_tests()
 
 
 def merge_sort(my_list: Sequence):
@@ -136,7 +137,7 @@ def validity_test() -> bool:
         end_size = len(numbers)
         unique, count = np.unique(numbers, return_counts=True)
         end_count = dict(zip(unique, count))
-
+        bla = list(numbers)
         is_sorted = np.all(numbers[:-1] <= numbers[1:])
 
         is_complete = (start_count == end_count) and (start_size == end_size)
@@ -180,60 +181,73 @@ np.sort(tests[index_ref[0]], kind='mergersort')"""
 
 
 if __name__ == "__main__":
-    print(validity_test())
-    merge_sort_time()
-    index_ref[0] = 0
+    # print(validity_test())
+    # merge_sort_time()
+    # index_ref[0] = 0
 
-    # c_merge_sort_time()
-    index_ref[0] = 0
+    # # c_merge_sort_time()
+    # index_ref[0] = 0
 
-    numpy_sort_time()
-    index_ref[0] = 0
-    fig = plt.figure()
+    # numpy_sort_time()
+    # index_ref[0] = 0
+    # fig = plt.figure()
 
-    merge_sort_times = np.array(merge_sort_times).astype(float)
-    numpy_sort_times = np.array(numpy_sort_times).astype(float)
-    # c_merge_sort_times = np.array(c_merge_sort_times).astype(float)
+    # merge_sort_times = np.array(merge_sort_times).astype(float)
+    # numpy_sort_times = np.array(numpy_sort_times).astype(float)
+    # # c_merge_sort_times = np.array(c_merge_sort_times).astype(float)
 
-    data = zip(
-        merge_sort_times,
-        numpy_sort_times,
-        # c_merge_sort_times,
-    )
+    # data = zip(
+    #     merge_sort_times,
+    #     numpy_sort_times,
+    #     # c_merge_sort_times,
+    # )
 
-    MERGE_COLOR = "red"
-    NUMPY_COLOR = "green"
-    # CYTHON_COLOR = "blue"
+    # MERGE_COLOR = "red"
+    # NUMPY_COLOR = "green"
+    # # CYTHON_COLOR = "blue"
 
-    ax1 = fig.add_subplot(1, 1, 1)
+    # ax1 = fig.add_subplot(1, 1, 1)
 
-    # scatter plot
-    ax1.set_xlim(right=TESTS_NUMBER, left=0)
-    ax1.set_ylim(top=np.max(merge_sort_times), bottom=0)
-    ax1.set_title("Mean test time")
-    ax1.set_xlabel("Test")
-    ax1.set_ylabel("Time (s)")
+    # # scatter plot
+    # ax1.set_xlim(right=TESTS_NUMBER, left=0)
+    # ax1.set_ylim(top=np.max(merge_sort_times), bottom=0)
+    # ax1.set_title("Mean test time")
+    # ax1.set_xlabel("Test")
+    # ax1.set_ylabel("Time (s)")
 
-    patch_merge = patches.Patch(color=MERGE_COLOR, label="merge sort")
+    # patch_merge = patches.Patch(color=MERGE_COLOR, label="merge sort")
 
-    patch_numpy = patches.Patch(color=NUMPY_COLOR, label="Numpy quicksort")
+    # patch_numpy = patches.Patch(color=NUMPY_COLOR, label="Numpy quicksort")
 
-    # patch_cython = patches.Patch(color=CYTHON_COLOR, label="Cython merge sort")
+    # # patch_cython = patches.Patch(color=CYTHON_COLOR, label="Cython merge sort")
 
-    ax1.legend(
-        handles=[
-            patch_merge,
-            patch_numpy,
-            #  patch_cython
-        ]
-    )
+    # ax1.legend(
+    #     handles=[
+    #         patch_merge,
+    #         patch_numpy,
+    #         #  patch_cython
+    #     ]
+    # )
 
-    x = np.arange(0, TESTS_NUMBER, 1)
+    # x = np.arange(0, TESTS_NUMBER, 1)
 
-    ax1.plot(x, merge_sort_times, color=MERGE_COLOR)
-    ax1.plot(x, numpy_sort_times, color=NUMPY_COLOR)
-    # ax1.plot(x, c_merge_sort_times, color=CYTHON_COLOR)
+    # ax1.plot(x, merge_sort_times, color=MERGE_COLOR)
+    # ax1.plot(x, numpy_sort_times, color=NUMPY_COLOR)
+    # # ax1.plot(x, c_merge_sort_times, color=CYTHON_COLOR)
 
-    fig.show()
-    fig.savefig(f"merge_sort_n={ARRAY_SIZE}")
-    plt.show()
+    # fig.show()
+    # fig.savefig(f"merge_sort_n={ARRAY_SIZE}")
+    # plt.show()
+    for test in tests:
+        start_size = len(test)
+        unique, count = np.unique(test, return_counts=True)
+        start_count = dict(zip(unique, count))
+
+        merge_sort(test)
+
+        end_size = len(test)
+        end_count = dict(zip(unique, count))
+        bla = list(test)
+        is_sorted = np.all(test[:-1] <= test[1:])
+
+        is_complete = (start_count == end_count) and (start_size == end_size)
