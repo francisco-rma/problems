@@ -16,19 +16,6 @@ class Node(object):
             self.right = right
         pass
 
-    def search(self, target: int):
-        if self.value == target:
-            return self
-        elif self.children is None or len(self.children) <= 0:
-            return None
-        else:
-            for child in self.children:
-                test = child.search(target)
-                if test is None:
-                    continue
-                else:
-                    return test
-
     def __eq__(self, comparison: Node) -> bool:
         if self.value != comparison.value:
             return False
@@ -37,14 +24,40 @@ class Node(object):
 
         return left_validation and right_validation
 
-    def add_child(self, child):
-        if isinstance(child, Node):
-            self.children.append(child)
-        else:
-            self.children.append(Node(child))
+    def __invert__(self, node: Node) -> Node:
+        if node is None:
+            return node
+        self.__invert__(node.left)
+        self.__invert__(node.right)
+
+        node.left, node.right = node.right, node.left
+
+        return node
 
 
-def populate_bst(values: Sequence[int], inverted=False) -> Node:
+def populate_binary_tree(values: Sequence[int], inverted=False) -> Node:
+    n = len(values)
+
+    if n == 0:
+        return None
+
+    def inner(index: int = 0):
+        if index >= n or values[index] is None:
+            return None
+
+        node = Node(values[index])
+        left_idx = 2 * index + 1
+        right_idx = 2 * index + 2
+
+        node.left = inner(left_idx if not inverted else right_idx)
+        node.right = inner(right_idx if not inverted else left_idx)
+
+        return node
+
+    return inner()
+
+
+def populate_binary_search_tree(values: Sequence[int], inverted=False) -> Node:
     n = len(values)
 
     if n == 0:
@@ -84,23 +97,34 @@ def populate_bst(values: Sequence[int], inverted=False) -> Node:
 
 def generate_root(tree: Node, inverted=False) -> Sequence[int]:
     root = []
+    if tree is None:
+        return root
     root.append(tree.value)
 
     def inner(node: Node):
+        if node is None:
+            return
         has_left_node = node.left is not None
         has_right_node = node.right is not None
 
-        if has_left_node:
-            root.append(node.left.value)
+        left_val = node.left.value if has_left_node else None
+        right_val = node.right.value if has_right_node else None
 
-        if has_right_node:
-            root.append(node.right.value)
+        if has_left_node and has_right_node:
+            root.append(left_val if not inverted else right_val)
+            root.append(right_val if not inverted else left_val)
+            inner(node.left) if not inverted else inner(node.right)
+            inner(node.right) if not inverted else inner(node.left)
 
-        if has_left_node:
-            inner(node.left)
+        elif has_left_node:
+            if inverted:
+                root.append(right_val)
+            root.append(left_val)
 
-        if has_right_node:
-            inner(node.right)
+        elif has_right_node:
+            if not inverted:
+                root.append(left_val)
+            root.append(right_val)
 
     inner(tree)
 
