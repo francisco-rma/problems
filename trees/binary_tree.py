@@ -3,11 +3,10 @@ from typing import Sequence
 
 
 class Node(object):
-
     def __init__(self, value=0, left=None, right=None) -> None:
         self.value = None
-        self.left = None
-        self.right = None
+        self.left: Node = None
+        self.right: Node = None
         if value is not None:
             self.value = value
         if left is not None:
@@ -24,7 +23,7 @@ class Node(object):
 
         return left_validation and right_validation
 
-    def __invert__(self, node: Node) -> Node:
+    def __invert__(self: Node, node: Node) -> Node:
         if node is None:
             return node
         self.__invert__(node.left)
@@ -33,6 +32,15 @@ class Node(object):
         node.left, node.right = node.right, node.left
 
         return node
+
+    # def __invert_bfs__(self: Node) -> Node:
+    #     if self.left is None and self.right is None:
+    #         return
+    #     self.left, self.right = self.right, self.left
+    #     self.left.__invert_bfs__()
+    #     self.right.__invert_bfs__()
+
+    #     return
 
 
 def populate_binary_tree(values: Sequence[int], inverted=False) -> Node:
