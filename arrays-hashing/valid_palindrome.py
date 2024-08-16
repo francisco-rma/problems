@@ -1,40 +1,38 @@
-ignore = set(["", " ", ".", ",", ":", ";", "()", ")", "-"])
+ignore = set(
+    [
+        "",
+        " ",
+        ".",
+        ",",
+        ":",
+        ";",
+        "(",
+        ")",
+        "-",
+    ]
+)
 
 
 def isPalindrome(s: str) -> bool:
-    size = len(s)
-    half = len(s) // 2
-    right = 0
-    left = len(s) // 2
+    translation_table = dict.fromkeys(map(ord, "!@#$.,:?;()- "), None)
+    value = s.translate(translation_table).lower()
 
-    i = 0
+    right = len(value) - 1
+    left = 0
 
-    while i <= half:
-        a = s[right]
-        b = s[len(s) - 1 - i]
-        c = s[left]
-        d = s[half + 1 + i]
-        if s[right] != s[len(s) - 1 - i]:
-            return False
-        if s[left] != s[half + 1 + i]:
+    while left <= right:
+        left_val = value[left]
+        right_val = value[right]
+        print(left_val, right_val)
+        if value[left] != value[right]:
             return False
 
-        i += 1
-        right += 1
-        left -= 1
+        right -= 1
+        left += 1
 
     return True
 
 
-def clean(s: str) -> str:
-    returnString = ""
-    for index, char in enumerate(s):
-        if char not in ignore:
-            returnString += char.lower()
-
-    return returnString
-
-
 s = "A man, a plan, a canal: Panama"
 
-print(isPalindrome(clean(s)))
+print(isPalindrome(s))
