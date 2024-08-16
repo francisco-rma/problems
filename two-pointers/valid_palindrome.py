@@ -1,18 +1,3 @@
-ignore = set(
-    [
-        "",
-        " ",
-        ".",
-        ",",
-        ":",
-        ";",
-        "(",
-        ")",
-        "-",
-    ]
-)
-
-
 def isPalindrome(s: str) -> bool:
     translation_table = dict.fromkeys(map(ord, "!@#$.,:?;()- "), None)
     value = s.translate(translation_table).lower()
