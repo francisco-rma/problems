@@ -2,24 +2,24 @@ def largest_sum(numbers: list[int]) -> int:
     if len(numbers) == 0:
         raise ValueError("Empty list")
 
-    i = 1
-    min_idx = 0
-    max_sum = numbers[0]
-    current_sum = numbers[0]
-    window = [0, 0]
+    max_sum = 0
+    current_sum = 0
 
-    while i < len(numbers):
-        current_sum = max(current_sum + numbers[i], numbers[i])
-        if current_sum == numbers[i]:
-            min_idx = i
+    min_idx = 0
+    max_idx = 0
+
+    L = 0
+
+    for R, value in enumerate(numbers):
+        current_sum = max(current_sum + value, value)
+        if current_sum == value:
+            L = R
 
         max_sum = max(current_sum, max_sum)
         if max_sum == current_sum:
-            window[0], window[1] = min_idx, i
+            min_idx, max_idx = L, R
 
-        i += 1
-
-    return max_sum, window
+    return max_sum, (min_idx, max_idx)
 
 
 array = [4, -1, 2, -7, 3, 4]
