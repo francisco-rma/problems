@@ -1,23 +1,16 @@
 def isValid(s: str) -> bool:
-    def is_match(opening, closing) -> bool:
-        match opening:
-            case "(":
-                return closing == ")"
-            case "[":
-                return closing == "]"
-            case "{":
-                return closing == "}"
-            case _:
-                return False
+    key_map = {")": "(", "}": "{", "]": "["}
 
     stack = []
-    stack.append(s[0])
 
-    for char in s[1:]:
-        if len(stack) > 0 and is_match(stack[-1], char):
-            stack.pop()
-        else:
+    for char in s:
+        if char not in key_map:
             stack.append(char)
+            continue
+        if len(stack) == 0 or stack[-1] != key_map[char]:
+            return False
+
+        stack.pop()
 
     return len(stack) == 0
 
