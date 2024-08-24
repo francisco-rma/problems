@@ -9,5 +9,10 @@
     "python.formatting.provider": "none",
     "editor.codeActionsOnSave": {
 
-    }
+    },
+    "python.analysis.extraPaths": [
+        "/home/fran/training/functions",
+        "/home/fran/tvl",
+        "./two_pointers"
+    ]
 }
