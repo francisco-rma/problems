@@ -1,6 +1,3 @@
-import math
-
-
 def evalRPN(tokens: list[str]) -> int:
     operators = set(["+", "-", "*", "/"])
     eval_stack = []
@@ -27,8 +24,7 @@ def evalRPN(tokens: list[str]) -> int:
                 print(f"Operation: {operand1} * {operand2} = {result}")
                 pass
             case "/":
-                result = operand1 / operand2
-                result = math.floor(result) if result >= 0 else math.ceil(result)
+                result = int(operand1 / operand2)
                 print(f"Operation: {operand1} / {operand2} = {result}")
                 pass
 
