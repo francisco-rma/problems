@@ -1,19 +1,23 @@
-from operator import concat
-
-
 def searchMatrix(matrix: list[list[int]], target: int) -> bool:
-    import binary_search
+    left = 0
+    right = len(matrix) * len(matrix[0]) - 1
 
-    nums = []
-    for i in range(len(matrix)):
-        nums += matrix[i]
+    while left <= right:
+        idx = left + ((right - left) // 2)
+        row_idx, col_idx = divmod(idx, len(matrix[0]))
 
-    return binary_search.binary_search(nums=nums, target=target) != -1
+        if matrix[row_idx][col_idx] == target:
+            return True
+        elif matrix[row_idx][col_idx] > target:
+            right = idx - 1
+        else:
+            left = idx + 1
+
+    return False
 
 
-matrix = [[1, 2, 4, 8], [10, 11, 12, 13], [14, 20, 30, 40]]
-
-target = 10
+matrix = [[1]]
+target = 3
 
 result = searchMatrix(matrix=matrix, target=target)
 print(result)
