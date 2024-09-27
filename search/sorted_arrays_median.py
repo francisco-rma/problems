@@ -1,3 +1,12 @@
+import time
+import numpy as np
+import matplotlib.pyplot as plt
+import sorting.merge_sort
+import sorting.merge_sort.merge_sort
+from utils import decorators
+import sorting
+
+
 def binary_count(values: list[int], target: int) -> int:
     if not values or values[-1] < target:
         None
@@ -21,6 +30,7 @@ def binary_count(values: list[int], target: int) -> int:
     return 0
 
 
+# @decorators.print_runtime
 def findMedianSortedArrays(nums1: list[int], nums2: list[int]) -> float:
     A, B = nums1, nums2
 
@@ -53,9 +63,36 @@ def findMedianSortedArrays(nums1: list[int], nums2: list[int]) -> float:
                 return min(rightA, rightB)
 
 
-nums1 = [1, 2]
-nums2 = [3]
+rng = np.random.default_rng()
 
-result = findMedianSortedArrays(nums1=nums1, nums2=nums2)
+results = []
+sizes = np.linspace(1, 500000, 10000, dtype=int)
+for i in sizes:
 
-print(result)
+    j = 0
+    raw_results = []
+    while j < 10:
+        divisor = rng.integers(0, i + 1)
+
+        nums1 = np.sort(rng.integers(0, 1000, size=(i - divisor + 1)))
+
+        # nums1_test2 = sorting.merge_sort.merge_sort.merge_sort(nums1)
+        # assert np.array_equal(nums1_test1, nums1_test2)
+
+        nums2 = np.sort(rng.integers(0, 1000, size=divisor))
+        # print(len(nums1), len(nums2))
+
+        start = time.perf_counter()
+        median = findMedianSortedArrays(nums1=nums1, nums2=nums2)
+        runtime = time.perf_counter() - start
+        # print(f"Result: {median}")
+        raw_results.append(runtime)
+        j += 1
+
+    avg_time = np.mean(raw_results)
+    # print(f"Iteration:{i}  --->  avg time: {avg_time}\n")
+    results.append(avg_time)
+
+
+plt.plot(sizes, results)
+plt.show()

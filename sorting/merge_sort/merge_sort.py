@@ -44,7 +44,7 @@ def generate_n_tests():
 tests = generate_tests()
 
 
-def merge_sort(my_list: Sequence):
+def merge_sort(my_list: list) -> list[int]:
     """Merge sort"""
 
     if len(my_list) > 1:
@@ -56,10 +56,12 @@ def merge_sort(my_list: Sequence):
 
         merge_sort(right_array)
 
-        merge(my_list=my_list, midpoint=midpoint)
+        my_list = merge(my_list=my_list, midpoint=midpoint)
+
+        return my_list
 
 
-def merge(my_list: Sequence, midpoint: int):
+def merge(my_list: Sequence, midpoint: int) -> list:
     """Merge"""
     i = 0
     j = 0
@@ -85,6 +87,8 @@ def merge(my_list: Sequence, midpoint: int):
         my_list[k] = right[j]
         j += 1
         k += 1
+
+    return my_list
 
 
 def c_merge_sort(numbers: Sequence, n: int):
