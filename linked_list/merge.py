@@ -34,15 +34,11 @@ def mergeTwoLists(
             right = right.next
         node = node.next
 
-    while left:
+    if left:
         node.next = left
-        left = left.next
-        node = node.next
 
-    while right:
+    if right:
         node.next = right
-        right = right.next
-        node = node.next
 
     return new_head
 
