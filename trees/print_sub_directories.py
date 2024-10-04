@@ -15,12 +15,12 @@ def print_sub_diretories(paths: list[str]):
             else:
                 self.children.append(Tree(child))
 
-        def print_values(self, indent: int = -1):
+        def print_values(self, indent: int = -1, size: int = 1):
             if not indent == 0:
-                print(" " * indent + str(self.value))
+                print(" " * size * indent + str(self.value))
 
             for child in self.children:
-                child.print_values(indent + 1)
+                child.print_values(indent + 1, size=2)
 
     root = Tree("root")
 
