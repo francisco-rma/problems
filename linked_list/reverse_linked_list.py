@@ -32,9 +32,7 @@ def reverseList(head: Optional[ListNode]) -> Optional[ListNode]:
 
     while cur_node is not None:
         next_node = cur_node.next
-
-        if prev_node is not None:
-            cur_node.next = prev_node
+        cur_node.next = prev_node
 
         prev_node = cur_node
         cur_node = next_node
