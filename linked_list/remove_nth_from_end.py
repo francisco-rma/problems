@@ -8,6 +8,7 @@ def removeNthFromEnd(head: Optional[ListNode], n: int) -> Optional[ListNode]:
     count = 0
     while count < n:
         fast = fast.next
+        count += 1
 
     while fast:
         fast = fast.next
