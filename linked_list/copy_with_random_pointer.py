@@ -52,25 +52,20 @@ class Node:
 def copyRandomList(head: Optional[Node]) -> Optional[Node]:
     if head is None:
         return None
+
     new_head = Node(x=head.val)
 
-    source_node: Node = head
-    result_node = new_head
-
     node_map = {}
+    node_map[head] = new_head
+
+    source_node = head.next
+    result_node = new_head.next
 
     while source_node:
-        next_node = None
-
-        if source_node.next:
-            next_node = Node(x=source_node.next.val)
-
-        result_node.next = next_node
+        result_node = Node(x=source_node.val)
 
         if source_node not in node_map:
             node_map[source_node] = result_node
-
-        result_node = next_node
 
         source_node = source_node.next
 
@@ -78,9 +73,11 @@ def copyRandomList(head: Optional[Node]) -> Optional[Node]:
     result_node: Node = new_head
 
     while source_node:
+        result_node.next = node_map[source_node.next] if source_node.next else None
         result_node.random = (
             node_map[source_node.random] if source_node.random else None
         )
+
         source_node = source_node.next
         result_node = result_node.next
 
