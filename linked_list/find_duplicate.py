@@ -34,7 +34,7 @@ class ListNode:
         return False
 
 
-nums = [1, 2, 3, 4, 4]
+nums = [1, 2, 3, 4]
 ll: ListNode = ListNode.from_list(nums)
 
 print(ll.findDuplicate())
