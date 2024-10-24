@@ -33,8 +33,27 @@ class ListNode:
 
         return False
 
+    def floydfindDuplicate(nums: list[int]) -> int:
+        fast, slow = nums[0], nums[0]
 
-nums = [1, 2, 3, 4]
+        while True:
+            slow = nums[slow]
+            fast = nums[nums[fast]]
+
+            if slow == fast:
+                break
+
+        new_slow = nums[0]
+
+        while new_slow != slow:
+            new_slow = nums[new_slow]
+            slow = nums[slow]
+
+        return new_slow
+
+
+nums = [1, 2, 3, 4, 4]
 ll: ListNode = ListNode.from_list(nums)
 
-print(ll.findDuplicate())
+result = ListNode.floydfindDuplicate(nums)
+print(f"The repeating number is: {result}")
