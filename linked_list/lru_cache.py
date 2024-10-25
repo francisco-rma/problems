@@ -1,8 +1,8 @@
 class Node:
-    def __init__(self, key: int, val: int, next=None):
-        self.key = key
+    def __init__(self, val: int, next=None, previous=None):
         self.val = val
         self.next = next
+        self.previous = previous
 
 
 class LRUCache:
@@ -10,114 +10,84 @@ class LRUCache:
     def __init__(self, capacity: int):
         self.capacity = capacity
         self.current_count = 0
-        self.head: Node = None
+        self.node_map: dict[int, Node] = {}
+        self.lru: Node = None
+        self.mru: Node = None
 
     def display(self):
         keys = []
         values = []
         info = []
-        node = self.head
-
+        node = self.lru
         while node:
-            keys.append(str(node.key))
+            for key in self.node_map.keys():
+                if self.node_map[key] is node:
+                    keys.append(str(key))
+
             values.append(str(node.val))
             info.append(str(hex(id(node))))
             node = node.next
-
         l1 = "Key: " + " ---> ".join(keys)
         l2 = "Val: " + " ---> ".join(values)
         l3 = "Addr " + " ---> ".join(info)
-
         print(l1)
         print(l2)
         print(l3)
         print()
 
     def get(self, key: int) -> int:
-        current_node = self.head
-        previous_node: Node = None
-        target_node: Node = None
         result = -1
 
-        while current_node:
-            if current_node.key == key:
-                next_node: Node = current_node.next
+        if key in self.node_map:
+            target_node = self.node_map[key]
+            result = target_node.val
 
-                current_node.next = None
+            if target_node is self.lru and target_node is self.mru:
+                pass
 
-                target_node = current_node
-                result = target_node.val
+            elif target_node is self.lru:
+                self.lru = target_node.next
+                self.lru.previous = None
 
-                if current_node is self.head:
-                    self.head = next_node
-                else:
-                    previous_node.next = next_node
+                target_node.next = None
+                target_node.previous = self.mru
 
-                if next_node:
-                    previous_node = next_node
-                    current_node = next_node.next
-                else:
-                    current_node = next_node
+                self.mru.next = target_node
+                self.mru = target_node
 
-                continue
+            elif target_node is self.mru:
+                pass
 
-            previous_node = current_node
-            current_node = current_node.next
-
-        if target_node:
-            target_node.next = None
-
-        if previous_node:
-            previous_node.next = target_node
-
-        else:
-            self.head = target_node
+            else:
+                target_node.previous.next = target_node.next
+                target_node.next = None
+                target_node.previous = self.mru
+                self.mru.next = target_node
+                self.mru = target_node
 
         return result
 
     def put(self, key: int, value: int) -> None:
-        current_node = self.head
-        previous_node: Node = None
-        target_node: Node = None
+        if len(self.node_map.keys()) == 0:
+            new_node = Node(val=value, previous=None, next=None)
+            self.current_count += 1
+            self.lru = new_node
+            self.mru = new_node
+            self.node_map[key] = new_node
 
-        while current_node:
-            if current_node.key == key:
-                next_node: Node = current_node.next
+        elif key in self.node_map:
+            self.node_map[key].val = value
 
-                current_node.val = value
-                current_node.next = None
-
-                target_node = current_node
-
-                if current_node is self.head:
-                    self.head = next_node
-                else:
-                    previous_node.next = next_node
-
-                if next_node:
-                    previous_node = next_node
-                    current_node = next_node.next
-                else:
-                    current_node = next_node
-
-                continue
-
-            previous_node = current_node
-            current_node = current_node.next
-
-        if not target_node:
-            target_node = Node(key=key, val=value)
+        else:
+            new_node = Node(val=value, previous=self.mru, next=None)
             self.current_count += 1
 
-        target_node.next = None
-
-        if not previous_node:
-            self.head = target_node
-        elif previous_node is not target_node:
-            previous_node.next = target_node
+            self.mru.next = new_node
+            self.mru = new_node
+            self.node_map[key] = new_node
 
         if self.current_count > self.capacity:
-            self.head = self.head.next
+            self.lru = self.lru.next
             self.current_count -= 1
 
 
