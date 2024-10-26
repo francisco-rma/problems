@@ -1,6 +1,12 @@
+from asyncio import sleep
+import os
+import time
+
+
 class Node:
-    def __init__(self, val: int, next=None, previous=None):
+    def __init__(self, val: int, key: int, next=None, previous=None):
         self.val = val
+        self.key = key
         self.next = next
         self.previous = previous
 
@@ -14,7 +20,7 @@ class LRUCache:
         self.lru: Node = None
         self.mru: Node = None
 
-    def display(self):
+    def display(self, command: str):
         keys = []
         values = []
         info = []
@@ -27,9 +33,12 @@ class LRUCache:
             values.append(str(node.val))
             info.append(str(hex(id(node))))
             node = node.next
-        l1 = "Key: " + " ---> ".join(keys)
-        l2 = "Val: " + " ---> ".join(values)
-        l3 = "Addr " + " ---> ".join(info)
+        l1 = "Key: " + " <--------> ".join(keys)
+        l2 = "Val: " + " <--------> ".join(values)
+        l3 = "Addr " + " <--------> ".join(info)
+        os.system("cls" if os.name == "nt" else "clear")
+        if command:
+            print(command)
         print(l1)
         print(l2)
         print(l3)
@@ -59,6 +68,7 @@ class LRUCache:
                 pass
 
             else:
+                target_node.next.previous = target_node.previous
                 target_node.previous.next = target_node.next
                 target_node.next = None
                 target_node.previous = self.mru
@@ -69,7 +79,7 @@ class LRUCache:
 
     def put(self, key: int, value: int) -> None:
         if len(self.node_map.keys()) == 0:
-            new_node = Node(val=value, previous=None, next=None)
+            new_node = Node(val=value, key=key, previous=None, next=None)
             self.current_count += 1
             self.lru = new_node
             self.mru = new_node
@@ -77,9 +87,33 @@ class LRUCache:
 
         elif key in self.node_map:
             self.node_map[key].val = value
+            target_node = self.node_map[key]
+            if target_node is self.lru and target_node is self.mru:
+                pass
+
+            elif target_node is self.lru:
+                self.lru = target_node.next
+                self.lru.previous = None
+
+                target_node.next = None
+                target_node.previous = self.mru
+
+                self.mru.next = target_node
+                self.mru = target_node
+
+            elif target_node is self.mru:
+                pass
+
+            else:
+                target_node.next.previous = target_node.previous
+                target_node.previous.next = target_node.next
+                target_node.next = None
+                target_node.previous = self.mru
+                self.mru.next = target_node
+                self.mru = target_node
 
         else:
-            new_node = Node(val=value, previous=self.mru, next=None)
+            new_node = Node(val=value, key=key, previous=self.mru, next=None)
             self.current_count += 1
 
             self.mru.next = new_node
@@ -87,89 +121,6 @@ class LRUCache:
             self.node_map[key] = new_node
 
         if self.current_count > self.capacity:
-            self.lru = self.lru.next
+            lru = self.node_map.pop(self.lru.key)
+            self.lru = lru.next
             self.current_count -= 1
-
-
-def test1():
-    cache = LRUCache(2)
-    cache.display()
-
-    print(f"cache.put(1, 1) returned: {cache.put(1, 1)}")
-    cache.display()
-
-    print(f"cache.put(2, 2) returned: {cache.put(2, 2)}")
-    cache.display()
-
-    print(f"cache.get(1) returned: {cache.get(1)}")
-    cache.display()
-
-    print(f"cache.put(3, 3) returned: {cache.put(3, 3)}")
-    cache.display()
-
-    print(f"cache.get(2) returned: {cache.get(2)}")
-    cache.display()
-
-    print(f"cache.put(4, 4) returned: {cache.put(4, 4)}")
-    cache.display()
-
-    print(f"cache.get(1) returned: {cache.get(1)}")
-    cache.display()
-
-    print(f"cache.get(3) returned: {cache.get(3)}")
-    cache.display()
-
-    print(f"cache.get(4) returned: {cache.get(4)}")
-    cache.display()
-
-
-def test2():
-    cache = LRUCache(2)
-    cache.display()
-
-    print(f"cache.put(1, 10) returned: {cache.put(1, 10)}")
-    cache.display()
-
-    print(f"cache.get(1) returned: {cache.get(1)}")
-    cache.display()
-
-    print(f"cache.put(2, 20) returned: {cache.put(2, 20)}")
-    cache.display()
-
-    print(f"cache.put(3, 30) returned: {cache.put(3, 30)}")
-    cache.display()
-
-    print(f"cache.get(2) returned: {cache.get(2)}")
-    cache.display()
-
-    print(f"cache.get(1) returned: {cache.get(1)}")
-    cache.display()
-
-
-def test3():
-    cache = LRUCache(2)
-    cache.display()
-
-    print(f"cache.get(2) returned: {cache.get(2)}")
-    cache.display()
-
-    print(f"cache.put(2, 6) returned: {cache.put(2, 6)}")
-    cache.display()
-
-    print(f"cache.get(1) returned: {cache.get(1)}")
-    cache.display()
-
-    print(f"cache.put(1, 5) returned: {cache.put(1, 5)}")
-    cache.display()
-
-    print(f"cache.put(1, 2) returned: {cache.put(1, 2)}")
-    cache.display()
-
-    print(f"cache.get(1) returned: {cache.get(1)}")
-    cache.display()
-
-    print(f"cache.get(2) returned: {cache.get(2)}")
-    cache.display()
-
-
-test3()
