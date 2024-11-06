@@ -22,7 +22,9 @@ class ListNode:
 
 
 def mergeKLists(lists: list[Optional[ListNode]]) -> Optional[ListNode]:
-    result = None
+    if len(lists) == 0:
+        return None
+    head = None
 
     min_val = None
     min_idx = None
@@ -34,7 +36,7 @@ def mergeKLists(lists: list[Optional[ListNode]]) -> Optional[ListNode]:
         print(node, node.val)
         tracker[idx] = node
 
-        if not min_val:
+        if min_val is None:
             min_val = node.val
             min_idx = idx
             continue
@@ -43,9 +45,16 @@ def mergeKLists(lists: list[Optional[ListNode]]) -> Optional[ListNode]:
             min_val = node.val
             min_idx = idx
 
-    result = ListNode(min_val)
+    if len(tracker.keys()) == 0:
+        return None
+
+    head = tracker[min_idx]
     tracker[min_idx] = tracker[min_idx].next
-    result_tail = result
+    head.next = None
+    result_tail = head
+
+    min_val = None
+    min_idx = None
 
     while tracker.keys():
         for i in range(len(lists)):
@@ -70,16 +79,20 @@ def mergeKLists(lists: list[Optional[ListNode]]) -> Optional[ListNode]:
                 min_val = node.val
                 min_idx = i
 
-        result_tail.next = ListNode(min_val)
-        if min_idx in tracker:
-            tracker[min_idx] = tracker[min_idx].next
+        if min_idx is None:
+            break
+
+        result_tail.next = tracker[min_idx]
+        tracker[min_idx] = tracker[min_idx].next
         result_tail = result_tail.next
+        result_tail.next = None
         min_val = None
+        min_idx = None
 
-    return result
+    return head
 
 
-source = [[1, 2, 4], [1, 3, 5], [3, 6]]
+source = [[0], [1], [2], [3], [4], [5], [6], [7], [8], [9]]
 lists = []
 
 for values in source:
