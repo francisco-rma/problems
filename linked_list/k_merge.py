@@ -21,75 +21,47 @@ class ListNode:
         return head
 
 
+def mergeLists(l1: Optional[ListNode], l2: Optional[ListNode]):
+    dummy = ListNode(0)
+    tail = dummy
+
+    while l1 and l2:
+        if l1.val < l2.val:
+            tail.next = l1
+            l1 = l1.next
+        else:
+            tail.next = l2
+            l2 = l2.next
+
+        tail = tail.next
+        tail.next = None
+
+    while l1:
+        tail.next = l1
+        l1 = l1.next
+        tail = tail.next
+        tail.next = None
+
+    while l2:
+        tail.next = l2
+        l2 = l2.next
+        tail = tail.next
+        tail.next = None
+
+    return dummy.next
+
+
 def mergeKLists(lists: list[Optional[ListNode]]) -> Optional[ListNode]:
-    if len(lists) == 0:
-        return None
-    head = None
 
-    min_val = None
-    min_idx = None
-    tracker: dict[int, ListNode] = {}
+    while len(lists) > 1:
+        mergedLists = []
+        for i in range(0, len(lists), 2):
+            mergedLists.append(
+                mergeLists(lists[i], (lists[i + 1] if i + 1 < len(lists) else None))
+            )
+        lists = mergedLists
 
-    for idx, node in enumerate(lists):
-        if not node:
-            continue
-        print(node, node.val)
-        tracker[idx] = node
-
-        if min_val is None:
-            min_val = node.val
-            min_idx = idx
-            continue
-
-        if node.val < min_val:
-            min_val = node.val
-            min_idx = idx
-
-    if len(tracker.keys()) == 0:
-        return None
-
-    head = tracker[min_idx]
-    tracker[min_idx] = tracker[min_idx].next
-    head.next = None
-    result_tail = head
-
-    min_val = None
-    min_idx = None
-
-    while tracker.keys():
-        for i in range(len(lists)):
-            if i not in tracker:
-                continue
-
-            node = tracker[i]
-
-            if not node:
-                tracker.pop(i)
-                continue
-
-            if not min_val:
-                min_val = node.val
-                min_idx = i
-
-            if node.val == result_tail.val:
-                min_val = node.val
-                min_idx = i
-                break
-            elif node.val < min_val:
-                min_val = node.val
-                min_idx = i
-
-        if min_idx is None:
-            break
-
-        result_tail.next = tracker[min_idx]
-        tracker[min_idx] = tracker[min_idx].next
-        result_tail = result_tail.next
-        result_tail.next = None
-        min_val = None
-        min_idx = None
-
-    return head
+    return lists[0]
 
 
 source = [[0], [1], [2], [3], [4], [5], [6], [7], [8], [9]]
