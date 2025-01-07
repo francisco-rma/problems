@@ -3,26 +3,38 @@ from typing import Optional
 
 
 class TreeNode:
-    def __init__(
-        self, value: int = None, left: TreeNode = None, right: TreeNode = None
-    ):
+    def __init__(self, value: int, left: TreeNode = None, right: TreeNode = None):
+        if not value:
+            raise ValueError(f"Value cannot be {value}")
         self.value = value
         self.right = right
         self.left = left
 
     def from_list(values: list[int | None]) -> TreeNode:
-        n = len(values)
+        from collections import deque
 
-        def inner(idx: int = 0):
-            if idx >= n or values[idx] is None:
-                return None
-            node = TreeNode(value=values[idx])
-            node.left = inner(2 * idx + 1)
-            node.right = inner(2 * idx + 2)
+        queue = deque(values)
+        value = queue.popleft()
+        root = TreeNode(value)
+        nodes: deque[TreeNode] = deque()
 
-            return node
+        nodes.append(root)
 
-        return inner()
+        while queue:
+            cur_node = nodes.popleft()
+
+            left_val = queue.popleft()
+            if left_val:
+                cur_node.left = TreeNode(left_val)
+                nodes.append(cur_node.left)
+
+            if queue:
+                right_val = queue.popleft()
+                if right_val:
+                    cur_node.right = TreeNode(right_val)
+                    nodes.append(cur_node.right)
+
+        return root
 
     def maxDepth(self, root: Optional[TreeNode], method: str = "dfsr") -> int:
         if not root:
@@ -80,12 +92,36 @@ class TreeNode:
 
                 return dfsi(root)
 
+            case "bfsi":
+
+                def bfsi(node: Optional[TreeNode]):
+                    from collections import deque
+
+                    queue = deque([node])
+                    visited = set()
+                    level = 0
+
+                    while queue:
+                        for _ in range(len(queue)):
+                            node = queue.popleft()
+                            if node.left:
+                                queue.append(node.left)
+                            if node.right:
+                                queue.append(node.right)
+                        level += 1
+
+                    for node in visited:
+                        print(f"visited {node.value} at {node}")
+                    return level
+
+                return bfsi(root)
+
             case _:
                 return None
 
     def maxDepthBfs(self, root: Optional[TreeNode]): ...
 
 
-root: TreeNode = TreeNode.from_list([1, 2, 3, 4, 5])
+root: TreeNode = TreeNode.from_list([1, 2, None, 3, None, 4, None, 5])
 
-print(root.maxDepth(root=root, method="dfsi"))
+print(root.maxDepth(root=root, method="bfsi"))
