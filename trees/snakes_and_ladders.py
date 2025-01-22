@@ -38,7 +38,6 @@ class Solution:
 
                     if next_number_on_position != -1:
                         queue.append((next_number_on_position, num_dices + 1))
-                        # visited.add(next_number_on_position)
                     else:
                         queue.append((next_position, num_dices + 1))
 
