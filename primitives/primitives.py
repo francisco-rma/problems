@@ -46,7 +46,10 @@ def parity(x, method: str = "bruteforce"):
             return 0
 
 
-def propagate_rightmost(x):
+def right_propagate(x: int):
+    """
+    Propagates the rightmost set bit to the right.\n
+    """
     idx = x & -x
     bit_mask = ((idx - 1) << 1) + 1
     result = x | bit_mask
@@ -63,6 +66,6 @@ def propagate_rightmost(x):
 # =======================================================
 
 test = "11010000"
-result = propagate_rightmost(int(test, base=2))
+result = right_propagate(int(test, base=2))
 
 print(f"Result is: {result}")
