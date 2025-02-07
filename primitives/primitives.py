@@ -36,15 +36,26 @@ def parity(x, method: str = "bruteforce") -> int:
             return result
 
         case "bit_grouping":
-            raise NotImplementedError("Implementation is still wrong")
-            bit_count = get_leftmost_bit(x)
-            bit_count >>= 1
+            # bit_count = get_leftmost_bit(x)
 
-            while bit_count:
-                x ^= x >> bit_count
-                bit_count >>= 1
-                print(f"\n{bit_count:008b}")
-                print(f"{x:008b}\n-----------------")
+            # even_remainder = bit_count & 1
+            # bit_count = bit_count - even_remainder if even_remainder else bit_count >> 1
+
+            # print(f"\n{bit_count:008b}")
+            # print(f"{x:008b}\n-----------------")
+            # while bit_count:
+            #     x ^= x >> bit_count
+            #     bit_count >>= 1
+            #     print(f"\n{bit_count:008b}")
+            #     print(f"{x:008b}\n-----------------")
+
+            x ^= x >> 32
+            x ^= x >> 16
+            x ^= x >> 8
+            x ^= x >> 4
+            x ^= x >> 2
+            x ^= x >> 1
+
             return x & 1
 
         case _:
