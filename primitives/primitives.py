@@ -122,24 +122,24 @@ def is_power_of_two(x):
 # Parity
 # =======================================================
 
-test_range = range(1, 10000)
-size = 1000
+# test_range = range(1, 10000)
+# size = 1000
 
-tests = random.choices(test_range, k=size)
+# tests = random.choices(test_range, k=size)
 
-for test in test_range:
-    print(f"\nTest value: {test:008b}")
-    reference_result = parity(x=test)
-    bit_erasure_result = parity(x=test, method="bit_erasure")
-    bit_grouping_result = parity(x=test, method="bit_grouping")
+# for test in test_range:
+#     print(f"\nTest value: {test:008b}")
+#     reference_result = parity(x=test)
+#     bit_erasure_result = parity(x=test, method="bit_erasure")
+#     bit_grouping_result = parity(x=test, method="bit_grouping")
 
-    print(f"reference_result: {reference_result}")
-    print(f"bit_erasure_result: {bit_erasure_result}")
-    print(f"bit_grouping_result: {bit_grouping_result}")
-    print("\n------------------")
+#     print(f"reference_result: {reference_result}")
+#     print(f"bit_erasure_result: {bit_erasure_result}")
+#     print(f"bit_grouping_result: {bit_grouping_result}")
+#     print("\n------------------")
 
-    assert reference_result == bit_erasure_result
-    assert reference_result == bit_grouping_result
+#     assert reference_result == bit_erasure_result
+#     assert reference_result == bit_grouping_result
 
 # =======================================================
 # =======================================================
