@@ -1,24 +1,29 @@
+import random
+
+
+def get_leftmost_bit(x: int) -> int:
+    count = 0
+    while x > 0:
+        x >>= 1
+        count += 1
+
+    return count
+
+
 def count_1_bits(x) -> int:
     count = 0
     while x:
-        print("\nx is    : {0:03d} ({0:07b})".format(x))
-        print("1 is    : {0:03d} ({0:07b})".format(1))
-        print("x & 1 is: {0:03d} ({0:07b})".format(x & 1))
         count += x & 1
-        print(f"count is: {count}\n")
         x >>= 1
 
     return count
 
 
-def parity(x, method: str = "bruteforce"):
+def parity(x, method: str = "bruteforce") -> int:
     match method:
         case "bruteforce":
             result = 0
             while x:
-                print("\nx is    : {0:03d} ({0:07b})".format(x))
-                print("1 is    : {0:03d} ({0:07b})".format(1))
-                print("x & 1 is: {0:03d} ({0:07b})".format(x & 1))
                 result ^= x & 1
                 x >>= 1
             return result
@@ -26,20 +31,20 @@ def parity(x, method: str = "bruteforce"):
         case "bit_erasure":
             result = 0
             while x:
-                print("\nx is     : {0:03d} ({0:07b})".format(x))
                 result ^= 1
-                print("result is: {0:03d} ({0:07b})".format(result))
                 x &= x - 1
             return result
 
         case "bit_grouping":
-            bit_count = len(str(bin(x))[2:])
-            while bit_count:
-                bit_count >>= 1
-                print("\ngroup size is: {0:03d} ({0:08b})".format(bit_count))
-                print("x is         : {0:03d} ({0:08b})".format(x))
-                x ^= x >> (bit_count)
+            raise NotImplementedError("Implementation is still wrong")
+            bit_count = get_leftmost_bit(x)
+            bit_count >>= 1
 
+            while bit_count:
+                x ^= x >> bit_count
+                bit_count >>= 1
+                print(f"\n{bit_count:008b}")
+                print(f"{x:008b}\n-----------------")
             return x & 1
 
         case _:
@@ -54,18 +59,76 @@ def right_propagate(x: int):
     bit_mask = ((idx - 1) << 1) + 1
     result = x | bit_mask
 
-    print("\nx is       : {0:06d} ({0:08b})".format(x))
-    print("bit mask is: {0:06d} ({0:08b})".format(bit_mask))
-    print("result is  : {0:06d} ({0:08b})".format(result))
-
     return result
+
+
+def mod(x, y):
+    return x & (y - 1)
+
+
+def is_power_of_two(x):
+    return count_1_bits(x=x) == 1
 
 
 # =======================================================
 # Test cases
 # =======================================================
 
-test = "11010000"
-result = right_propagate(int(test, base=2))
 
-print(f"Result is: {result}")
+# =======================================================
+# Modulo of a power of two
+# =======================================================
+
+# divisor_range = range(1, 8)
+# test_range = range(1, 1000)
+# size = 10
+
+# tests = random.choices(test_range, k=size)
+# divisors = random.choices(divisor_range, k=size)
+
+# for test, exponent in zip(tests, divisors):
+#     result = mod(x=test, y=2**exponent)
+
+# =======================================================
+# =======================================================
+
+# =======================================================
+# Is a power of two
+# =======================================================
+
+# true_values = [2**n for n in range(2, 1000)]
+# false_values = [2**n - 1 for n in range(2, 1000)]
+
+# for success_candidate, fail_candidate in zip(true_values, false_values):
+#     assert is_power_of_two(success_candidate)
+#     assert not is_power_of_two(fail_candidate)
+
+# =======================================================
+# =======================================================
+
+
+# =======================================================
+# Parity
+# =======================================================
+
+test_range = range(1, 10000)
+size = 1000
+
+tests = random.choices(test_range, k=size)
+
+for test in test_range:
+    print(f"\nTest value: {test:008b}")
+    reference_result = parity(x=test)
+    bit_erasure_result = parity(x=test, method="bit_erasure")
+    bit_grouping_result = parity(x=test, method="bit_grouping")
+
+    print(f"reference_result: {reference_result}")
+    print(f"bit_erasure_result: {bit_erasure_result}")
+    print(f"bit_grouping_result: {bit_grouping_result}")
+    print("\n------------------")
+
+    assert reference_result == bit_erasure_result
+    assert reference_result == bit_grouping_result
+
+# =======================================================
+# =======================================================
