@@ -7,12 +7,12 @@
 # Levenshtein distance
 # =======================================================
 
-from levenshtein_distance import levenshtein_distance
+from levenshtein_distance import lev, levenshtein_distance
 
 source = "aksdjfofweg"
 target = "dfargstrdt"
 
-result = levenshtein_distance(p=source, q=target)
+result = lev(p=source, q=target)
 
 print(result)
 
