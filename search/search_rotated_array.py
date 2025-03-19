@@ -1,8 +1,7 @@
-from typing import List
 import binary_search
 
 
-def find_pivot_index(nums: List[int]) -> int:
+def find_pivot_index(nums: list[int]) -> int:
     start = 0
     end = len(nums) - 1
     while start < end:
@@ -18,7 +17,7 @@ def find_pivot_index(nums: List[int]) -> int:
     return index
 
 
-def search_rotated_array(nums: List[int], target: int) -> int:
+def search_rotated_array(nums: list[int], target: int) -> int:
     index = -1
 
     pivot_index = find_pivot_index(nums=nums)
