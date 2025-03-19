@@ -1,3 +1,9 @@
+import urllib.request
+import pandas as pd
+
+from utils import decorators
+
+
 def levenshtein_distance(p: str, q: str) -> int:
     if len(p) == 0:
         return len(q)
@@ -48,3 +54,31 @@ def lev(p: str, q: str) -> int:
     # for row in d:
     #     print(row)
     return d[m][n]
+
+
+@decorators.print_runtime
+def random_words(size=100):
+
+    path = "https://www.mit.edu/~ecprice/wordlist.10000"
+
+    response = urllib.request.urlopen(url=path)
+    words = response.read().decode().splitlines()
+
+    results: list[tuple[str, str, int]] = []
+    computed_pairs: set[tuple[str, str]] = []
+
+    assert size < len(words)
+
+    print(f"\nSIZE: {size}")
+
+    for _, source in enumerate(words[:size]):
+        for _, target in enumerate(words[:size]):
+            pair = tuple([source, target])
+            if target == source or pair in computed_pairs:
+                continue
+
+            dist = lev(source, target)
+            results.append(tuple([source, target, dist]))
+
+    df: pd.DataFrame = pd.DataFrame(results)
+    df.to_csv("results.csv")
