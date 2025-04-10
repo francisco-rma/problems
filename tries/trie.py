@@ -8,9 +8,6 @@ class Trie:
 
     # TODO FIX
     def __repr__(self):
-        if self is None:
-            return
-
         queue = deque([self])
         val = ""
         level = 1

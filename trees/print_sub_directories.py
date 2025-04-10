@@ -1,4 +1,4 @@
-def print_sub_diretories(paths: list[str]):
+def print_sub_directories(paths: list[str]):
     """
     Constructs and prints a tree structure representing subdirectories from a list of paths.
     Args:
@@ -10,7 +10,7 @@ def print_sub_diretories(paths: list[str]):
             "/home/user/docs/reports",
             "/home/user/docs/reports/2023"
         ]
-        print_sub_diretories(paths)
+        print_sub_directories(paths)
         # Output:
         # root
         #   home
@@ -71,4 +71,4 @@ paths = [
     "/x/uy/kz/12",
 ]
 
-print_sub_diretories(paths=paths)
+print_sub_directories(paths=paths)
