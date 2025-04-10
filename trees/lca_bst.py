@@ -82,3 +82,65 @@ class TreeNode:
             asc_q.popleft()
 
         return lca
+
+    def lowestCommonAncestorControl(root: TreeNode, p: TreeNode, q: TreeNode) -> TreeNode:
+        def ascendancy(node: Optional[TreeNode], target: int) -> deque[TreeNode]:
+            if not node:
+                return None
+            if node.val == target:
+                return deque([node])
+
+            result = []
+            if target < node.val:
+                result = ascendancy(node=node.left, target=target)
+            else:
+                result = ascendancy(node=node.right, target=target)
+
+            result.appendleft(node)
+
+            return result
+
+        asc_p = ascendancy(root, target=p.val)
+        asc_q = ascendancy(root, target=q.val)
+
+        lca: TreeNode = root
+
+        while asc_p and asc_q:
+            if asc_p[0].val != asc_q[0].val:
+                break
+
+            lca = asc_p.popleft()
+            asc_q.popleft()
+
+        return lca
+
+    def lowestCommonAncestorControlV2(root: TreeNode, p: TreeNode, q: TreeNode) -> TreeNode:
+        def inner(node: Optional[TreeNode], lower_bound: int, upper_bound: int) -> TreeNode:
+            if not node or lower_bound >= upper_bound:
+                return None
+            if node.val >= lower_bound and node.val <= upper_bound:
+                return node
+
+            result = None
+            if node.val > upper_bound:
+                result = inner(node=node.left, lower_bound=lower_bound, upper_bound=upper_bound)
+            elif node.val < lower_bound:
+                result = inner(node=node.right, lower_bound=lower_bound, upper_bound=upper_bound)
+
+            return result
+
+        return inner(node=root, lower_bound=min([p.val, q.val]), upper_bound=max([p.val, q.val]))
+
+    def create_large_bst(size: int) -> TreeNode:
+        """Creates a large balanced binary search tree with `size` nodes."""
+
+        def build_bst(start: int, end: int) -> Optional[TreeNode]:
+            if start > end:
+                return None
+            mid = (start + end) // 2
+            node = TreeNode(val=mid)
+            node.left = build_bst(start, mid - 1)
+            node.right = build_bst(mid + 1, end)
+            return node
+
+        return build_bst(1, size)

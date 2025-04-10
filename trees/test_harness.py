@@ -33,20 +33,48 @@
 # Lowest common ancestor on binary search tree
 # =======================================================
 
+import time
 from lca_bst import TreeNode
 
-root = TreeNode.from_list([5, 3, 8, 1, 4, 7, 9, None, 2])
-p = TreeNode.seek(root, target=3)
-q = TreeNode.seek(root, target=4)
+# Benchmark for creating a large BST
 
-print(repr(root))
+start_time = time.time()
 
-# assert TreeNode.generate_root(p_root) == p
-# assert TreeNode.generate_root(q_root) == q
+# root = TreeNode.from_list([5, 3, 8, 1, 4, 7, 9, None, 2])
+root = TreeNode.create_large_bst(20000000)
+p = TreeNode.seek(root, target=100000)
+q = TreeNode.seek(root, target=1000000)
 
-result = TreeNode.lowestCommonAncestor(root=root, p=p, q=q)
+end_time = time.time()
 
-print(result)
+print(
+    f"Bounds:\n {max([p.val,q.val])} - {min([p.val,q.val])} \nTree creation time: {end_time - start_time:.6f} seconds"
+)
+
+
+# Benchmark for lowestCommonAncestor
+start_time = time.time()
+result_lca = TreeNode.lowestCommonAncestor(root=root, p=p, q=q)
+end_time = time.time()
+print(
+    f"lowestCommonAncestor result:\n {result_lca.val} \nTime: {end_time - start_time:.6f} seconds"
+)
+
+# Benchmark for lowestCommonAncestorControl
+start_time = time.time()
+result_lca_control = TreeNode.lowestCommonAncestorControl(root=root, p=p, q=q)
+end_time = time.time()
+print(
+    f"lowestCommonAncestorControl result:\n {result_lca_control.val} \nTime: {end_time - start_time:.6f} seconds"
+)
+
+# Benchmark for lowestCommonAncestorControlV2
+start_time = time.time()
+result_lca_control = TreeNode.lowestCommonAncestorControlV2(root=root, p=p, q=q)
+end_time = time.time()
+print(
+    f"lowestCommonAncestorControlV2 result:\n {result_lca_control.val} \nTime: {end_time - start_time:.6f} seconds"
+)
 
 # =======================================================
 # =======================================================
