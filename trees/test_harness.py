@@ -41,7 +41,7 @@ from lca_bst import TreeNode
 start_time = time.time()
 
 # root = TreeNode.from_list([5, 3, 8, 1, 4, 7, 9, None, 2])
-root = TreeNode.create_large_bst(20000000)
+root = TreeNode.create_large_bst(2000000)
 p = TreeNode.seek(root, target=100000)
 q = TreeNode.seek(root, target=1000000)
 
@@ -62,7 +62,7 @@ print(
 
 # Benchmark for lowestCommonAncestorControl
 start_time = time.time()
-result_lca_control = TreeNode.lowestCommonAncestorControl(root=root, p=p, q=q)
+result_lca_control = TreeNode.lowestCommonAncestorNaive(root=root, p=p, q=q)
 end_time = time.time()
 print(
     f"lowestCommonAncestorControl result:\n {result_lca_control.val} \nTime: {end_time - start_time:.6f} seconds"
@@ -70,7 +70,7 @@ print(
 
 # Benchmark for lowestCommonAncestorControlV2
 start_time = time.time()
-result_lca_control = TreeNode.lowestCommonAncestorControlV2(root=root, p=p, q=q)
+result_lca_control = TreeNode.lowestCommonAncestor(root=root, p=p, q=q)
 end_time = time.time()
 print(
     f"lowestCommonAncestorControlV2 result:\n {result_lca_control.val} \nTime: {end_time - start_time:.6f} seconds"

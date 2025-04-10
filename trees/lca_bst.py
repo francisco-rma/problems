@@ -52,38 +52,7 @@ class TreeNode:
 
         return inner(node=node, target=target)
 
-    def lowestCommonAncestor(root: TreeNode, p: TreeNode, q: TreeNode) -> TreeNode:
-        def ascendancy(node: Optional[TreeNode], target: int) -> deque[TreeNode]:
-            if not node:
-                return None
-            if node.val == target:
-                return deque([node])
-
-            result = []
-            if target < node.val:
-                result = ascendancy(node=node.left, target=target)
-            else:
-                result = ascendancy(node=node.right, target=target)
-
-            result.appendleft(node)
-
-            return deque(dict.fromkeys(result))
-
-        asc_p = ascendancy(root, target=p.val)
-        asc_q = ascendancy(root, target=q.val)
-
-        lca: TreeNode = root
-
-        while asc_p and asc_q:
-            if asc_p[0].val != asc_q[0].val:
-                break
-
-            lca = asc_p.popleft()
-            asc_q.popleft()
-
-        return lca
-
-    def lowestCommonAncestorControl(root: TreeNode, p: TreeNode, q: TreeNode) -> TreeNode:
+    def lowestCommonAncestorNaive(root: TreeNode, p: TreeNode, q: TreeNode) -> TreeNode:
         def ascendancy(node: Optional[TreeNode], target: int) -> deque[TreeNode]:
             if not node:
                 return None
@@ -114,7 +83,7 @@ class TreeNode:
 
         return lca
 
-    def lowestCommonAncestorControlV2(root: TreeNode, p: TreeNode, q: TreeNode) -> TreeNode:
+    def lowestCommonAncestor(root: TreeNode, p: TreeNode, q: TreeNode) -> TreeNode:
         def inner(node: Optional[TreeNode], lower_bound: int, upper_bound: int) -> TreeNode:
             if not node or lower_bound >= upper_bound:
                 return None
