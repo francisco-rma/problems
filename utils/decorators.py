@@ -10,7 +10,7 @@ def print_runtime(func: Callable):
         result = func(*args, **kwargs)
         end = time.time()
         runtime = end - start
-        print(f"function {func.__name__} took {runtime}")
+        print(f"function {func.__name__} took {runtime} seconds")
 
         return result
 
