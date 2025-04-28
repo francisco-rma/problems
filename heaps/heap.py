@@ -1,74 +1,121 @@
 from __future__ import annotations
-from typing import Optional
 
 
-class HeapNode:
-    def __init__(self, val: int, left: Optional[HeapNode] = None, right: Optional[HeapNode] = None):
-        self.val: Optional[HeapNode] = val
-        self.left: Optional[HeapNode] = left
-        self.right: Optional[HeapNode] = right
-
-    def max_heapify(source: list[int], idx: int):
-        n = len(source)
-        if n == 0 or (idx is not None and idx > n // 2):
-            return None
-
-        left_idx = 2 * idx + 1 if 2 * idx + 1 < n else None
-        right_idx = 2 * idx + 2 if 2 * idx + 2 < n else None
-
-        node = source[idx]
-        left = source[left_idx] if left_idx else float("-inf")
-        right = source[right_idx] if right_idx else float("-inf")
-
-        if node < max([left, right]):
-            if left > right:
-                source[idx], source[left_idx] = source[left_idx], source[idx]
-            else:
-                source[idx], source[right_idx] = source[right_idx], source[idx]
-
-        left = source[left_idx] if left_idx else float("-inf")
-        right = source[right_idx] if right_idx else float("inf")
-
-        if left < right and right_idx:
-            source[left_idx], source[right_idx] = source[right_idx], source[left_idx]
-
-        if left_idx:
-            HeapNode.max_heapify(source, left_idx)
-        if right_idx:
-            HeapNode.max_heapify(source, right_idx)
-
-    def min_heapify(source: list[int], idx: int):
-        n = len(source)
-        if n == 0 or (idx is not None and idx > n // 2):
-            return None
-
-        left_idx = 2 * idx + 1 if 2 * idx + 1 < n else None
-        right_idx = 2 * idx + 2 if 2 * idx + 2 < n else None
-
-        node = source[idx]
-        left = source[left_idx] if left_idx else float("inf")
-        right = source[right_idx] if right_idx else float("inf")
-
-        if node > min([left, right]):
-            if left < right:
-                source[idx], source[left_idx] = source[left_idx], source[idx]
-            else:
-                source[idx], source[right_idx] = source[right_idx], source[idx]
-
-        left = source[left_idx] if left_idx else float("-inf")
-        right = source[right_idx] if right_idx else float("inf")
-
-        if left > right and right_idx:
-            source[left_idx], source[right_idx] = source[right_idx], source[left_idx]
-
-        if left_idx:
-            HeapNode.min_heapify(source, left_idx)
-        if right_idx:
-            HeapNode.min_heapify(source, right_idx)
-
+class Heap:
     def build_heap(source: list[int], order="max"):
-        func = HeapNode.max_heapify if order == "max" else HeapNode.min_heapify
+        func = Heap.max_heapify if order == "max" else Heap.min_heapify
         n = len(source)
         for i in range(n // 2, -1, -1):
             func(source, i)
         return source
+
+    def __init__(self, source: list[int]):
+        Heap.build_heap(source)
+        self.source = source
+
+    def __getitem__(self, index):
+        return self.source[index]
+
+    def __setitem__(self, index, value):
+        self.source[index] = value
+
+    def __iter__(self):
+        return iter(self.source)
+
+    def __len__(self):
+        return len(self.source)
+
+    def __next__(self):
+        return next(self.source)
+
+    def __repr__(self):
+        if not self.source:
+            return ""
+
+        n = len(self.source)
+        levels = 0
+
+        # Calculate the number of levels in the heap
+        while (1 << levels) - 1 < n:
+            levels += 1
+
+        max_width = (1 << (levels - 1)) * 3  # Maximum width of the last level
+        index = 0
+        result = ""
+        for level in range(levels):
+            level_width = 1 << level  # Number of nodes at this level
+            spacing = max_width // (level_width + 1)  # Spacing between nodes
+            line = ""
+
+            for i in range(level_width):
+                if index >= n:
+                    break
+                line += f"{' ' * spacing}{self[index]}{' ' * spacing}"
+                index += 1
+
+            result += line.center(max_width) + "\n"
+        return result
+
+    def max_heapify(self, idx: int):
+        n = len(self)
+        if n == 0 or (idx is not None and idx > n // 2):
+            return None
+
+        left_idx = 2 * idx + 1 if 2 * idx + 1 < n else None
+        right_idx = 2 * idx + 2 if 2 * idx + 2 < n else None
+
+        node = self[idx]
+        left = self[left_idx] if left_idx else float("-inf")
+        right = self[right_idx] if right_idx else float("-inf")
+
+        if node < max([left, right]):
+            if left > right:
+                self[idx], self[left_idx] = self[left_idx], self[idx]
+            else:
+                self[idx], self[right_idx] = self[right_idx], self[idx]
+
+        left = self[left_idx] if left_idx else float("-inf")
+        right = self[right_idx] if right_idx else float("inf")
+
+        if left < right and right_idx:
+            self[left_idx], self[right_idx] = (
+                self[right_idx],
+                self[left_idx],
+            )
+
+        if left_idx:
+            Heap.max_heapify(self, left_idx)
+        if right_idx:
+            Heap.max_heapify(self, right_idx)
+
+    def min_heapify(self, idx: int):
+        n = len(self)
+        if n == 0 or (idx is not None and idx > n // 2):
+            return None
+
+        left_idx = 2 * idx + 1 if 2 * idx + 1 < n else None
+        right_idx = 2 * idx + 2 if 2 * idx + 2 < n else None
+
+        node = self[idx]
+        left = self[left_idx] if left_idx else float("inf")
+        right = self[right_idx] if right_idx else float("inf")
+
+        if node > min([left, right]):
+            if left < right:
+                self[idx], self[left_idx] = self[left_idx], self[idx]
+            else:
+                self[idx], self[right_idx] = self[right_idx], self[idx]
+
+        left = self[left_idx] if left_idx else float("-inf")
+        right = self[right_idx] if right_idx else float("inf")
+
+        if left > right and right_idx:
+            self[left_idx], self[right_idx] = (
+                self[right_idx],
+                self[left_idx],
+            )
+
+        if left_idx:
+            Heap.min_heapify(self, left_idx)
+        if right_idx:
+            Heap.min_heapify(self, right_idx)
