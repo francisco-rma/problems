@@ -124,14 +124,11 @@ class Heap:
         if right_idx:
             Heap.min_heapify(self, right_idx)
 
-    def _sift_down(self, start_idx: int, pos: int):
+    def _sift_down(self, start_idx: int, pos: int) -> int:
         siftee = self[pos]
 
         while pos > start_idx:
-            parent_pos = (pos - 1) // 2
-            parent_pos_control = (pos - 1) >> 1
-            assert parent_pos == parent_pos_control
-
+            parent_pos = (pos - 1) >> 1  # (pos - 1) // 2
             parent = self[parent_pos]
 
             if siftee < parent:
@@ -142,6 +139,7 @@ class Heap:
             break
 
         self[pos] = siftee
+        return pos
 
     def _sift_up(self, idx):
         upper_bound = len(self)
@@ -162,12 +160,16 @@ class Heap:
         self._sift_down(start_idx=start_idx, pos=idx)
 
     def heap_pop(self) -> int:
-        result = self.source.pop()
+        leaf = self.source.pop()
 
         if self.source:
             return_item = self[0]
-            self[0] = result
+            self[0] = leaf
             self._sift_up(0)
             return return_item
 
-        return result
+        return leaf
+
+    def heap_push(self, value: int):
+        self.source.append(value)
+        return self._sift_down(start_idx=0, pos=len(self) - 1)

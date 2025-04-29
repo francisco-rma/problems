@@ -17,7 +17,7 @@ def test_max_heap(sample: list[int]):
 
     for i in range(len(heap) // 2):
         assert heap[0] == max_val
-        assert heap[i] >= heap[2 * i + 1]
+        assert heap[i] >= heap[2 * i]
         if (2 * i + 2) < len(heap):
             assert heap[i] >= heap[2 * i + 2]
 
@@ -28,7 +28,7 @@ def test_min_heap(sample: list[int]):
 
     for i in range(len(heap) // 2):
         assert heap[0] == min_val
-        assert heap[i] <= heap[2 * i + 1]
+        assert heap[i] <= heap[2 * i]
         if (2 * i + 2) < len(heap):
             assert heap[i] <= heap[2 * i + 2]
 
@@ -83,4 +83,22 @@ def multi_heap_pop_test():
     heap_pop_test()
 
 
-heap_pop_test()
+def heap_push_test():
+    # control = sorted([211, 278, 741, 381, 525, 767, 827, 476, 782, 802])
+    control = random.sample(population=range(100000), k=10000)
+
+    heap = Heap(source=[], order="min")
+    i = 0
+    while len(heap) < len(control):
+        idx = heap.heap_push(control[i])
+        assert heap[idx] == control[i]
+        assert len(heap) == len(control[: i + 1])
+
+        # print(f"{heap[idx]} has been pushed to index {idx}!\n")
+        # print(heap)
+        # print("\n---------\n")
+
+        i += 1
+
+
+heap_push_test()
