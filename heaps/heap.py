@@ -65,17 +65,21 @@ class Heap:
         right_idx = 2 * idx + 2 if 2 * idx + 2 < n else None
 
         node = self[idx]
-        left = self[left_idx] if left_idx else float("-inf")
-        right = self[right_idx] if right_idx else float("-inf")
 
-        if node < max([left, right]):
+        if node is None:
+            return None
+
+        left = self[left_idx] if left_idx and self[left_idx] else float("-inf")
+        right = self[right_idx] if right_idx and self[right_idx] else float("-inf")
+
+        if node < max(left, right):
             if left > right:
                 self[idx], self[left_idx] = self[left_idx], self[idx]
             else:
                 self[idx], self[right_idx] = self[right_idx], self[idx]
 
-        left = self[left_idx] if left_idx else float("-inf")
-        right = self[right_idx] if right_idx else float("inf")
+        left = self[left_idx] if left_idx and self[left_idx] else float("-inf")
+        right = self[right_idx] if right_idx and self[right_idx] else float("inf")
 
         if left < right and right_idx:
             self[left_idx], self[right_idx] = (
@@ -119,3 +123,46 @@ class Heap:
             Heap.min_heapify(self, left_idx)
         if right_idx:
             Heap.min_heapify(self, right_idx)
+
+    def heap_pop(self) -> int:
+        if not self.source:
+            raise ValueError("Empty heap")
+
+        result = self[0]
+        self[0] = None
+        leaf_node = None
+
+        for iter_count, leaf_candidate in enumerate(self[::-1]):
+            idx = len(self) - 1 - iter_count
+            if leaf_candidate is not None:
+                leaf_node = self.source.pop(idx)
+                break
+
+        self[0] = leaf_node
+
+        i = 0
+
+        while i is not None:
+            print(self)
+            node = self[i]
+            if node is None:
+                self.source.pop(i)
+                break
+
+            left_idx = 2 * i + 1 if 2 * i + 1 < len(self) else None
+            right_idx = 2 * i + 2 if 2 * i + 2 < len(self) else None
+
+            left = self[left_idx] if left_idx and self[left_idx] else float("-inf")
+            right = self[right_idx] if right_idx and self[right_idx] else float("-inf")
+
+            if node < max(left, right):
+                if left > right:
+                    self[i], self[left_idx] = self[left_idx], self[i]
+                    i = left_idx
+                else:
+                    self[i], self[right_idx] = self[right_idx], self[i]
+                    i = right_idx
+            else:
+                break
+
+        return result
