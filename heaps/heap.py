@@ -9,9 +9,12 @@ class Heap:
             func(source, i)
         return source
 
-    def __init__(self, source: list[int]):
-        Heap.build_heap(source)
+    def __init__(self, source: list[int], order="max"):
+        Heap.build_heap(source, order=order)
         self.source = source
+
+    def __len__(self):
+        return len(self.source)
 
     def __getitem__(self, index):
         return self.source[index]
@@ -22,9 +25,6 @@ class Heap:
     def __iter__(self):
         return iter(self.source)
 
-    def __len__(self):
-        return len(self.source)
-
     def __next__(self):
         return next(self.source)
 
@@ -32,7 +32,7 @@ class Heap:
         if not self.source:
             return ""
 
-        n = len(self.source)
+        n = len(self)
         levels = 0
 
         # Calculate the number of levels in the heap
@@ -124,45 +124,50 @@ class Heap:
         if right_idx:
             Heap.min_heapify(self, right_idx)
 
+    def _sift_down(self, start_idx: int, pos: int):
+        siftee = self[pos]
+
+        while pos > start_idx:
+            parent_pos = (pos - 1) // 2
+            parent_pos_control = (pos - 1) >> 1
+            assert parent_pos == parent_pos_control
+
+            parent = self[parent_pos]
+
+            if siftee < parent:
+                self[pos] = parent
+                pos = parent_pos
+                continue
+
+            break
+
+        self[pos] = siftee
+
+    def _sift_up(self, idx):
+        upper_bound = len(self)
+        start_idx = idx
+        child_idx = 2 * idx + 1
+        new_item = self[idx]
+        while child_idx < upper_bound:
+            sibling_idx = child_idx + 1
+            if sibling_idx < upper_bound and self[sibling_idx] < self[child_idx]:
+                child_idx = sibling_idx
+
+            self[idx] = self[child_idx]
+
+            idx = child_idx
+            child_idx = 2 * idx + 1
+
+        self[idx] = new_item
+        self._sift_down(start_idx=start_idx, pos=idx)
+
     def heap_pop(self) -> int:
-        if not self.source:
-            raise ValueError("Empty heap")
+        result = self.source.pop()
 
-        result = self[0]
-        self[0] = None
-        leaf_node = None
-
-        for iter_count, leaf_candidate in enumerate(self[::-1]):
-            idx = len(self) - 1 - iter_count
-            if leaf_candidate is not None:
-                leaf_node = self.source.pop(idx)
-                break
-
-        self[0] = leaf_node
-
-        i = 0
-
-        while i is not None:
-            print(self)
-            node = self[i]
-            if node is None:
-                self.source.pop(i)
-                break
-
-            left_idx = 2 * i + 1 if 2 * i + 1 < len(self) else None
-            right_idx = 2 * i + 2 if 2 * i + 2 < len(self) else None
-
-            left = self[left_idx] if left_idx and self[left_idx] else float("-inf")
-            right = self[right_idx] if right_idx and self[right_idx] else float("-inf")
-
-            if node < max(left, right):
-                if left > right:
-                    self[i], self[left_idx] = self[left_idx], self[i]
-                    i = left_idx
-                else:
-                    self[i], self[right_idx] = self[right_idx], self[i]
-                    i = right_idx
-            else:
-                break
+        if self.source:
+            return_item = self[0]
+            self[0] = result
+            self._sift_up(0)
+            return return_item
 
         return result

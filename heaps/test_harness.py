@@ -54,13 +54,14 @@ def multi_test():
 def heap_pop_test():
     # sample = random.sample(population=range(1000), k=10)
     sample = [211, 278, 741, 381, 525, 767, 827, 476, 782, 802]
-    control = sorted([211, 278, 741, 381, 525, 767, 827, 476, 782, 802], reverse=True)
+    control = sorted([211, 278, 741, 381, 525, 767, 827, 476, 782, 802])
 
-    heap = Heap(source=sample)
+    heap = Heap(source=sample, order="min")
 
     while heap and control:
         result = heap.heap_pop()
-        assert result == control.pop(0)
+        control_result = control.pop(0)
+        assert result == control_result
         assert len(heap) == len(control)
         print(heap)
         print(f"{result} has been popped!\n")
