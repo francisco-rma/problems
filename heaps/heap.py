@@ -2,16 +2,14 @@ from __future__ import annotations
 
 
 class Heap:
-    def build_heap(source: list[int], order="max"):
-        func = Heap.max_heapify if order == "max" else Heap.min_heapify
-        n = len(source)
-        for i in range(n // 2, -1, -1):
-            func(source, i)
-        return source
-
     def __init__(self, source: list[int], order="max"):
-        Heap.build_heap(source, order=order)
+        n = len(source)
         self.source = source
+        if n == 0:
+            return
+
+        for i in range(n // 2, -1, -1):
+            self._sift_up(i)
 
     def __len__(self):
         return len(self.source)
@@ -56,74 +54,6 @@ class Heap:
             result += line.center(max_width) + "\n"
         return result
 
-    def max_heapify(self, idx: int):
-        n = len(self)
-        if n == 0 or (idx is not None and idx > n // 2):
-            return None
-
-        left_idx = 2 * idx + 1 if 2 * idx + 1 < n else None
-        right_idx = 2 * idx + 2 if 2 * idx + 2 < n else None
-
-        node = self[idx]
-
-        if node is None:
-            return None
-
-        left = self[left_idx] if left_idx and self[left_idx] else float("-inf")
-        right = self[right_idx] if right_idx and self[right_idx] else float("-inf")
-
-        if node < max(left, right):
-            if left > right:
-                self[idx], self[left_idx] = self[left_idx], self[idx]
-            else:
-                self[idx], self[right_idx] = self[right_idx], self[idx]
-
-        left = self[left_idx] if left_idx and self[left_idx] else float("-inf")
-        right = self[right_idx] if right_idx and self[right_idx] else float("inf")
-
-        if left < right and right_idx:
-            self[left_idx], self[right_idx] = (
-                self[right_idx],
-                self[left_idx],
-            )
-
-        if left_idx:
-            Heap.max_heapify(self, left_idx)
-        if right_idx:
-            Heap.max_heapify(self, right_idx)
-
-    def min_heapify(self, idx: int):
-        n = len(self)
-        if n == 0 or (idx is not None and idx > n // 2):
-            return None
-
-        left_idx = 2 * idx + 1 if 2 * idx + 1 < n else None
-        right_idx = 2 * idx + 2 if 2 * idx + 2 < n else None
-
-        node = self[idx]
-        left = self[left_idx] if left_idx else float("inf")
-        right = self[right_idx] if right_idx else float("inf")
-
-        if node > min([left, right]):
-            if left < right:
-                self[idx], self[left_idx] = self[left_idx], self[idx]
-            else:
-                self[idx], self[right_idx] = self[right_idx], self[idx]
-
-        left = self[left_idx] if left_idx else float("-inf")
-        right = self[right_idx] if right_idx else float("inf")
-
-        if left > right and right_idx:
-            self[left_idx], self[right_idx] = (
-                self[right_idx],
-                self[left_idx],
-            )
-
-        if left_idx:
-            Heap.min_heapify(self, left_idx)
-        if right_idx:
-            Heap.min_heapify(self, right_idx)
-
     def _sift_down(self, start_idx: int, pos: int) -> int:
         siftee = self[pos]
 
@@ -159,6 +89,27 @@ class Heap:
         self[idx] = new_item
         self._sift_down(start_idx=start_idx, pos=idx)
 
+    def _sift_up_early(self, idx):
+        upper_bound = len(self)
+        start_idx = idx
+        child_idx = 2 * idx + 1
+        new_item = self[idx]
+
+        while child_idx < upper_bound and not (
+            new_item < min(self[child_idx], self[child_idx + 1])
+        ):
+            sibling_idx = child_idx + 1
+            if sibling_idx < upper_bound and self[sibling_idx] < self[child_idx]:
+                child_idx = sibling_idx
+
+            self[idx] = self[child_idx]
+
+            idx = child_idx
+            child_idx = 2 * idx + 1
+
+        self[idx] = new_item
+        self._sift_down(start_idx=start_idx, pos=idx)
+
     def heap_pop(self) -> int:
         leaf = self.source.pop()
 
@@ -166,6 +117,17 @@ class Heap:
             return_item = self[0]
             self[0] = leaf
             self._sift_up(0)
+            return return_item
+
+        return leaf
+
+    def heap_pop_early(self) -> int:
+        leaf = self.source.pop()
+
+        if self.source:
+            return_item = self[0]
+            self[0] = leaf
+            self._sift_up_early(0)
             return return_item
 
         return leaf

@@ -11,5 +11,6 @@
 *.pyc
 *.pyd
 *.lock
+*.csv
 build/
 pipfile
