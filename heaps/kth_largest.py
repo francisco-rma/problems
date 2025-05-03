@@ -13,15 +13,3 @@ class KthLargest:
         kth_largest = self.source[0]
 
         return kth_largest
-
-
-sample_source = [1, 2, 3, 3]
-k = 3
-sample_stream = [3, 5, 6, 7, 8]
-
-heap = KthLargest(k=k, nums=sample_source)
-
-print(heap.source)
-for val in sample_stream:
-    heap.add(val=val)
-print(heap.source)
