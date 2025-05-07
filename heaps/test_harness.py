@@ -4,20 +4,42 @@
 
 
 # =======================================================
+# Task Scheduler
+# =======================================================
+from task_scheduler import leastInterval
+
+
+tasks = ["A", "A", "A", "A", "A", "A", "B", "C", "D", "E", "F", "G"]
+n = 1
+tasks = ["A", "A", "A", "B", "C"]
+n = 3
+cycle_count = leastInterval(tasks=tasks, n=n)
+print(cycle_count)
+
+# from heap import Heap
+
+# source = [0, 3, 6, 0, 0]
+# heap = Heap(source=source, order="min")
+
+# while heap:
+#     print(heap)
+#     heap.heap_pop()
+
+# =======================================================
 # Kth largest
 # =======================================================
-from kth_largest import KthLargest
+# from kth_largest import KthLargest
 
-sample_source = [1, 2, 3, 3]
-k = 3
-sample_stream = [3, 5, 6, 7, 8]
+# sample_source = [1, 2, 3, 3]
+# k = 3
+# sample_stream = [3, 5, 6, 7, 8]
 
-heap = KthLargest(k=k, nums=sample_source)
+# heap = KthLargest(k=k, nums=sample_source)
 
-print(heap.source)
-for val in sample_stream:
-    heap.add(val=val)
-print(heap.source)
+# print(heap.source)
+# for val in sample_stream:
+#     heap.add(val=val)
+# print(heap.source)
 
 
 # =======================================================
