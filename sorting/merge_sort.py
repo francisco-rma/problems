@@ -1,8 +1,6 @@
 import timeit
 from typing import Sequence
-from matplotlib import patches
 import numpy as np
-import matplotlib.pyplot as plt
 
 ARRAY_SIZE: int = 10
 TESTS_NUMBER: int = 100
@@ -40,55 +38,51 @@ def generate_n_tests():
     return test_list
 
 
-# tests = generate_n_tests()
-tests = generate_tests()
-
-
 def merge_sort(my_list: list) -> list[int]:
     """Merge sort"""
-
-    if len(my_list) > 1:
-        midpoint = len(my_list) // 2
-        left_array = my_list[:midpoint]
-        right_array = my_list[midpoint:]
-
-        merge_sort(left_array)
-
-        merge_sort(right_array)
-
-        my_list = merge(my_list=my_list, midpoint=midpoint)
-
+    if len(my_list) <= 1:
         return my_list
 
+    midpoint = len(my_list) // 2
+    left_array = my_list[:midpoint]
+    right_array = my_list[midpoint:]
 
-def merge(my_list: Sequence, midpoint: int) -> list:
+    left_array = merge_sort(left_array)
+
+    right_array = merge_sort(right_array)
+
+    merge(left=left_array, right=right_array, target=my_list)
+
+    return my_list
+
+
+def merge(left: list, right: list, target: list):
     """Merge"""
     i = 0
     j = 0
     k = 0
-    left = np.ndarray.copy(my_list[:midpoint])
-    right = np.ndarray.copy(my_list[midpoint:])
+
     while i < len(left) and j < len(right):
         if left[i] <= right[j]:
-            my_list[k] = left[i]
+            target[k] = left[i]
             i += 1
         else:
-            my_list[k] = right[j]
+            target[k] = right[j]
             j += 1
 
         k += 1
 
     while i < len(left):
-        my_list[k] = left[i]
+        target[k] = left[i]
         i += 1
         k += 1
 
     while j < len(right):
-        my_list[k] = right[j]
+        target[k] = right[j]
         j += 1
         k += 1
 
-    return my_list
+    return target
 
 
 def c_merge_sort(numbers: Sequence, n: int):
@@ -112,9 +106,7 @@ merge_sort(mylist)"""
         i = 0
         times = []
         while i < REFINEMENT:
-            times.append(
-                timeit.timeit(setup=setup_code, stmt=test_code, number=REFINEMENT)
-            )
+            times.append(timeit.timeit(setup=setup_code, stmt=test_code, number=REFINEMENT))
             i += 1
 
         time: float = np.format_float_positional(np.mean(times), precision=5)
@@ -141,7 +133,6 @@ def validity_test() -> bool:
         end_size = len(numbers)
         unique, count = np.unique(numbers, return_counts=True)
         end_count = dict(zip(unique, count))
-        bla = list(numbers)
         is_sorted = np.all(numbers[:-1] <= numbers[1:])
 
         is_complete = (start_count == end_count) and (start_size == end_size)
@@ -171,9 +162,7 @@ np.sort(tests[index_ref[0]], kind='mergersort')"""
         i = 0
         times = []
         while i < REFINEMENT:
-            times.append(
-                timeit.timeit(setup=setup_code, stmt=test_code, number=REFINEMENT)
-            )
+            times.append(timeit.timeit(setup=setup_code, stmt=test_code, number=REFINEMENT))
             i += 1
 
         time: float = np.format_float_positional(np.mean(times), precision=5)
@@ -242,6 +231,10 @@ if __name__ == "__main__":
     # fig.show()
     # fig.savefig(f"merge_sort_n={ARRAY_SIZE}")
     # plt.show()
+
+    # tests = generate_n_tests()
+    tests = generate_tests()
+
     for test in tests:
         start_size = len(test)
         unique, count = np.unique(test, return_counts=True)

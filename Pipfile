@@ -20,6 +20,7 @@ cython = "*"
 pylint = "*"
 ipykernel = "*"
 flake8 = "*"
+memory-profiler = "*"
 
 [requires]
 python_version = "3"
