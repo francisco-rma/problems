@@ -4,8 +4,6 @@ def binary_search(nums: list[int], target: int) -> int:
     i = start + ((end - start) // 2)
 
     while start <= end:
-        test = nums[i]
-
         if nums[i] == target:
             return i
 
