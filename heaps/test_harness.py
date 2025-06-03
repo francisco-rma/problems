@@ -9,8 +9,6 @@
 from task_scheduler import leastInterval
 
 
-tasks = ["A", "A", "A", "A", "A", "A", "B", "C", "D", "E", "F", "G"]
-n = 1
 tasks = ["A", "A", "A", "B", "C"]
 n = 3
 cycle_count = leastInterval(tasks=tasks, n=n)
