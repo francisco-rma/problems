@@ -13,13 +13,12 @@ class Trie:
         level = 1
 
         while queue:
-            node = queue.pop()
+            node, level = queue.pop()
             test = list(filter(bool, node.children))
             for item in test:
                 val += f"\nLevel {level} : {chr(item.val)}\n"
-                queue.appendleft(item)
+                queue.appendleft(item, level + 1)
 
-            level += 1
         return val
 
     def insert(self, key: str):
@@ -33,18 +32,16 @@ class Trie:
             node = node.children[idx]
             level += 1
 
-    def search(self, key: str) -> bool:
+    def search(self, key: str) -> str:
         queue = deque(map(ord, key))
         node = self
         level = 1
         while queue:
             idx = queue.popleft()
             if node.children[idx] is None:
-                print(f"Found {key[:level]}/{key}")
-                return False
+                return key[:level]
 
             node = node.children[idx]
             level += 1
 
-        # print(f"Found {key[:level]}/{key}")
-        return True
+        return key[:level]

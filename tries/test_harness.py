@@ -20,9 +20,13 @@ for word in words:
     root.insert(word)
 
 for word in words:
-    assert root.search(word)
+    result: str = root.search(word)
+    print(f"Found {result}/{word}")
+    assert result == word
 
-root.search("adwahiudwa")
+word = "adwahiudwa"
+result = root.search(word)
+print(f"Found {result}/{word}")
 
 # =======================================================
 # =======================================================

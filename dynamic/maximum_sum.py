@@ -1,6 +1,5 @@
 from functools import lru_cache
 import random
-import numpy as np
 
 
 def maximum_gain(coins: list[int]):

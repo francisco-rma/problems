@@ -98,7 +98,7 @@ class TreeNode:
 
             return result
 
-        return inner(node=root, lower_bound=min([p.val, q.val]), upper_bound=max([p.val, q.val]))
+        return inner(node=root, lower_bound=min(p.val, q.val), upper_bound=max(p.val, q.val))
 
     def create_large_bst(size: int) -> TreeNode:
         """Creates a large balanced binary search tree with `size` nodes."""
