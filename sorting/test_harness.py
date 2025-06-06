@@ -19,11 +19,14 @@ def is_sorted(arr):
     return all(arr[i] <= arr[i + 1] for i in range(len(arr) - 1))
 
 
+order = 5
+order_delta = 2
+
+
 def validity_check():
     """Checks for merge_sort and quick_sort if the resulting array is sorted and contains all original elements."""
-    order = 6
-    order_delta = 1
-    population = range(-1 * (10 ** (order + 1)), 10 ** (order + 1))
+    # population = range(-1 * (10 ** (order + 1)), 10 ** (order + 1))
+    population = range(-1 * (10 ** (order - 1)), 10 ** (order - 1))
     sizes = range(10**order, 10 ** (order + order_delta), 10 ** (order + order_delta - 1))
 
     quicksort_results = []
@@ -71,7 +74,6 @@ def validity_check():
 
 validity_check()
 
-order = 6
 size = 10**order
 population = range(-1 * (10 ** (order + 1)), 10 ** (order + 1))
 arr = random.choices(population=population, k=size)
