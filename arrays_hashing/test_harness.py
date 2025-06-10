@@ -19,7 +19,7 @@ for i in test_range:
     print(f"\nInitial array: {tests}")
     result = parity_sort.parity_sort(values=tests)
     print(f"Result  array: {result}\n-------------------\n")
-    assert parity_sort.assertion(result)
+    assert parity_sort.validation(result)
 
 
 # =======================================================

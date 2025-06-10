@@ -10,7 +10,7 @@ def parity_sort(values: list[int]) -> list[int]:
     return values
 
 
-def assertion(values: list[int]) -> bool:
+def validation(values: list[int]) -> bool:
     if not values:
         return True
 
