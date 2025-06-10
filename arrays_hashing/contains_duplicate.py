@@ -1,7 +1,4 @@
-from typing import List
-
-
-def contains_duplicate(nums: List[int]) -> bool:
+def contains_duplicate(nums: list[int]) -> bool:
     counter = {}
     for index, value in enumerate(nums):
         if value not in counter:
