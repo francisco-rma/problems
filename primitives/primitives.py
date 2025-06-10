@@ -1,6 +1,3 @@
-import random
-
-
 def get_leftmost_bit(x: int) -> int:
     count = 0
     while x > 0:
