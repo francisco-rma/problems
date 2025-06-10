@@ -29,10 +29,10 @@ def group_anagrams(terms: list[str]) -> list[list[str]]:
 
 
 def group_anagramsV2(terms: list[str]) -> list[list[str]]:
-    counts = {}
+    counts: dict[int, list[str]] = {}
     for _, value in enumerate(terms):
-        count = tuple(sorted(valid_anagram.count_char(value).items()))
-        if not count in counts:
+        count: tuple[str, int] = tuple(sorted(valid_anagram.count_char(value).items()))
+        if count not in counts:
             counts[count] = []
         counts[count].append(value)
 
