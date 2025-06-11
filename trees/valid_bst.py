@@ -56,19 +56,11 @@ class TreeNode:
         return root
 
 
-def validation_walk(node: TreeNode, min: int | None = None, max: int | None = None) -> bool:
+def validation_walk(node: TreeNode, min: float, max: float) -> bool:
     if not node:
         return True
 
-    invalid = (
-        (min is not None and node.val <= min)
-        or (max is not None and node.val >= max)
-        or (node.left and node.left.val >= node.val)
-        or (node.right and node.right.val <= node.val)
-        or (node.left and node.right and node.left.val >= node.right.val)
-    )
-
-    if invalid:
+    if node.val <= min or node.val >= max:
         return False
 
     left_valid = validation_walk(node=node.left, max=node.val, min=min) if node.left else True
@@ -78,4 +70,4 @@ def validation_walk(node: TreeNode, min: int | None = None, max: int | None = No
 
 
 def isValidBST(root: Optional[TreeNode]) -> bool:
-    return validation_walk(root)
+    return validation_walk(root, float("-inf"), float("inf"))
