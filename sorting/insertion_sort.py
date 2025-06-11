@@ -47,10 +47,10 @@ def generate_n_tests():
 tests = generate_n_tests()
 
 
-def insertion_sort(numbers: list[int], n: int) -> list[int]:
+def insertion_sort(numbers: list[int]) -> list[int]:
     """Insertion Sort"""
     i = 1
-
+    n = len(numbers)
     while i < n:
         key = numbers[i]
         j = i - 1
@@ -84,9 +84,7 @@ insertion_sort(mylist, len(mylist))"""
         i = 0
         times = []
         while i < REFINEMENT:
-            times.append(
-                timeit.timeit(setup=setup_code, stmt=test_code, number=REFINEMENT)
-            )
+            times.append(timeit.timeit(setup=setup_code, stmt=test_code, number=REFINEMENT))
             i += 1
 
         time: float = np.format_float_positional(np.mean(times), precision=5)
@@ -117,9 +115,7 @@ np.sort(tests[index_ref[0]])"""
         i = 0
         times = []
         while i < REFINEMENT:
-            times.append(
-                timeit.timeit(setup=setup_code, stmt=test_code, number=REFINEMENT)
-            )
+            times.append(timeit.timeit(setup=setup_code, stmt=test_code, number=REFINEMENT))
             i += 1
 
         time: float = np.format_float_positional(np.mean(times), precision=5)
@@ -152,9 +148,7 @@ c_insertion_sort(mylist, len(mylist))"""
         i = 0
         times = []
         while i < REFINEMENT:
-            times.append(
-                timeit.timeit(setup=setup_code, stmt=test_code, number=REFINEMENT)
-            )
+            times.append(timeit.timeit(setup=setup_code, stmt=test_code, number=REFINEMENT))
             i += 1
 
         time: float = np.format_float_positional(np.mean(times), precision=5)
@@ -178,7 +172,7 @@ def performance_test(numbers: list[int], index: list[int]):
     """Generates a graphical view of time ellapsed to run the algorithm"""
     print(f"Test number: {index[0]}")
     index[0] += 1
-    numbers = insertion_sort(numbers=numbers, n=len(numbers))
+    numbers = insertion_sort(numbers=numbers)
     return
 
 
