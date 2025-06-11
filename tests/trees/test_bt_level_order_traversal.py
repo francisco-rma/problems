@@ -25,7 +25,7 @@ def test_bt_level_order_traversal():
         result = root.levelOrder(root)
         assert len(result) == len(
             control
-        ), f"Failed for \n{root.__repr__()}\n expected {len(control)} items, got {len(result)}"
+        ), f"Failed for \n{root}\n expected {len(control)} items, got {len(result)}"
         assert result == control, f"Failed for {root}: expected {control}, got {result}"
 
 
@@ -51,6 +51,4 @@ def test_bad_cases():
             continue
 
         result = root.levelOrder(root)
-        assert (
-            result != control
-        ), f"Failed for \n{root.__repr__()}\n expected {control}, got {result}"
+        assert result != control, f"Failed for \n{root}\n expected {control}, got {result}"
