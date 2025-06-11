@@ -29,7 +29,9 @@ class TreeNode:
 
         return display(self).rstrip()
 
-    def from_list(values: list[int | None]) -> TreeNode:
+    def from_list(values: list[int | None]) -> TreeNode | None:
+        if not values:
+            return None
         queue = deque(values)
         value = queue.popleft()
         root = TreeNode(value)
