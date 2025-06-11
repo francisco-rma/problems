@@ -11,7 +11,7 @@ class TreeNode:
 
     def __repr__(self):
         # Pretty print the tree with connections
-        def display(node, prefix="", is_left=True):
+        def display(node, prefix="", is_left=True) -> str:
             if not node:
                 return ""
             result = ""
