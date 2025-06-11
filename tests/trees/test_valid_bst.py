@@ -1,4 +1,4 @@
-from trees.valid_bst import TreeNode
+from trees.valid_bst import TreeNode, isValidBST
 
 
 def test_valid_bst():
@@ -17,26 +17,26 @@ def test_valid_bst():
     for source, control in cases:
         root: TreeNode = TreeNode.from_list(source)
 
-        result = TreeNode.isValidBST(root)
+        result = isValidBST(root)
         assert result == control, f"Failed for {root}: expected {control}, got {result}"
 
 
 def test_simple_cases():
     # Valid BST
     root = TreeNode(2, TreeNode(1), TreeNode(3))
-    assert TreeNode.isValidBST(root) is True
+    assert isValidBST(root) is True
 
     # Invalid BST (left child > root)
     root = TreeNode(2, TreeNode(5), TreeNode(3))
-    assert TreeNode.isValidBST(root) is False
+    assert isValidBST(root) is False
 
     # Invalid BST (right child < root)
     root = TreeNode(2, TreeNode(1), TreeNode(0))
-    assert TreeNode.isValidBST(root) is False
+    assert isValidBST(root) is False
 
     # Single node
     root = TreeNode(1)
-    assert TreeNode.isValidBST(root) is True
+    assert isValidBST(root) is True
 
     # Empty tree
-    assert TreeNode.isValidBST(None) is True
+    assert isValidBST(None) is True
