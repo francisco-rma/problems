@@ -5,11 +5,8 @@ from trees.valid_bst import isValidBST
 
 def test_insertion():
     source = [9, 3, 20, None, None, 15, 25]
-
     rng = np.random.default_rng(42)  # Seed for reproducibility
-
     my_tree: AVLNode = AVLNode.from_list(source)
-
     assert isValidBST(my_tree)
 
     if not my_tree:
@@ -17,14 +14,12 @@ def test_insertion():
 
     for index in range(100):
         insertion_target = rng.integers(low=0, high=1000, size=1)[0]
+        result, parent = my_tree.insert(key=insertion_target)
 
-        (result, parent) = my_tree.insert(key=insertion_target)
-        print(my_tree)
         assert isValidBST(my_tree)
         assert parent is not None
         assert result is not None
         assert result.val == insertion_target
-
         assert my_tree.contains(
             target=insertion_target
         ), f"Target {insertion_target} not found in the tree after insertion."
@@ -32,11 +27,27 @@ def test_insertion():
         node, parent = my_tree.binary_search(target=insertion_target)
         assert node is not None and node.val == insertion_target
 
-        print("------------------------" + f"Iteration ${index} " + "------------------------")
-        print("Insertion target:", insertion_target)
-        print("Result node:", result)
-        print("Parent node:", parent)
-        print("\n")
 
-    print("Result tree:\n")
-    print(my_tree)
+def test_deletion():
+    source = [0]
+    rng = np.random.default_rng()
+    my_tree: AVLNode = AVLNode.from_list(source)
+    inserted_values = []
+
+    # Insert random values and track them
+    for _ in range(100000):
+        val = rng.integers(low=1, high=1000, size=1)[0]
+        my_tree.insert(key=val)
+        inserted_values.append(val)
+        assert isValidBST(my_tree)
+        assert my_tree.contains(target=val)
+
+    aux = my_tree.val
+    my_tree.delete(key=aux)
+    assert not my_tree.contains(target=aux)
+    assert isValidBST(my_tree)
+
+    for _, val in enumerate(inserted_values):
+        my_tree.delete(key=val)
+        assert not my_tree.contains(target=val)
+        assert isValidBST(my_tree)
