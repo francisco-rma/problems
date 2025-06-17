@@ -35,12 +35,12 @@ class AVLNode:
         self.val = val
         self.left = left
         self.right = right
+        self.length = 1
         self.height = 1
 
     def __repr__(self):
-        # Pretty print the tree with connections
         def display(node: AVLNode, prefix="", is_left=True) -> str:
-            if not node:
+            if not node or node.length == 0:
                 return ""
             result = ""
             if node.right:
@@ -58,7 +58,7 @@ class AVLNode:
         return display(self).rstrip()
 
     def contains(self, target: int) -> bool:
-        if not self:
+        if not self or self.length == 0:
             return False
 
         if self.val == target:
@@ -88,26 +88,30 @@ class AVLNode:
 
         return node, parent
 
+    def max(self) -> tuple[AVLNode | None, AVLNode | None]:
+        """Find the maximum value in the AVL tree."""
+        parent = None
+        node = self
+        while node and node.right:
+            parent = node
+            node = node.right
+        return node, parent
+
+    def min(self) -> tuple[AVLNode | None, AVLNode | None]:
+        """Find the minimum value in the AVL tree."""
+        parent = None
+        node = self
+        while node and node.left:
+            parent = node
+            node = node.left
+        return node, parent
+
     def insert(self, key: int) -> tuple[AVLNode, AVLNode]:
         """Insert a new key into the AVL tree."""
-        # node, parent = self.binary_search(target=key)
-        # if not node:
-        #     assert parent.left is None and parent.right is None, "Parent should be a leaf node"
-
-        #     if key <= parent.val:
-        #         parent.left = AVLNode(key)
-        #         return parent.left, parent
-
-        #     if key > parent.val:
-        #         parent.right = AVLNode(key)
-        #         return parent.right, parent
-
         node: AVLNode | None = self
         parent: AVLNode | None = None
-        print(f"Insertion target: {key}")
         while node:
             if key == node.val:
-                parent = node
                 break
             elif key < node.val:
                 parent = node
@@ -116,11 +120,95 @@ class AVLNode:
                 parent = node
                 node = node.right
 
-        if key == parent.val:
+        if node and key == node.val:
             return node, parent
-        elif key <= parent.val:
+
+        self.length += 1
+
+        if key < parent.val:
             parent.left = AVLNode(key)
             return parent.left, parent
         elif key > parent.val:
             parent.right = AVLNode(key)
             return parent.right, parent
+
+    def swap_child(self, child: AVLNode, target: AVLNode | None) -> None:
+        """Prune a child node from the AVL tree."""
+        if self.left == child:
+            self.left = target
+        elif self.right == child:
+            self.right = target
+        # else:
+        #     raise ValueError("Child node not found in this AVLNode.")
+
+    def _delete_root(self) -> None:
+        """Delete the root node of the AVL tree."""
+        if not self.left and not self.right:
+            self.length = 0
+            self.height = 0
+            return None
+
+        if not self.left:
+            temp = self.right
+            self.right = temp.right
+            temp.right = None
+            self.left = temp.left
+            temp.left = None
+            self.val = temp.val
+        elif not self.right:
+            temp = self.left
+            self.left = temp.left
+            temp.left = None
+            self.right = temp.right
+            temp.right = None
+            self.val = temp.val
+        else:
+            max_subnode, max_subnode_parent = self.left.max()
+            if max_subnode is self.left:
+                self.val = max_subnode.val
+                self.left = max_subnode.left
+                max_subnode.left = None
+
+            if max_subnode_parent:
+                max_subnode_parent.right = None
+
+            self.val = max_subnode.val
+
+    def delete(self, key: int) -> AVLNode | None:
+        """Delete a key from the AVL tree."""
+        node, parent = self.binary_search(target=key)
+        if not node:
+            return None
+
+        if not parent:
+            print("Root deletion")
+            self._delete_root()
+            return
+
+        if not node.left and not node.right:
+            parent.swap_child(child=node, target=None)
+
+        elif node.left and not node.right:
+            parent.swap_child(child=node, target=node.left)
+            node.left = None
+
+        elif node.right and not node.left:
+            parent.swap_child(child=node, target=node.right)
+            node.right = None
+
+        else:
+            max_subnode, max_subnode_parent = node.left.max()
+            if max_subnode_parent:
+                max_subnode_parent.right = None
+
+            if max_subnode is node.left:
+                node.left = None
+                parent.swap_child(child=node, target=max_subnode)
+            else:
+                parent.swap_child(child=node, target=max_subnode)
+            max_subnode.left = node.left
+            max_subnode.right = node.right
+
+        node.left = None
+        node.right = None
+        self.length -= 1

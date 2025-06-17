@@ -70,4 +70,6 @@ def validation_walk(node: TreeNode, min: float, max: float) -> bool:
 
 
 def isValidBST(root: Optional[TreeNode]) -> bool:
+    if not root or not root.val:
+        return True
     return validation_walk(root, float("-inf"), float("inf"))
