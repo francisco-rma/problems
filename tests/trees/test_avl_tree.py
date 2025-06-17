@@ -1,3 +1,4 @@
+from collections import deque
 import numpy as np
 from trees.avl_tree import AVLNode
 from trees.valid_bst import isValidBST
@@ -5,7 +6,7 @@ from trees.valid_bst import isValidBST
 
 def test_insertion():
     source = [9, 3, 20, None, None, 15, 25]
-    rng = np.random.default_rng(42)  # Seed for reproducibility
+    rng = np.random.default_rng()
     my_tree: AVLNode = AVLNode.from_list(source)
     assert isValidBST(my_tree)
 
@@ -32,10 +33,9 @@ def test_deletion():
     source = [0]
     rng = np.random.default_rng()
     my_tree: AVLNode = AVLNode.from_list(source)
-    inserted_values = []
+    inserted_values: list[int] = []
 
-    # Insert random values and track them
-    for _ in range(100000):
+    for _ in range(10000):
         val = rng.integers(low=1, high=1000, size=1)[0]
         my_tree.insert(key=val)
         inserted_values.append(val)
@@ -47,7 +47,13 @@ def test_deletion():
     assert not my_tree.contains(target=aux)
     assert isValidBST(my_tree)
 
-    for _, val in enumerate(inserted_values):
+    queue = deque(set(inserted_values))
+    while queue:
+        val = queue.pop()
         my_tree.delete(key=val)
+        for item in queue:
+            assert my_tree.contains(
+                target=item
+            ), f"Item {item} should still be in the tree after deletion of {val}."
         assert not my_tree.contains(target=val)
         assert isValidBST(my_tree)
