@@ -2,6 +2,14 @@ from __future__ import annotations
 from collections import deque
 from typing import Optional
 
+CYAN = "\033[96m"
+YELLOW = "\033[93m"
+GREEN = "\033[92m"
+RED = "\033[91m"
+BLUE = "\033[94m"
+RESET = "\033[0m"
+BOLD = "\033[1m"
+
 
 class AVLNode:
     def from_list(values: list[int | None]) -> AVLNode | None:
@@ -30,15 +38,28 @@ class AVLNode:
     def __repr__(self):
         def display(node: AVLNode, prefix="", is_left=True) -> str:
             if not node or node.length == 0:
-                return ""
-            result = ""
+                return f"{RESET}"
+
+            result = f"{BOLD}"
+
             if node.right:
                 new_prefix = prefix + ("│   " if is_left else "    ")
                 result += display(node.right, new_prefix, False)
             result += prefix
             if prefix:
                 result += "└── " if is_left else "┌── "
-            result += f"{node.val}\n"
+
+            balance = node.balance()
+            if balance == -1:
+                result += f"{YELLOW}"
+            elif balance == 0:
+                result += f"{GREEN}"
+            elif balance == 1:
+                result += f"{BLUE}"
+            else:
+                result += f"{RED}"
+            result += f"{node.val}{RESET}\n"
+
             if node.left:
                 new_prefix = prefix + ("    " if is_left else "│   ")
                 result += display(node.left, new_prefix, True)
@@ -49,7 +70,7 @@ class AVLNode:
     def balance(self):
         left_height = self.left.height if self.left else -1
         right_height = self.right.height if self.right else -1
-        return abs(right_height) - abs(left_height)
+        return right_height - left_height
 
     def contains(self, target: int) -> bool:
         if not self or self.length == 0:
