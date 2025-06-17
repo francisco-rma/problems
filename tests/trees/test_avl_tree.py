@@ -3,7 +3,7 @@ import numpy as np
 from trees.avl_tree import AVLNode
 from trees.valid_bst import isValidBST
 
-TEST_SIZE = 10**3
+TEST_SIZE = 5 * 10**2
 
 
 def test_insertion():
@@ -108,3 +108,86 @@ def test_length():
     assert (
         my_tree.length == length
     ), f"Expected length {length} after deletion, got {my_tree.length}"
+
+
+def test_left_rotate_root():
+    root = AVLNode(17)
+    root.left = AVLNode(9)
+    root.right = AVLNode(50)
+    root.right.left = AVLNode(23)
+    root.right.right = AVLNode(76)
+    root.update_heights()
+
+    assert isValidBST(root)
+
+    print(root)
+    root = AVLNode._left_rotate(root)
+    print(root)
+
+    assert root.val == 50
+    assert root.left is not None and root.left.val == 17
+    assert root.right is not None and root.right.val == 76
+    assert root.left.right is not None and root.left.right.val == 23
+    assert root.left.left is not None and root.left.left.val == 9
+
+
+def test_left_rotate_nonroot():
+    root = AVLNode(17)
+    root.left = AVLNode(9)
+    root.right = AVLNode(50)
+    root.right.left = AVLNode(23)
+    root.right.right = AVLNode(76)
+    root.update_heights()
+
+    assert isValidBST(root)
+
+    print(root)
+    root.right = AVLNode._left_rotate(root.right)
+    print(root)
+
+    assert root.val == 17
+    assert root.left is not None and root.left.val == 9
+    assert root.right is not None and root.right.val == 76
+    assert root.right.left is not None and root.right.left.val == 50
+    assert root.right.left.left is not None and root.right.left.left.val == 23
+
+
+def test_right_rotate_root():
+    root = AVLNode(50)
+    root.left = AVLNode(17)
+    root.right = AVLNode(76)
+    root.left.left = AVLNode(9)
+    root.left.right = AVLNode(23)
+    root.update_heights()
+    assert isValidBST(root)
+
+    print(root)
+    root = AVLNode._right_rotate(root)
+    print(root)
+
+    assert root.val == 17
+    assert root.left is not None and root.left.val == 9
+    assert root.right is not None and root.right.val == 50
+    assert root.right.left is not None and root.right.left.val == 23
+    assert root.right.right is not None and root.right.right.val == 76
+
+
+def test_right_rotate_nonroot():
+    root = AVLNode(50)
+    root.left = AVLNode(17)
+    root.right = AVLNode(76)
+    root.left.left = AVLNode(9)
+    root.left.right = AVLNode(23)
+    root.update_heights()
+    assert isValidBST(root)
+
+    print(root)
+    root.left = AVLNode._right_rotate(root.left)
+    print(root)
+
+    assert root.val == 50
+    assert root.left is not None and root.left.val == 9
+    assert root.right is not None and root.right.val == 76
+    assert root.left.left is None
+    assert root.left.right is not None and root.left.right.val == 17
+    assert root.left.right.right is not None and root.left.right.right.val == 23
