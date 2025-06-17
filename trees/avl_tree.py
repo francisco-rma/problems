@@ -10,23 +10,12 @@ class AVLNode:
         queue = deque(values)
         value = queue.popleft()
         root = AVLNode(value)
-        nodes: deque[AVLNode] = deque()
-
-        nodes.append(root)
 
         while queue:
-            cur_node = nodes.popleft()
-
-            left_val = queue.popleft()
-            if left_val:
-                cur_node.left = AVLNode(left_val)
-                nodes.append(cur_node.left)
-
-            if queue:
-                right_val = queue.popleft()
-                if right_val:
-                    cur_node.right = AVLNode(right_val)
-                    nodes.append(cur_node.right)
+            value = queue.popleft()
+            if value is None:
+                continue
+            root.insert(key=value)
 
         return root
 

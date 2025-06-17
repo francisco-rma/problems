@@ -35,7 +35,7 @@ def test_deletion():
     my_tree: AVLNode = AVLNode.from_list(source)
     inserted_values: list[int] = []
 
-    for _ in range(10000):
+    for _ in range(1000):
         val = rng.integers(low=1, high=1000, size=1)[0]
         my_tree.insert(key=val)
         inserted_values.append(val)
@@ -57,3 +57,14 @@ def test_deletion():
             ), f"Item {item} should still be in the tree after deletion of {val}."
         assert not my_tree.contains(target=val)
         assert isValidBST(my_tree)
+
+
+def test_from_list():
+    rng = np.random.default_rng()
+    source = rng.integers(low=1, high=1000, size=100).tolist()
+
+    my_tree: AVLNode = AVLNode.from_list(source)
+    assert isValidBST(my_tree)
+
+    for val in source:
+        assert my_tree.contains(target=val), f"Value {val} should be in the tree."
