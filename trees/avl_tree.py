@@ -25,7 +25,7 @@ class AVLNode:
         self.left = left
         self.right = right
         self.length = 1
-        self.height = 1
+        self.height = 0
 
     def __repr__(self):
         def display(node: AVLNode, prefix="", is_left=True) -> str:
@@ -104,10 +104,9 @@ class AVLNode:
         if self.right:
             self.right.update_heights()
 
-        left_height = self.left.height if self.left else 0
-        right_height = self.right.height if self.right else 0
+        left_height = self.left.height if self.left else -1
+        right_height = self.right.height if self.right else -1
         self.height = 1 + max(left_height, right_height)
-        print(f"Updating height for node {self.val}: left={left_height}, right={right_height}")
         return
 
     def insert(self, key: int) -> tuple[AVLNode, AVLNode]:
@@ -179,6 +178,7 @@ class AVLNode:
                 max_subnode_parent.right = max_subnode.left
 
             self.val = max_subnode.val
+        self.length -= 1
         self.update_heights()
 
     def delete(self, key: int) -> AVLNode | None:

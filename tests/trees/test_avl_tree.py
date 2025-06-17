@@ -74,10 +74,36 @@ def test_height():
     source = [9, 3, 20, None, None, 15, 25]
     my_tree: AVLNode = AVLNode.from_list(source)
     assert isValidBST(my_tree)
-    assert my_tree.height == 3, f"Expected height 3, got {my_tree.height}"
+    assert my_tree.height == 2, f"Expected height 3, got {my_tree.height}"
 
     my_tree.insert(key=10)
-    assert my_tree.height == 4, f"Expected height 4 after insertion, got {my_tree.height}"
+    assert my_tree.height == 3, f"Expected height 4 after insertion, got {my_tree.height}"
 
     my_tree.delete(key=10)
-    assert my_tree.height == 3, f"Expected height 3 after deletion, got {my_tree.height}"
+    assert my_tree.height == 2, f"Expected height 3 after deletion, got {my_tree.height}"
+
+
+def test_length():
+    source = [9, 3, 20, None, None, 15, 25]
+    length = len(list(filter(lambda x: x is not None, source)))
+    my_tree: AVLNode = AVLNode.from_list(source)
+    assert isValidBST(my_tree)
+    assert my_tree.length == length, f"Expected length {length}, got {my_tree.length}"
+
+    my_tree.insert(key=10)
+    length += 1
+    assert (
+        my_tree.length == length
+    ), f"Expected length {length} after insertion, got {my_tree.length}"
+
+    my_tree.delete(key=20)
+    length -= 1
+    assert (
+        my_tree.length == length
+    ), f"Expected length {length} after deletion, got {my_tree.length}"
+
+    my_tree.delete(key=9)
+    length -= 1
+    assert (
+        my_tree.length == length
+    ), f"Expected length {length} after deletion, got {my_tree.length}"
