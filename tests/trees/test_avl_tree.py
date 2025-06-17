@@ -119,10 +119,8 @@ def test_left_rotate_root():
     root.update_heights()
 
     assert isValidBST(root)
-
-    print(root)
     root = AVLNode._left_rotate(root)
-    print(root)
+    assert isValidBST(root)
 
     assert root.val == 50
     assert root.left is not None and root.left.val == 17
@@ -140,10 +138,8 @@ def test_left_rotate_nonroot():
     root.update_heights()
 
     assert isValidBST(root)
-
-    print(root)
     root.right = AVLNode._left_rotate(root.right)
-    print(root)
+    assert isValidBST(root)
 
     assert root.val == 17
     assert root.left is not None and root.left.val == 9
@@ -159,11 +155,10 @@ def test_right_rotate_root():
     root.left.left = AVLNode(9)
     root.left.right = AVLNode(23)
     root.update_heights()
-    assert isValidBST(root)
 
-    print(root)
+    assert isValidBST(root)
     root = AVLNode._right_rotate(root)
-    print(root)
+    assert isValidBST(root)
 
     assert root.val == 17
     assert root.left is not None and root.left.val == 9
@@ -179,11 +174,10 @@ def test_right_rotate_nonroot():
     root.left.left = AVLNode(9)
     root.left.right = AVLNode(23)
     root.update_heights()
-    assert isValidBST(root)
 
-    print(root)
+    assert isValidBST(root)
     root.left = AVLNode._right_rotate(root.left)
-    print(root)
+    assert isValidBST(root)
 
     assert root.val == 50
     assert root.left is not None and root.left.val == 9
