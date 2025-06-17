@@ -46,6 +46,11 @@ class AVLNode:
 
         return display(self).rstrip()
 
+    def balance(self):
+        left_height = self.left.height if self.left else -1
+        right_height = self.right.height if self.right else -1
+        return abs(right_height) - abs(left_height)
+
     def contains(self, target: int) -> bool:
         if not self or self.length == 0:
             return False
@@ -218,3 +223,25 @@ class AVLNode:
         node.right = None
         self.length -= 1
         self.update_heights()
+
+    def _left_rotate(root: AVLNode) -> AVLNode:
+        """Perform a left rotation on the AVL tree."""
+        if not root.right:
+            return root
+        pivot = root.right
+
+        root.right = pivot.left
+        pivot.left = root
+        root = pivot
+        return root
+
+    def _right_rotate(root: AVLNode) -> AVLNode:
+        """Perform a left rotation on the AVL tree."""
+        if not root.left:
+            return root
+        pivot = root.left
+
+        root.left = pivot.right
+        pivot.right = root
+        root = pivot
+        return root
