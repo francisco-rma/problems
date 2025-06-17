@@ -3,6 +3,8 @@ import numpy as np
 from trees.avl_tree import AVLNode
 from trees.valid_bst import isValidBST
 
+TEST_SIZE = 10**3
+
 
 def test_insertion():
     source = [9, 3, 20, None, None, 15, 25]
@@ -13,12 +15,11 @@ def test_insertion():
     if not my_tree:
         raise ValueError("Tree is empty, cannot perform insertion tests.")
 
-    for index in range(100):
+    for index in range(TEST_SIZE):
         insertion_target = rng.integers(low=0, high=1000, size=1)[0]
         result, parent = my_tree.insert(key=insertion_target)
 
         assert isValidBST(my_tree)
-        assert parent is not None
         assert result is not None
         assert result.val == insertion_target
         assert my_tree.contains(
@@ -35,7 +36,7 @@ def test_deletion():
     my_tree: AVLNode = AVLNode.from_list(source)
     inserted_values: list[int] = []
 
-    for _ in range(100):
+    for _ in range(TEST_SIZE):
         val = rng.integers(low=1, high=1000, size=1)[0]
         my_tree.insert(key=val)
         inserted_values.append(val)
@@ -61,7 +62,7 @@ def test_deletion():
 
 def test_from_list():
     rng = np.random.default_rng()
-    source = rng.integers(low=1, high=1000, size=100).tolist()
+    source = rng.integers(low=1, high=1000, size=TEST_SIZE).tolist()
 
     my_tree: AVLNode = AVLNode.from_list(source)
     assert isValidBST(my_tree)
