@@ -170,7 +170,7 @@ class AVLNode:
                 max_subnode.left = None
 
             if max_subnode_parent:
-                max_subnode_parent.right = None
+                max_subnode_parent.right = max_subnode.left
 
             self.val = max_subnode.val
 
@@ -181,7 +181,6 @@ class AVLNode:
             return None
 
         if not parent:
-            print("Root deletion")
             self._delete_root()
             return
 
@@ -199,15 +198,14 @@ class AVLNode:
         else:
             max_subnode, max_subnode_parent = node.left.max()
             if max_subnode_parent:
-                max_subnode_parent.right = None
+                max_subnode_parent.right = max_subnode.left
 
-            if max_subnode is node.left:
-                node.left = None
-                parent.swap_child(child=node, target=max_subnode)
-            else:
-                parent.swap_child(child=node, target=max_subnode)
-            max_subnode.left = node.left
+            if max_subnode is not node.left:
+                max_subnode.left = node.left
+
             max_subnode.right = node.right
+
+            parent.swap_child(child=node, target=max_subnode)
 
         node.left = None
         node.right = None
