@@ -95,6 +95,21 @@ class AVLNode:
             node = node.left
         return node, parent
 
+    def update_heights(self) -> None:
+        if not self:
+            return
+
+        if self.left:
+            self.left.update_heights()
+        if self.right:
+            self.right.update_heights()
+
+        left_height = self.left.height if self.left else 0
+        right_height = self.right.height if self.right else 0
+        self.height = 1 + max(left_height, right_height)
+        print(f"Updating height for node {self.val}: left={left_height}, right={right_height}")
+        return
+
     def insert(self, key: int) -> tuple[AVLNode, AVLNode]:
         """Insert a new key into the AVL tree."""
         node: AVLNode | None = self
@@ -116,9 +131,11 @@ class AVLNode:
 
         if key < parent.val:
             parent.left = AVLNode(key)
+            self.update_heights()
             return parent.left, parent
         elif key > parent.val:
             parent.right = AVLNode(key)
+            self.update_heights()
             return parent.right, parent
 
     def swap_child(self, child: AVLNode, target: AVLNode | None) -> None:
@@ -162,6 +179,7 @@ class AVLNode:
                 max_subnode_parent.right = max_subnode.left
 
             self.val = max_subnode.val
+        self.update_heights()
 
     def delete(self, key: int) -> AVLNode | None:
         """Delete a key from the AVL tree."""
@@ -199,3 +217,4 @@ class AVLNode:
         node.left = None
         node.right = None
         self.length -= 1
+        self.update_heights()

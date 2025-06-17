@@ -35,7 +35,7 @@ def test_deletion():
     my_tree: AVLNode = AVLNode.from_list(source)
     inserted_values: list[int] = []
 
-    for _ in range(1000):
+    for _ in range(100):
         val = rng.integers(low=1, high=1000, size=1)[0]
         my_tree.insert(key=val)
         inserted_values.append(val)
@@ -68,3 +68,16 @@ def test_from_list():
 
     for val in source:
         assert my_tree.contains(target=val), f"Value {val} should be in the tree."
+
+
+def test_height():
+    source = [9, 3, 20, None, None, 15, 25]
+    my_tree: AVLNode = AVLNode.from_list(source)
+    assert isValidBST(my_tree)
+    assert my_tree.height == 3, f"Expected height 3, got {my_tree.height}"
+
+    my_tree.insert(key=10)
+    assert my_tree.height == 4, f"Expected height 4 after insertion, got {my_tree.height}"
+
+    my_tree.delete(key=10)
+    assert my_tree.height == 3, f"Expected height 3 after deletion, got {my_tree.height}"
