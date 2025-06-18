@@ -254,6 +254,7 @@ class AVLNode:
         root.right = pivot.left
         pivot.left = root
         root = pivot
+        root.update_heights()
         return root
 
     def _right_rotate(root: AVLNode) -> AVLNode:
@@ -265,4 +266,69 @@ class AVLNode:
         root.left = pivot.right
         pivot.right = root
         root = pivot
+        root.update_heights()
         return root
+
+    def avl_walk(node: AVLNode | None) -> AVLNode | None:
+        if not node:
+            return None
+
+        # AVLNode.avl_transform(node=node)
+
+        if node.left:
+            AVLNode.avl_walk(node.left)
+
+        # AVLNode.avl_transform(node=node)
+
+        if node.right:
+            AVLNode.avl_walk(node.right)
+
+        node = AVLNode.avl_transform(node=node)
+        return node
+
+    def avl_transform(node: AVLNode) -> AVLNode | None:
+        balance = node.balance()
+        # balanced node
+        if -1 <= balance <= 1:
+            pass
+
+        # left heavy node
+        elif balance < -1:
+            assert node.left is not None
+            left_balance = node.left.balance()
+            # left heavy or balanced left child
+            if left_balance <= 0:
+                node = AVLNode._right_rotate(node)
+            # right heavy left child
+            else:
+                node.left = AVLNode._left_rotate(node.left)
+                node = AVLNode._right_rotate(node)
+
+        # right heavy node
+        elif balance > 1:
+            assert node.right is not None
+            right_balance = node.right.balance()
+            # right heavy or balanced right child
+            if right_balance >= 0:
+                print("right heavy or balanced right child")
+                node = AVLNode._left_rotate(node)
+            # left heavy right child
+            else:
+                print("left heavy right child")
+                node.right = AVLNode._right_rotate(node.right)
+                node = AVLNode._left_rotate(node)
+
+        return node
+
+    def avl_check(node: AVLNode | None) -> tuple[bool, int]:
+        if not node:
+            return True, -1
+
+        left_check, left_height = AVLNode.avl_check(node.left)
+        right_check, right_height = AVLNode.avl_check(node.right)
+        balance = right_height - left_height
+
+        is_avl = -1 <= balance <= 1 and left_check and right_check
+        height = 1 + max(left_height, right_height)
+
+        return is_avl, height
