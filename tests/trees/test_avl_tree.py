@@ -45,14 +45,14 @@ def test_deletion():
         assert my_tree.contains(target=val)
 
     aux = my_tree.val
-    my_tree.delete(key=aux)
+    my_tree = AVLNode.delete(root=my_tree, key=aux)
     assert not my_tree.contains(target=aux)
     assert isValidBST(my_tree)
 
     queue = deque(set(inserted_values))
     while queue:
         val = queue.pop()
-        my_tree.delete(key=val)
+        my_tree = AVLNode.delete(root=my_tree, key=val)
         for item in queue:
             assert my_tree.contains(
                 target=item
@@ -85,7 +85,7 @@ def test_height():
     print(my_tree)
     assert my_tree.height == 3, f"Expected height 3 after insertion, got {my_tree.height}"
 
-    my_tree.delete(key=10)
+    my_tree = AVLNode.delete(root=my_tree, key=10)
     assert isValidBST(my_tree)
     print(my_tree)
     assert my_tree.height == 2, f"Expected height 2 after deletion, got {my_tree.height}"
@@ -104,13 +104,13 @@ def test_length():
         my_tree.length == length
     ), f"Expected length {length} after insertion, got {my_tree.length}"
 
-    my_tree.delete(key=20)
+    my_tree = AVLNode.delete(root=my_tree, key=20)
     length -= 1
     assert (
         my_tree.length == length
     ), f"Expected length {length} after deletion, got {my_tree.length}"
 
-    my_tree.delete(key=9)
+    my_tree = AVLNode.delete(root=my_tree, key=9)
     length -= 1
     assert (
         my_tree.length == length

@@ -207,16 +207,20 @@ class AVLNode:
         self.length -= 1
         self.update_heights()
 
-    def delete(self, key: int) -> AVLNode | None:
+    @staticmethod
+    def delete(root: AVLNode, key: int) -> AVLNode | None:
         """Delete a key from the AVL tree."""
-        node, parent = self.binary_search(target=key)
-        if not node:
+        if not root:
             return None
 
-        if not parent:
-            self._delete_root()
-            return
+        node, parent = root.binary_search(target=key)
 
+        if not node:
+            return root
+
+        if not parent:
+            root._delete_root()
+            return root
         if not node.left and not node.right:
             parent.swap_child(child=node, target=None)
 
@@ -237,13 +241,14 @@ class AVLNode:
                 max_subnode.left = node.left
 
             max_subnode.right = node.right
-
             parent.swap_child(child=node, target=max_subnode)
 
+        print(root)
         node.left = None
         node.right = None
-        self.length -= 1
-        self.update_heights()
+        root.length -= 1
+        root.update_heights()
+        return root
 
     def _left_rotate(root: AVLNode) -> AVLNode:
         """Perform a left rotation on the AVL tree."""
