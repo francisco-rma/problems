@@ -75,13 +75,19 @@ def test_height():
     source = [9, 3, 20, None, None, 15, 25]
     my_tree: AVLNode = AVLNode.from_list(source)
     assert isValidBST(my_tree)
-    assert my_tree.height == 2, f"Expected height 3, got {my_tree.height}"
+
+    print(my_tree)
+    assert my_tree.height == 2, f"Expected height 2, got {my_tree.height}"
 
     my_tree.insert(key=10)
-    assert my_tree.height == 3, f"Expected height 4 after insertion, got {my_tree.height}"
+    assert isValidBST(my_tree)
+    print(my_tree)
+    assert my_tree.height == 3, f"Expected height 3 after insertion, got {my_tree.height}"
 
     my_tree.delete(key=10)
-    assert my_tree.height == 2, f"Expected height 3 after deletion, got {my_tree.height}"
+    assert isValidBST(my_tree)
+    print(my_tree)
+    assert my_tree.height == 2, f"Expected height 2 after deletion, got {my_tree.height}"
 
 
 def test_length():
@@ -157,7 +163,9 @@ def test_right_rotate_root():
     root.update_heights()
 
     assert isValidBST(root)
+    print(root.val)
     root = AVLNode._right_rotate(root)
+    print(root.val)
     assert isValidBST(root)
 
     assert root.val == 17
@@ -185,3 +193,100 @@ def test_right_rotate_nonroot():
     assert root.left.left is None
     assert root.left.right is not None and root.left.right.val == 17
     assert root.left.right.right is not None and root.left.right.right.val == 23
+
+
+def test_avl_walk_lh1():
+    root = AVLNode(50)
+    root.left = AVLNode(17)
+    root.right = AVLNode(76)
+    root.left.left = AVLNode(9)
+    root.left.right = AVLNode(23)
+    root.left.right.left = AVLNode(20)
+    root.update_heights()
+    print(root)
+
+    assert isValidBST(root)
+    root = AVLNode.avl_walk(root)
+    assert AVLNode.avl_check(root)
+    assert isValidBST(root)
+
+
+def test_avl_walk_lh2():
+    root = AVLNode(50)
+    root.left = AVLNode(17)
+    root.right = AVLNode(76)
+    root.left.left = AVLNode(9)
+    root.left.right = AVLNode(23)
+    root.left.left.right = AVLNode(11)
+    root.update_heights()
+    print(root)
+
+    assert isValidBST(root)
+    root = AVLNode.avl_walk(root)
+    assert AVLNode.avl_check(root)
+    assert isValidBST(root)
+    print(root)
+
+
+def test_avl_walk_rh1():
+    root = AVLNode(50)
+    root.left = AVLNode(17)
+    root.right = AVLNode(76)
+    root.right.left = AVLNode(60)
+    root.right.right = AVLNode(100)
+    root.right.left.right = AVLNode(70)
+    root.update_heights()
+    print(root)
+
+    assert isValidBST(root)
+    root = AVLNode.avl_walk(root)
+    print(root)
+    assert AVLNode.avl_check(root)
+    assert isValidBST(root)
+
+
+def test_avl_walk_rh2():
+    root = AVLNode(50)
+    root.left = AVLNode(17)
+    root.right = AVLNode(76)
+    root.right.left = AVLNode(60)
+    root.right.right = AVLNode(100)
+    root.right.right.right = AVLNode(155)
+    root.update_heights()
+    print(root)
+
+    assert isValidBST(root)
+    root = AVLNode.avl_walk(root)
+    print(root)
+    assert AVLNode.avl_check(root)
+    assert isValidBST(root)
+
+
+def test_avl_check_and_height_consistency():
+    # Build a tree
+    source = [17, 9, 50, 23, 76, 5, 12, 30, 60]
+    root: AVLNode = AVLNode.from_list(source)
+    root.update_heights()
+
+    # Use avl_check to get organic heights
+    is_avl, organic_height = AVLNode.avl_check(root)
+    assert is_avl, "Tree should satisfy AVL property"
+
+    # Compare organic height with stored property
+    assert (
+        root.height == organic_height
+    ), f"Stored height {root.height} != organic height {organic_height}"
+
+    # Recursively compare all node heights
+    def compare_heights(node: AVLNode | None):
+        if not node:
+            return -1
+        is_avl, organic = AVLNode.avl_check(node)
+        assert is_avl, f"Subtree rooted at {node.val} is not AVL"
+        assert (
+            node.height == organic
+        ), f"Node {node.val}: stored height {node.height} != organic {organic}"
+        compare_heights(node.left)
+        compare_heights(node.right)
+
+    compare_heights(root)
