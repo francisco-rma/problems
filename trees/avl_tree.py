@@ -85,7 +85,7 @@ class AVLNode:
         return left or right
 
     def binary_search(self, target: int) -> tuple[AVLNode | None, AVLNode | None]:
-        """Binary search to find a target value."""
+        """Binary search to find a target value. Returns a tuple of (target, parent)"""
         if not self:
             return False
 
@@ -121,56 +121,12 @@ class AVLNode:
             node = node.left
         return node, parent
 
-    def update_heights(self) -> None:
-        if not self:
-            return
-
-        if self.left:
-            self.left.update_heights()
-        if self.right:
-            self.right.update_heights()
-
-        left_height = self.left.height if self.left else -1
-        right_height = self.right.height if self.right else -1
-        self.height = 1 + max(left_height, right_height)
-        return
-
-    @staticmethod
-    def insert(root: AVLNode, key: int) -> AVLNode:
-        """Insert a new key into the AVL tree."""
-        node: AVLNode | None = root
-        parent: AVLNode | None = None
-        while node:
-            if key == node.val:
-                break
-            elif key < node.val:
-                parent = node
-                node = node.left
-            elif key > node.val:
-                parent = node
-                node = node.right
-
-        if node and key == node.val:
-            return root
-
-        root.length += 1
-
-        if key < parent.val:
-            parent.left = AVLNode(key)
-            root.update_heights()
-        elif key > parent.val:
-            parent.right = AVLNode(key)
-            root.update_heights()
-        return root
-
     def swap_child(self, child: AVLNode, target: AVLNode | None) -> None:
         """Prune a child node from the AVL tree."""
         if self.left == child:
             self.left = target
         elif self.right == child:
             self.right = target
-        # else:
-        #     raise ValueError("Child node not found in this AVLNode.")
 
     def _delete_root(self) -> None:
         """Delete the root node of the AVL tree."""
@@ -202,10 +158,58 @@ class AVLNode:
 
             if max_subnode_parent:
                 max_subnode_parent.right = max_subnode.left
-
+            max_subnode.left = None
             self.val = max_subnode.val
         self.length -= 1
-        self.update_heights()
+        AVLNode.update_stats(node=self)
+
+    def is_avl(self):
+        result, _ = AVLNode.avl_check(node=self)
+        return result
+
+    @staticmethod
+    def update_stats(node: AVLNode | None) -> tuple[int, int] | None:
+        if not node:
+            return None
+
+        left_height, left_length = AVLNode.update_stats(node=node.left) if node.left else (-1, 0)
+        right_height, right_length = (
+            AVLNode.update_stats(node=node.right) if node.right else (-1, 0)
+        )
+
+        node.height = 1 + max(left_height, right_height)
+        node.length = 1 + left_length + right_length
+
+        return node.height, node.length
+
+    @staticmethod
+    def insert(root: AVLNode, key: int) -> AVLNode:
+        """Insert a new key into the AVL tree."""
+        node: AVLNode | None = root
+        parent: AVLNode | None = None
+        while node:
+            if key == node.val:
+                break
+            elif key < node.val:
+                parent = node
+                node = node.left
+            elif key > node.val:
+                parent = node
+                node = node.right
+
+        if node and key == node.val:
+            return root
+
+        root.length += 1
+
+        if key < parent.val:
+            parent.left = AVLNode(key)
+            root = AVLNode.avl_transform(node=root)
+        elif key > parent.val:
+            parent.right = AVLNode(key)
+
+        root = AVLNode.avl_transform(node=root)
+        return root
 
     @staticmethod
     def delete(root: AVLNode, key: int) -> AVLNode | None:
@@ -216,10 +220,13 @@ class AVLNode:
         node, parent = root.binary_search(target=key)
 
         if not node:
-            return root
+            return AVLNode.avl_transform(node=root)
 
         if not parent:
             root._delete_root()
+
+            root = AVLNode.avl_transform(node=root)
+
             return root
         if not node.left and not node.right:
             parent.swap_child(child=node, target=None)
@@ -243,13 +250,14 @@ class AVLNode:
             max_subnode.right = node.right
             parent.swap_child(child=node, target=max_subnode)
 
-        print(root)
         node.left = None
         node.right = None
         root.length -= 1
-        root.update_heights()
+
+        root = AVLNode.avl_transform(node=root)
         return root
 
+    @staticmethod
     def _left_rotate(root: AVLNode) -> AVLNode:
         """Perform a left rotation on the AVL tree."""
         if not root.right:
@@ -258,10 +266,9 @@ class AVLNode:
 
         root.right = pivot.left
         pivot.left = root
-        root = pivot
-        root.update_heights()
-        return root
+        return pivot
 
+    @staticmethod
     def _right_rotate(root: AVLNode) -> AVLNode:
         """Perform a left rotation on the AVL tree."""
         if not root.left:
@@ -270,29 +277,28 @@ class AVLNode:
 
         root.left = pivot.right
         pivot.right = root
-        root = pivot
-        root.update_heights()
-        return root
+        return pivot
 
+    @staticmethod
     def avl_walk(node: AVLNode | None) -> AVLNode | None:
         if not node:
             return None
-
-        # AVLNode.avl_transform(node=node)
-
         if node.left:
             AVLNode.avl_walk(node.left)
-
-        # AVLNode.avl_transform(node=node)
-
         if node.right:
             AVLNode.avl_walk(node.right)
-
         node = AVLNode.avl_transform(node=node)
         return node
 
+    @staticmethod
     def avl_transform(node: AVLNode) -> AVLNode | None:
+        if not node:
+            return None
+
+        node.left = AVLNode.avl_transform(node=node.left)
+        node.right = AVLNode.avl_transform(node=node.right)
         balance = node.balance()
+
         # balanced node
         if -1 <= balance <= 1:
             pass
@@ -301,6 +307,7 @@ class AVLNode:
         elif balance < -1:
             assert node.left is not None
             left_balance = node.left.balance()
+
             # left heavy or balanced left child
             if left_balance <= 0:
                 node = AVLNode._right_rotate(node)
@@ -313,16 +320,16 @@ class AVLNode:
         elif balance > 1:
             assert node.right is not None
             right_balance = node.right.balance()
+
             # right heavy or balanced right child
             if right_balance >= 0:
-                print("right heavy or balanced right child")
                 node = AVLNode._left_rotate(node)
             # left heavy right child
             else:
-                print("left heavy right child")
                 node.right = AVLNode._right_rotate(node.right)
                 node = AVLNode._left_rotate(node)
 
+        AVLNode.update_stats(node=node)
         return node
 
     def avl_check(node: AVLNode | None) -> tuple[bool, int]:
