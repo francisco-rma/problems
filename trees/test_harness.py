@@ -134,7 +134,8 @@ def test_insertion():
     for index in range(100):
         insertion_target = rng.integers(low=0, high=1000, size=1)[0]
 
-        (result, parent) = my_tree.insert(key=insertion_target)
+        my_tree = my_tree.insert(key=insertion_target)
+        (result, parent) = my_tree.binary_search(target=insertion_target)
 
         assert isValidBST(my_tree)
         assert parent is not None

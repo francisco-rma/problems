@@ -17,7 +17,8 @@ def test_insertion():
 
     for index in range(TEST_SIZE):
         insertion_target = rng.integers(low=0, high=1000, size=1)[0]
-        result, parent = my_tree.insert(key=insertion_target)
+        my_tree = AVLNode.insert(root=my_tree, key=insertion_target)
+        result, parent = my_tree.binary_search(target=insertion_target)
 
         assert isValidBST(my_tree)
         assert result is not None
@@ -38,7 +39,7 @@ def test_deletion():
 
     for _ in range(TEST_SIZE):
         val = rng.integers(low=1, high=1000, size=1)[0]
-        my_tree.insert(key=val)
+        my_tree = AVLNode.insert(root=my_tree, key=val)
         inserted_values.append(val)
         assert isValidBST(my_tree)
         assert my_tree.contains(target=val)
@@ -79,7 +80,7 @@ def test_height():
     print(my_tree)
     assert my_tree.height == 2, f"Expected height 2, got {my_tree.height}"
 
-    my_tree.insert(key=10)
+    my_tree = AVLNode.insert(root=my_tree, key=10)
     assert isValidBST(my_tree)
     print(my_tree)
     assert my_tree.height == 3, f"Expected height 3 after insertion, got {my_tree.height}"
@@ -97,7 +98,7 @@ def test_length():
     assert isValidBST(my_tree)
     assert my_tree.length == length, f"Expected length {length}, got {my_tree.length}"
 
-    my_tree.insert(key=10)
+    my_tree = AVLNode.insert(root=my_tree, key=10)
     length += 1
     assert (
         my_tree.length == length

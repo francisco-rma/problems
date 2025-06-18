@@ -23,7 +23,7 @@ class AVLNode:
             value = queue.popleft()
             if value is None:
                 continue
-            root.insert(key=value)
+            root = AVLNode.insert(root=root, key=value)
 
         return root
 
@@ -135,9 +135,10 @@ class AVLNode:
         self.height = 1 + max(left_height, right_height)
         return
 
-    def insert(self, key: int) -> tuple[AVLNode, AVLNode]:
+    @staticmethod
+    def insert(root: AVLNode, key: int) -> AVLNode:
         """Insert a new key into the AVL tree."""
-        node: AVLNode | None = self
+        node: AVLNode | None = root
         parent: AVLNode | None = None
         while node:
             if key == node.val:
@@ -150,18 +151,17 @@ class AVLNode:
                 node = node.right
 
         if node and key == node.val:
-            return node, parent
+            return root
 
-        self.length += 1
+        root.length += 1
 
         if key < parent.val:
             parent.left = AVLNode(key)
-            self.update_heights()
-            return parent.left, parent
+            root.update_heights()
         elif key > parent.val:
             parent.right = AVLNode(key)
-            self.update_heights()
-            return parent.right, parent
+            root.update_heights()
+        return root
 
     def swap_child(self, child: AVLNode, target: AVLNode | None) -> None:
         """Prune a child node from the AVL tree."""
