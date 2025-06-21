@@ -42,31 +42,6 @@ class AVLNode:
             result += AVLNode.display_v1(node.left, new_prefix, True)
         return result
 
-    @staticmethod
-    def display_v2(node: AVLNode) -> str:
-        if not node or node.length == 0:
-            return ""
-        # Collect nodes by level
-        levels = []
-        current_level = 1
-        level_nodes = []
-        for node, level in node.bfs_traverse():
-            if level != current_level:
-                levels.append(level_nodes)
-                level_nodes = []
-                current_level = level
-            level_nodes.append(str(node.val) if node else " ")
-        if level_nodes:
-            levels.append(level_nodes)
-        # Format output
-        output = []
-        max_width = max(len(lvl) for lvl in levels)
-        for lvl in levels:
-            # Center the line for better visualization
-            line = " ".join(lvl)
-            output.append(line.center(max_width * 3))
-        return "\n".join(output)
-
     def from_list(values: list[int | None]) -> AVLNode | None:
         if not values:
             return None
