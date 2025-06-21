@@ -12,6 +12,61 @@ BOLD = "\033[1m"
 
 
 class AVLNode:
+    @staticmethod
+    def display_v1(node: AVLNode, prefix="", is_left=True) -> str:
+        if not node or node.length == 0:
+            return f"{RESET}"
+
+        result = f"{BOLD}"
+
+        if node.right:
+            new_prefix = prefix + ("│   " if is_left else "    ")
+            result += AVLNode.display_v1(node.right, new_prefix, False)
+        result += prefix
+        if prefix:
+            result += "└── " if is_left else "┌── "
+
+        balance = node.balance()
+        if balance == -1:
+            result += f"{YELLOW}"
+        elif balance == 0:
+            result += f"{GREEN}"
+        elif balance == 1:
+            result += f"{BLUE}"
+        else:
+            result += f"{RED}"
+        result += f"{node.val}.{node.height}.{RESET}\n"
+
+        if node.left:
+            new_prefix = prefix + ("    " if is_left else "│   ")
+            result += AVLNode.display_v1(node.left, new_prefix, True)
+        return result
+
+    @staticmethod
+    def display_v2(node: AVLNode) -> str:
+        if not node or node.length == 0:
+            return ""
+        # Collect nodes by level
+        levels = []
+        current_level = 1
+        level_nodes = []
+        for node, level in node.bfs_traverse():
+            if level != current_level:
+                levels.append(level_nodes)
+                level_nodes = []
+                current_level = level
+            level_nodes.append(str(node.val) if node else " ")
+        if level_nodes:
+            levels.append(level_nodes)
+        # Format output
+        output = []
+        max_width = max(len(lvl) for lvl in levels)
+        for lvl in levels:
+            # Center the line for better visualization
+            line = " ".join(lvl)
+            output.append(line.center(max_width * 3))
+        return "\n".join(output)
+
     def from_list(values: list[int | None]) -> AVLNode | None:
         if not values:
             return None
@@ -36,36 +91,46 @@ class AVLNode:
         self.height = 0
 
     def __repr__(self):
-        def display(node: AVLNode, prefix="", is_left=True) -> str:
-            if not node or node.length == 0:
-                return f"{RESET}"
+        return AVLNode.display_v1(self).rstrip()
 
-            result = f"{BOLD}"
+    def bfs_traverse(self):
+        queue: deque[tuple[AVLNode, int]] = deque([(self, 1)])
 
-            if node.right:
-                new_prefix = prefix + ("│   " if is_left else "    ")
-                result += display(node.right, new_prefix, False)
-            result += prefix
-            if prefix:
-                result += "└── " if is_left else "┌── "
-
-            balance = node.balance()
-            if balance == -1:
-                result += f"{YELLOW}"
-            elif balance == 0:
-                result += f"{GREEN}"
-            elif balance == 1:
-                result += f"{BLUE}"
-            else:
-                result += f"{RED}"
-            result += f"{node.val}{RESET}\n"
-
+        while queue:
+            node, level = queue.pop()
             if node.left:
-                new_prefix = prefix + ("    " if is_left else "│   ")
-                result += display(node.left, new_prefix, True)
-            return result
+                queue.appendleft((node.left, level + 1))
+            if node.right:
+                queue.appendleft((node.right, level + 1))
+            yield node, level
 
-        return display(self).rstrip()
+    def dfs_pre_order_traverse(self):
+        if not self:
+            yield
+        yield self.val
+        if self.left:
+            yield from self.left.dfs_pre_order_traverse()
+        if self.right:
+            yield from self.right.dfs_pre_order_traverse()
+
+    def dfs_post_order_traverse(self):
+        if not self:
+            yield
+        if self.left:
+            yield from self.left.dfs_post_order_traverse()
+        if self.right:
+            yield from self.right.dfs_post_order_traverse()
+
+        yield self.val
+
+    def dfs_in_order_traverse(self):
+        if not self:
+            yield
+        if self.left:
+            yield from self.left.dfs_in_order_traverse()
+        yield self.val
+        if self.right:
+            yield from self.right.dfs_in_order_traverse()
 
     def balance(self):
         left_height = self.left.height if self.left else -1
@@ -183,6 +248,31 @@ class AVLNode:
         return node.height, node.length
 
     @staticmethod
+    def bst_insert(root: AVLNode, key: int) -> AVLNode | None:
+        """Insert a new key into the AVL tree."""
+        node: AVLNode | None = root
+        parent: AVLNode | None = None
+        while node:
+            if key == node.val:
+                break
+            elif key < node.val:
+                parent = node
+                node = node.left
+            elif key > node.val:
+                parent = node
+                node = node.right
+
+        if node and key == node.val:
+            return root
+
+        if key < parent.val:
+            parent.left = AVLNode(key)
+        elif key > parent.val:
+            parent.right = AVLNode(key)
+        AVLNode.update_stats(root)
+        return root
+
+    @staticmethod
     def insert(root: AVLNode, key: int) -> AVLNode:
         """Insert a new key into the AVL tree."""
         node: AVLNode | None = root
@@ -204,7 +294,6 @@ class AVLNode:
 
         if key < parent.val:
             parent.left = AVLNode(key)
-            root = AVLNode.avl_transform(node=root)
         elif key > parent.val:
             parent.right = AVLNode(key)
 
@@ -332,6 +421,54 @@ class AVLNode:
         AVLNode.update_stats(node=node)
         return node
 
+    @staticmethod
+    def avl_transform_and_validate(node: AVLNode) -> AVLNode | None:
+        if not node:
+            return None
+
+        node.left = AVLNode.avl_transform_and_validate(node=node.left)
+        node.right = AVLNode.avl_transform_and_validate(node=node.right)
+        balance = node.balance()
+
+        order = list(node.dfs_in_order_traverse())
+
+        # balanced node
+        if -1 <= balance <= 1:
+            pass
+
+        # left heavy node
+        elif balance < -1:
+            assert node.left is not None
+            left_balance = node.left.balance()
+
+            # left heavy or balanced left child
+            if left_balance <= 0:
+                node = AVLNode._right_rotate(node)
+            # right heavy left child
+            else:
+                node.left = AVLNode._left_rotate(node.left)
+                node = AVLNode._right_rotate(node)
+
+        # right heavy node
+        elif balance > 1:
+            assert node.right is not None
+            right_balance = node.right.balance()
+
+            # right heavy or balanced right child
+            if right_balance >= 0:
+                node = AVLNode._left_rotate(node)
+            # left heavy right child
+            else:
+                node.right = AVLNode._right_rotate(node.right)
+                node = AVLNode._left_rotate(node)
+
+        for idx, val in enumerate(node.dfs_in_order_traverse()):
+            assert val == order[idx]
+
+        AVLNode.update_stats(node=node)
+        return node
+
+    @staticmethod
     def avl_check(node: AVLNode | None) -> tuple[bool, int]:
         if not node:
             return True, -1

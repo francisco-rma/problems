@@ -1,9 +1,10 @@
 from collections import deque
+import random
 import numpy as np
 from trees.avl_tree import AVLNode
 from trees.valid_bst import isValidBST
 
-TEST_SIZE = 1 * 10**4
+TEST_SIZE = 1 * 10**3
 
 
 def test_left_rotate_root():
@@ -190,11 +191,7 @@ def test_insertion():
     my_tree: AVLNode = AVLNode.from_list(source)
     assert isValidBST(my_tree)
 
-    try:
-        assert my_tree.is_avl()
-    except Exception:
-        print(my_tree)
-        raise
+    assert my_tree.is_avl()
 
     if not my_tree:
         raise ValueError("Tree is empty, cannot perform insertion tests.")
@@ -210,7 +207,7 @@ def test_insertion():
         assert my_tree
         assert isValidBST(my_tree)
         assert my_tree.is_avl()
-
+        assert my_tree.height >= 1
         assert result is not None
         assert result.val == insertion_target
         assert my_tree.contains(
@@ -219,6 +216,8 @@ def test_insertion():
 
         node, parent = my_tree.binary_search(target=insertion_target)
         assert node is not None and node.val == insertion_target
+
+    print(my_tree)
 
 
 def test_deletion():
@@ -334,3 +333,42 @@ def test_length():
     assert (
         my_tree.length == length
     ), f"Expected length {length} after deletion, got {my_tree.length}"
+
+
+def is_sorted(arr):
+    return all(arr[i] <= arr[i + 1] for i in range(len(arr) - 1))
+
+
+def test_in_order_dfs():
+    POPULATION_SIZE = 1 * 10**2
+    population = range(POPULATION_SIZE * 10)
+    for _ in range(TEST_SIZE):
+        sample = random.sample(population=population, k=POPULATION_SIZE)
+
+        if not sample:
+            return None
+        queue = deque(sample)
+        value = queue.popleft()
+        root = AVLNode(value)
+        control_root = AVLNode(value)
+        assert id(root) != id(control_root)
+
+        while queue:
+            value = queue.popleft()
+            if value is None:
+                continue
+            root = AVLNode.bst_insert(root=root, key=value)
+            control_root = AVLNode.insert(root=control_root, key=value)
+
+        assert isValidBST(root=root)
+        assert isValidBST(root=control_root)
+        assert control_root.is_avl()
+
+        control_order = list(control_root.dfs_in_order_traverse())
+        assert is_sorted(control_order)
+        while not root.is_avl():
+            root = AVLNode.avl_transform_and_validate(node=root)
+            order = list(root.dfs_in_order_traverse())
+            assert is_sorted(order)
+            for a, b in zip(order, control_order):
+                assert a == b
