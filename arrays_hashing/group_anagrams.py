@@ -1,8 +1,7 @@
-from typing import List
-import valid_anagram
+from arrays_hashing import valid_anagram
 
 
-def group_anagrams(terms: List[str]) -> List[List[str]]:
+def group_anagrams(terms: list[str]) -> list[list[str]]:
     counts = {}
     grouped_list = []
     for i, value in enumerate(terms):
@@ -29,11 +28,11 @@ def group_anagrams(terms: List[str]) -> List[List[str]]:
     return grouped_list
 
 
-def group_anagramsV2(terms: List[str]) -> List[List[str]]:
-    counts = {}
+def group_anagramsV2(terms: list[str]) -> list[list[str]]:
+    counts: dict[int, list[str]] = {}
     for _, value in enumerate(terms):
-        count = tuple(sorted(valid_anagram.count_char(value).items()))
-        if not count in counts:
+        count: tuple[str, int] = tuple(sorted(valid_anagram.count_char(value).items()))
+        if count not in counts:
             counts[count] = []
         counts[count].append(value)
 

@@ -4,22 +4,11 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+pytest = "*"
 numpy = "*"
-pandas = "*"
 matplotlib = "*"
-scikit-learn = "*"
-line-profiler = "*"
-memory-profiler = "*"
-flask = "*"
-ipympl = "*"
-pillow = "*"
-customtkinter = "*"
-cython = "*"
-
-[dev-packages]
-pylint = "*"
-ipykernel = "*"
-flake8 = "*"
 
 [requires]
 python_version = "3"
+
+[dev-packages]
