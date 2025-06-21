@@ -5,6 +5,8 @@ name = "pypi"
 
 [packages]
 pytest = "*"
+numpy = "*"
+matplotlib = "*"
 
 [requires]
 python_version = "3"
