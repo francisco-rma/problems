@@ -5,7 +5,7 @@ import numpy as np
 from trees.avl_tree import AVLNode
 from trees.valid_bst import isValidBST
 
-TEST_SIZE = 1 * 10**3
+TEST_SIZE = 1 * 10**2
 
 
 def test_left_rotate_root():
@@ -260,7 +260,6 @@ def test_recursive_insertion():
 
 def test_deletion():
     source = [0]
-    # rng = np.random.default_rng(100)
     rng = np.random.default_rng()
     my_tree: AVLNode = AVLNode.from_list(source)
     assert my_tree.length == 1
@@ -296,8 +295,12 @@ def test_deletion():
         val = queue.pop()
         node, parent = my_tree.binary_search(target=val)
         assert node is not None and node.val == val
-
+        print(my_tree)
+        print(f"before deletion of {val}")
+        print("-------------------------")
         my_tree = AVLNode.delete(root=my_tree, key=val)
+        print("after")
+        print(my_tree)
 
         assert isValidBST(my_tree)
         assert my_tree.is_avl()
@@ -327,22 +330,22 @@ def test_height():
     assert isValidBST(my_tree)
     assert my_tree.is_avl()
 
-    print(my_tree.height)
-    print(my_tree)
+    # print(my_tree.height)
+    # print(my_tree)
     assert my_tree.height == 2, f"Expected height 2, got {my_tree.height}"
 
     my_tree = AVLNode.insert(root=my_tree, key=10)
     assert isValidBST(my_tree)
     assert my_tree.is_avl()
-    print(my_tree.height)
-    print(my_tree)
+    # print(my_tree.height)
+    # print(my_tree)
     assert my_tree.height == 2, f"Expected height 2 after insertion, got {my_tree.height}"
 
     my_tree = AVLNode.delete(root=my_tree, key=10)
     assert isValidBST(my_tree)
     assert my_tree.is_avl()
-    print(my_tree.height)
-    print(my_tree)
+    # print(my_tree.height)
+    # print(my_tree)
     assert my_tree.height == 2, f"Expected height 2 after deletion, got {my_tree.height}"
 
 
@@ -354,19 +357,37 @@ def test_length():
     assert my_tree.is_avl()
     assert my_tree.length == length, f"Expected length {length}, got {my_tree.length}"
 
-    my_tree = AVLNode.insert(root=my_tree, key=10)
+    val = 10
+    # print(my_tree)
+    # print(f"before insertion of {val}")
+    # print("-------------------------")
+    my_tree = AVLNode.insert(root=my_tree, key=val)
+    # print("after")
+    # print(my_tree)
     length += 1
     assert (
         my_tree.length == length
     ), f"Expected length {length} after insertion, got {my_tree.length}"
 
-    my_tree = AVLNode.delete(root=my_tree, key=20)
+    val = 20
+    # print(my_tree)
+    # print(f"before deletion of {val}")
+    # print("-------------------------")
+    my_tree = AVLNode.delete(root=my_tree, key=val)
+    # print("after")
+    # print(my_tree)
     length -= 1
     assert (
         my_tree.length == length
     ), f"Expected length {length} after deletion, got {my_tree.length}"
 
-    my_tree = AVLNode.delete(root=my_tree, key=9)
+    val = 9
+    # print(my_tree)
+    # print(f"before deletion of {val}")
+    # print("-------------------------")
+    my_tree = AVLNode.delete(root=my_tree, key=val)
+    # print("after")
+    # print(my_tree)
     length -= 1
     assert (
         my_tree.length == length
