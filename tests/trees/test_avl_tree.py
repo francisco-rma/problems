@@ -187,7 +187,6 @@ def test_avl_check_and_height_consistency():
 
 def test_insertion():
     source = [9, 3, 20, None, None, 15, 25]
-    # rng = np.random.default_rng(100)
     rng = np.random.default_rng()
     my_tree: AVLNode = AVLNode.from_list(source)
     assert isValidBST(my_tree)
@@ -225,8 +224,7 @@ def test_insertion():
 
 def test_recursive_insertion():
     source = [9, 3, 20, None, None, 15, 25]
-    rng = np.random.default_rng(100)
-    # rng = np.random.default_rng()
+    rng = np.random.default_rng()
     my_tree: AVLNode = AVLNode.from_list(source)
     assert isValidBST(my_tree)
 
