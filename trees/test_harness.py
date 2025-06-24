@@ -115,6 +115,9 @@ from valid_bst import isValidBST
 import cProfile
 
 
+TEST_SIZE = 10**2
+
+
 def is_sorted(arr):
     return all(arr[i] <= arr[i + 1] for i in range(len(arr) - 1))
 
@@ -252,7 +255,127 @@ def test_recursive_insertion():
     # print(my_tree)
 
 
-# test_recursive_insertion()
+def test_length():
+    source = [9, 3, 20, None, None, 15, 25]
+    length = len(list(filter(lambda x: x is not None, source)))
+    my_tree: AVLNode = AVLNode.from_list(source)
+    assert isValidBST(my_tree)
+    assert my_tree.is_avl()
+    assert my_tree.length == length, f"Expected length {length}, got {my_tree.length}"
+
+    my_tree = AVLNode.insert(root=my_tree, key=10)
+    length += 1
+    assert (
+        my_tree.length == length
+    ), f"Expected length {length} after insertion, got {my_tree.length}"
+
+    print(f"Before deletion of {20}:\n{my_tree}")
+    my_tree = AVLNode.delete(root=my_tree, key=20)
+    print(f"After:\n{my_tree}")
+    length -= 1
+    assert (
+        my_tree.length == length
+    ), f"Expected length {length} after deletion, got {my_tree.length}"
+
+    print(f"Before deletion of {9}:\n{my_tree}")
+    my_tree = AVLNode.delete(root=my_tree, key=9)
+    print(f"After:\n{my_tree}")
+    length -= 1
+    assert (
+        my_tree.length == length
+    ), f"Expected length {length} after deletion, got {my_tree.length}"
+
+
+def test_deletion():
+    source = [0]
+    rng = np.random.default_rng(100)
+    my_tree: AVLNode = AVLNode.from_list(source)
+    assert my_tree.length == 1
+    inserted_values: list[int] = []
+
+    for _ in range(TEST_SIZE):
+        val = rng.integers(low=1, high=1000, size=1)[0]
+        if my_tree.contains(val):
+            continue
+
+        length = my_tree.length
+        my_tree = AVLNode.insert(root=my_tree, key=val)
+
+        assert my_tree.length == length + 1
+        inserted_values.append(val)
+        assert isValidBST(my_tree)
+        assert my_tree.is_avl()
+        assert my_tree.contains(target=val)
+
+    aux = my_tree.val
+    my_tree = AVLNode.delete(root=my_tree, key=aux)
+    assert not my_tree.contains(target=aux)
+    assert isValidBST(my_tree)
+    assert my_tree.is_avl()
+
+    my_tree = AVLNode.insert(root=my_tree, key=aux)
+    assert my_tree.contains(target=aux)
+    assert isValidBST(my_tree)
+    assert my_tree.is_avl()
+
+    queue = deque(set(inserted_values))
+    while queue:
+        val = queue.pop()
+        node, _ = my_tree.binary_search(target=val)
+        assert node is not None and node.val == val
+        print(my_tree)
+        print(f"before deletion of {val}")
+        print("-------------------------")
+        my_tree = AVLNode.delete(root=my_tree, key=val)
+        print("after")
+        print(my_tree)
+
+        assert isValidBST(my_tree)
+        assert my_tree.is_avl()
+
+        for item in queue:
+            assert my_tree.contains(
+                target=item
+            ), f"Item {item} should still be in the tree after deletion of {val}."
+        assert not my_tree.contains(target=val)
+
+
+def test_from_list():
+    rng = np.random.default_rng()
+    source = rng.integers(low=1, high=1000, size=TEST_SIZE).tolist()
+
+    my_tree: AVLNode = AVLNode.from_list(source)
+    assert isValidBST(my_tree)
+    assert my_tree.is_avl()
+
+    for val in source:
+        assert my_tree.contains(target=val), f"Value {val} should be in the tree."
+
+
+def test_height():
+    source = [9, 3, 20, None, None, 15, 25]
+    my_tree: AVLNode = AVLNode.from_list(source)
+    assert isValidBST(my_tree)
+    assert my_tree.is_avl()
+
+    print(my_tree.height)
+    print(my_tree)
+    assert my_tree.height == 2, f"Expected height 2, got {my_tree.height}"
+
+    my_tree = AVLNode.insert(root=my_tree, key=10)
+    assert isValidBST(my_tree)
+    assert my_tree.is_avl()
+    print(my_tree.height)
+    print(my_tree)
+    assert my_tree.height == 2, f"Expected height 2 after insertion, got {my_tree.height}"
+
+    my_tree = AVLNode.delete(root=my_tree, key=10)
+    assert isValidBST(my_tree)
+    assert my_tree.is_avl()
+    print(my_tree.height)
+    print(my_tree)
+    assert my_tree.height == 2, f"Expected height 2 after deletion, got {my_tree.height}"
+
 
 root, avl_root = generate_samples()
 
