@@ -107,14 +107,13 @@
 import time
 from collections import deque
 import random
+import cProfile
 
 from avl_tree import AVLNode
 from binary_search_tree import BSTNode
 from valid_bst import isValidBST
-import cProfile
 
 
-TEST_SIZE = 10**3
 N = 1 * 10**6
 
 
