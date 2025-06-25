@@ -108,7 +108,6 @@ import time
 from collections import deque
 import random
 
-import numpy as np
 from avl_tree import AVLNode
 from binary_search_tree import BSTNode
 from valid_bst import isValidBST
