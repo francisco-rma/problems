@@ -424,7 +424,6 @@ class AVLNode:
             )
 
             if max_subnode_parent == root.left:
-                # assert max_subnode.val == temp_left.val
                 max_subnode.right = temp_right
                 max_subnode = AVLNode.single_avl_transform(node=max_subnode)
                 root.left = max_subnode
@@ -462,7 +461,6 @@ class AVLNode:
             )
 
             if max_subnode_parent == root.right:
-                # assert max_subnode.val == temp_left.val
                 max_subnode.right = temp_right
                 max_subnode = AVLNode.single_avl_transform(node=max_subnode)
                 root.right = max_subnode
@@ -482,21 +480,23 @@ class AVLNode:
 
             return True, root
 
-        result_left, root.left = (
-            AVLNode.rdelete(root=root.left, key=key) if root.left else (False, None)
-        )
-        if result_left:
-            root = AVLNode.single_avl_transform(node=root)
-            return True, root
+        if root.val > key:
+            result_left, root.left = (
+                AVLNode.rdelete(root=root.left, key=key) if root.left else (False, None)
+            )
+            if result_left:
+                root = AVLNode.single_avl_transform(node=root)
+            return result_left, root
 
-        result_right, root.right = (
-            AVLNode.rdelete(root=root.right, key=key) if root.right else (False, None)
-        )
-        if result_right:
-            root = AVLNode.single_avl_transform(node=root)
-            return True, root
+        if root.val < key:
+            result_right, root.right = (
+                AVLNode.rdelete(root=root.right, key=key) if root.right else (False, None)
+            )
+            if result_right:
+                root = AVLNode.single_avl_transform(node=root)
+            return result_right, root
 
-        return False, AVLNode.avl_transform(root)
+        return False, root
 
     @staticmethod
     def _left_rotate(root: AVLNode) -> AVLNode:
@@ -590,7 +590,6 @@ class AVLNode:
 
     @staticmethod
     def single_avl_transform(node: AVLNode) -> AVLNode | None:
-        # print(f"----- AVL TRANSFORMING -----\n{node}")
         if not node:
             return None
 
@@ -632,8 +631,6 @@ class AVLNode:
             AVLNode.update_single_stats(node=node.right)
             AVLNode.update_single_stats(node=node)
 
-        # print(f"----- AVL Result -----\n{node}")
-        # print("---------------")
         return node
 
     @staticmethod
