@@ -115,27 +115,30 @@ from valid_bst import isValidBST
 import cProfile
 
 
-TEST_SIZE = 10**2
+TEST_SIZE = 10**3
+N = 1 * 10**6
 
 
 def is_sorted(arr):
     return all(arr[i] <= arr[i + 1] for i in range(len(arr) - 1))
 
 
-def bst_benchmark(root):
+def bst_benchmark():
     print("\n[ BST BENCHMARK ]")
-    N = 10_000
-    values = list(range(N))
-    random.shuffle(values)
+    population = range(1, N * 10)
+
+    values = random.sample(population=population, k=N)
+    root = BSTNode(0)
+
     # Insert
     t0 = time.time()
     for v in values:
-        root = BSTNode.insert(root, v)
+        root = BSTNode.insert(root=root, key=v)
     t1 = time.time()
     print(f"BST insert {N} values: {t1-t0:.4f}s")
 
     # In-order traversal
-    def in_order(node):
+    def in_order(node: BSTNode):
         if not node:
             return []
         return in_order(node.left) + [node.val] + in_order(node.right)
@@ -144,34 +147,40 @@ def bst_benchmark(root):
     order = in_order(root)
     t1 = time.time()
     print(f"BST in-order traversal: {t1-t0:.4f}s, sorted: {order == sorted(set(order))}")
-    # # Delete
+
+    # Search
+    t0 = time.time()
+    for v in values:
+        _, _ = root.binary_search(target=v)
+    t1 = time.time()
+    print(f"BST full search: {t1-t0:.4f}s")
+
+    # Delete
     random.shuffle(values)
     t0 = time.time()
-    for i, v in enumerate(values):
+    for v in values:
         root = BSTNode.delete(root, v)
     t1 = time.time()
     print(f"BST delete {N} values: {t1-t0:.4f}s")
     print("BST benchmark complete.\n")
 
 
-def avl_bst_benchmark(root):
+def avl_bst_benchmark():
     print("\n[ AVL BENCHMARK ]")
-    N = 10_000
-    values = list(range(N))
-    random.shuffle(values)
+    population = range(1, N * 10)
+
+    values = random.sample(population=population, k=N)
+    root = AVLNode(0)
+
     # Insert
     t0 = time.time()
-    for i, v in enumerate(values):
-        # root = AVLNode.insert(root=root, key=v)
+    for v in values:
         _, root = AVLNode.rinsert(root=root, key=v)
-        # t0 = time.time()
-        # t1 = time.time()
-        # print(f"duration: {t1-t0} - length: {root.length}")
     t1 = time.time()
     print(f"AVL insert {N} values: {t1-t0:.4f}s")
 
     # In-order traversal
-    def in_order(node):
+    def in_order(node: AVLNode):
         if not node:
             return []
         return in_order(node.left) + [node.val] + in_order(node.right)
@@ -180,7 +189,15 @@ def avl_bst_benchmark(root):
     order = in_order(root)
     t1 = time.time()
     print(f"AVL in-order traversal: {t1-t0:.4f}s, sorted: {order == sorted(set(order))}")
-    # # Delete
+
+    # Search
+    t0 = time.time()
+    for v in values:
+        _, _ = root.binary_search(target=v)
+    t1 = time.time()
+    print(f"AVL full search: {t1-t0:.4f}s")
+
+    # Delete
     random.shuffle(values)
     t0 = time.time()
     for v in values:
@@ -191,9 +208,9 @@ def avl_bst_benchmark(root):
 
 
 def generate_samples() -> tuple[AVLNode, AVLNode]:
-    POPULATION_SIZE = 1 * 10**2
-    population = range(POPULATION_SIZE * 10)
-    sample = random.sample(population=population, k=POPULATION_SIZE)
+    print("Setting up...")
+    population = range(N * 10)
+    sample = random.sample(population=population, k=N)
 
     queue = deque(sample)
     value = queue.popleft()
@@ -208,179 +225,33 @@ def generate_samples() -> tuple[AVLNode, AVLNode]:
         root = AVLNode.bst_insert(root=root, key=value)
         avl_root = AVLNode.insert(root=avl_root, key=value)
 
+    print("ASSERTIONS")
+
     assert isValidBST(root=root)
+    print("TEST - isValidBST: ✅")
+
     assert isValidBST(root=avl_root)
+    print("CONTROL - isValidBST: ✅")
+
+    assert not root.is_avl()
+    print("TEST - is_avl: ❌")
+
     assert avl_root.is_avl()
+    print("CONTROL - is_avl: ✅")
+
+    test_order = list(root.dfs_in_order_traverse())
+    assert is_sorted(test_order)
+    print("TEST - in_order_traverse sorted: ✅")
+
     control_order = list(avl_root.dfs_in_order_traverse())
     assert is_sorted(control_order)
-
-    print(f"root (AVL {root.is_avl()}:\n{root}\n")
-    print(f"control_root (AVL {avl_root.is_avl()}:\n{avl_root}\n")
+    print("CONTROL - in_order_traverse sorted: ✅")
 
     return root, avl_root
 
 
-def test_recursive_insertion():
-    source = [9, 3, 20, None, None, 15, 25]
-    rng = np.random.default_rng(100)
-    # rng = np.random.default_rng()
-    my_tree: AVLNode = AVLNode.from_list(source)
-    assert isValidBST(my_tree)
-
-    assert my_tree.is_avl()
-
-    if not my_tree:
-        raise ValueError("Tree is empty, cannot perform insertion tests.")
-
-    for index in range(10**1):
-        insertion_target = rng.integers(low=0, high=1000, size=1)[0]
-        print(f"Insertion target: {insertion_target}")
-        print(f"Before: \n{my_tree}")
-        start = time.time()
-        inserted, my_tree = AVLNode.rinsert(root=my_tree, key=insertion_target)
-        print(f"duration: {time.time()-start} - length: {my_tree.length}")
-        print(f"inserted: {inserted}")
-        print(f"After: \n{my_tree}")
-
-        assert isValidBST(my_tree)
-        assert my_tree.is_avl()
-        assert my_tree.height >= 1
-        assert my_tree.contains(
-            target=insertion_target
-        ), f"Target {insertion_target} not found in the tree after insertion."
-
-        node, parent = my_tree.binary_search(target=insertion_target)
-        assert node is not None and node.val == insertion_target
-
-    # print(my_tree)
-
-
-def test_length():
-    source = [9, 3, 20, None, None, 15, 25]
-    length = len(list(filter(lambda x: x is not None, source)))
-    my_tree: AVLNode = AVLNode.from_list(source)
-    assert isValidBST(my_tree)
-    assert my_tree.is_avl()
-    assert my_tree.length == length, f"Expected length {length}, got {my_tree.length}"
-
-    my_tree = AVLNode.insert(root=my_tree, key=10)
-    length += 1
-    assert (
-        my_tree.length == length
-    ), f"Expected length {length} after insertion, got {my_tree.length}"
-
-    print(f"Before deletion of {20}:\n{my_tree}")
-    my_tree = AVLNode.delete(root=my_tree, key=20)
-    print(f"After:\n{my_tree}")
-    length -= 1
-    assert (
-        my_tree.length == length
-    ), f"Expected length {length} after deletion, got {my_tree.length}"
-
-    print(f"Before deletion of {9}:\n{my_tree}")
-    my_tree = AVLNode.delete(root=my_tree, key=9)
-    print(f"After:\n{my_tree}")
-    length -= 1
-    assert (
-        my_tree.length == length
-    ), f"Expected length {length} after deletion, got {my_tree.length}"
-
-
-def test_deletion():
-    source = [0]
-    rng = np.random.default_rng(100)
-    my_tree: AVLNode = AVLNode.from_list(source)
-    assert my_tree.length == 1
-    inserted_values: list[int] = []
-
-    for _ in range(TEST_SIZE):
-        val = rng.integers(low=1, high=1000, size=1)[0]
-        if my_tree.contains(val):
-            continue
-
-        length = my_tree.length
-        my_tree = AVLNode.insert(root=my_tree, key=val)
-
-        assert my_tree.length == length + 1
-        inserted_values.append(val)
-        assert isValidBST(my_tree)
-        assert my_tree.is_avl()
-        assert my_tree.contains(target=val)
-
-    aux = my_tree.val
-    my_tree = AVLNode.delete(root=my_tree, key=aux)
-    assert not my_tree.contains(target=aux)
-    assert isValidBST(my_tree)
-    assert my_tree.is_avl()
-
-    my_tree = AVLNode.insert(root=my_tree, key=aux)
-    assert my_tree.contains(target=aux)
-    assert isValidBST(my_tree)
-    assert my_tree.is_avl()
-
-    queue = deque(set(inserted_values))
-    while queue:
-        val = queue.pop()
-        node, _ = my_tree.binary_search(target=val)
-        assert node is not None and node.val == val
-        print(my_tree)
-        print(f"before deletion of {val}")
-        print("-------------------------")
-        my_tree = AVLNode.delete(root=my_tree, key=val)
-        print("after")
-        print(my_tree)
-
-        assert isValidBST(my_tree)
-        assert my_tree.is_avl()
-
-        for item in queue:
-            assert my_tree.contains(
-                target=item
-            ), f"Item {item} should still be in the tree after deletion of {val}."
-        assert not my_tree.contains(target=val)
-
-
-def test_from_list():
-    rng = np.random.default_rng()
-    source = rng.integers(low=1, high=1000, size=TEST_SIZE).tolist()
-
-    my_tree: AVLNode = AVLNode.from_list(source)
-    assert isValidBST(my_tree)
-    assert my_tree.is_avl()
-
-    for val in source:
-        assert my_tree.contains(target=val), f"Value {val} should be in the tree."
-
-
-def test_height():
-    source = [9, 3, 20, None, None, 15, 25]
-    my_tree: AVLNode = AVLNode.from_list(source)
-    assert isValidBST(my_tree)
-    assert my_tree.is_avl()
-
-    print(my_tree.height)
-    print(my_tree)
-    assert my_tree.height == 2, f"Expected height 2, got {my_tree.height}"
-
-    my_tree = AVLNode.insert(root=my_tree, key=10)
-    assert isValidBST(my_tree)
-    assert my_tree.is_avl()
-    print(my_tree.height)
-    print(my_tree)
-    assert my_tree.height == 2, f"Expected height 2 after insertion, got {my_tree.height}"
-
-    my_tree = AVLNode.delete(root=my_tree, key=10)
-    assert isValidBST(my_tree)
-    assert my_tree.is_avl()
-    print(my_tree.height)
-    print(my_tree)
-    assert my_tree.height == 2, f"Expected height 2 after deletion, got {my_tree.height}"
-
-
-root, avl_root = generate_samples()
-
-cProfile.run("bst_benchmark(root=root)")
-cProfile.run("avl_bst_benchmark(root=avl_root)")
+cProfile.run("bst_benchmark()")
+cProfile.run("avl_bst_benchmark()")
 
 # =======================================================
 # =======================================================

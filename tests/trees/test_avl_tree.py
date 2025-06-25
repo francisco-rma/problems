@@ -5,7 +5,7 @@ import numpy as np
 from trees.avl_tree import AVLNode
 from trees.valid_bst import isValidBST
 
-TEST_SIZE = 1 * 10**2
+TEST_SIZE = 1 * 10**3
 
 
 def test_left_rotate_root():
