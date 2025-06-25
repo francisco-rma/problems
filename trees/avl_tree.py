@@ -344,6 +344,8 @@ class AVLNode:
     @staticmethod
     def retrieve_max(node: AVLNode, parent: AVLNode, key: int) -> tuple[AVLNode, AVLNode, AVLNode]:
         if not node.right:
+            if not parent:
+                return parent, node, AVLNode.single_avl_transform(node=node.left)
             if node != parent.left:
                 parent.right = None
                 parent.right = node.left
@@ -354,6 +356,9 @@ class AVLNode:
         max_subnode_parent, max_subnode, new_node = AVLNode.retrieve_max(
             node=node.right, parent=node, key=key
         )
+
+        if not parent:
+            return max_subnode_parent, max_subnode, AVLNode.single_avl_transform(node=new_node)
 
         if node.height > new_node.height:
             node.right = new_node
@@ -372,9 +377,23 @@ class AVLNode:
         if not root:
             return None
         if root.val == key:
-            root._delete_root()
-            root = AVLNode.avl_transform(node=root)
-            return root
+            if root.left:
+                _, new_root, temp_left = AVLNode.retrieve_max(node=root.left, parent=None, key=key)
+                temp_right = root.right
+
+                root.left = None
+                root.right = None
+                root = new_root
+
+                root.right = temp_right
+                root.left = temp_left
+            elif root.right:
+                new_root = root.right
+                root.left = None
+                root.right = None
+                root = new_root
+            else:
+                return None
 
         _, root = AVLNode.rdelete(root=root, key=key)
         root = AVLNode.single_avl_transform(node=root)
