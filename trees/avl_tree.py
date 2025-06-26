@@ -35,7 +35,7 @@ class AVLNode:
             result += f"{BLUE}"
         else:
             result += f"{RED}"
-        result += f"{node.val}.{node.height}.{node.length}.{RESET}\n"
+        result += f"{node.val}{RESET}\n"
 
         if node.left:
             new_prefix = prefix + ("    " if is_left else "│   ")
