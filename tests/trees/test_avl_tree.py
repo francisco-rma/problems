@@ -99,7 +99,8 @@ def test_avl_walk_lh1():
 
     assert isValidBST(root)
     root = AVLNode.avl_walk(root)
-    assert AVLNode.avl_check(root)
+    assert root is not None
+    assert root.is_avl()
     assert isValidBST(root)
 
 
@@ -115,7 +116,8 @@ def test_avl_walk_lh2():
 
     assert isValidBST(root)
     root = AVLNode.avl_walk(root)
-    assert AVLNode.avl_check(root)
+    assert root is not None
+    assert root.is_avl()
     assert isValidBST(root)
     print(root)
 
@@ -133,7 +135,8 @@ def test_avl_walk_rh1():
     assert isValidBST(root)
     root = AVLNode.avl_walk(root)
     print(root)
-    assert AVLNode.avl_check(root)
+    assert root is not None
+    assert root.is_avl()
     assert isValidBST(root)
 
 
@@ -150,16 +153,18 @@ def test_avl_walk_rh2():
     assert isValidBST(root)
     root = AVLNode.avl_walk(root)
     print(root)
-    assert AVLNode.avl_check(root)
+    assert root is not None
     assert isValidBST(root)
+    assert root.is_avl()
 
 
 def test_avl_check_and_height_consistency():
     # Build a tree
-    source = [17, 9, 50, 23, 76, 5, 12, 30, 60]
-    root: AVLNode = AVLNode.from_list(source)
+    source: list[int | None] = [17, 9, 50, 23, 76, 5, 12, 30, 60]
+    root: AVLNode | None = AVLNode.from_list(source)
+    assert root is not None
+    assert isValidBST(root)
     assert root.is_avl()
-    # AVLNode.update_stats(node=root)
 
     # Use avl_check to get organic heights
     is_avl, organic_height = AVLNode.avl_check(root)
@@ -186,15 +191,13 @@ def test_avl_check_and_height_consistency():
 
 
 def test_insertion():
-    source = [9, 3, 20, None, None, 15, 25]
+    source: list[int | None] = [9, 3, 20, None, None, 15, 25]
     rng = np.random.default_rng()
-    my_tree: AVLNode = AVLNode.from_list(source)
+    my_tree: AVLNode | None = AVLNode.from_list(source)
+
+    assert my_tree is not None
     assert isValidBST(my_tree)
-
     assert my_tree.is_avl()
-
-    if not my_tree:
-        raise ValueError("Tree is empty, cannot perform insertion tests.")
 
     for index in range(TEST_SIZE):
         insertion_target = rng.integers(low=0, high=1000, size=1)[0]
@@ -202,6 +205,7 @@ def test_insertion():
         # print(f"Before: \n{my_tree}")
         start = time.time()
         my_tree = AVLNode.insert(root=my_tree, key=insertion_target)
+        assert my_tree is not None
         print(f"duration: {time.time()-start} - length: {my_tree.length}")
         # print(f"After: \n{my_tree}")
         result, parent = my_tree.binary_search(target=insertion_target)
@@ -225,9 +229,10 @@ def test_insertion():
 def test_recursive_insertion():
     source = [9, 3, 20, None, None, 15, 25]
     rng = np.random.default_rng()
-    my_tree: AVLNode = AVLNode.from_list(source)
-    assert isValidBST(my_tree)
+    my_tree: AVLNode | None = AVLNode.from_list(source)
 
+    assert my_tree is not None
+    assert isValidBST(my_tree)
     assert my_tree.is_avl()
 
     if not my_tree:
@@ -239,6 +244,7 @@ def test_recursive_insertion():
         print(f"Before: \n{my_tree}")
         start = time.time()
         inserted, my_tree = AVLNode._recursive_insert(root=my_tree, key=insertion_target)
+        assert my_tree is not None
         print(f"duration: {time.time()-start} - length: {my_tree.length}")
         print(f"inserted: {inserted}")
         print(f"After: \n{my_tree}")
@@ -257,9 +263,11 @@ def test_recursive_insertion():
 
 
 def test_deletion():
-    source = [0]
+    source: list[int | None] = [0]
     rng = np.random.default_rng()
-    my_tree: AVLNode = AVLNode.from_list(source)
+    my_tree: AVLNode | None = AVLNode.from_list(source)
+
+    assert my_tree is not None
     assert my_tree.length == 1
     inserted_values: list[int] = []
 
@@ -270,20 +278,24 @@ def test_deletion():
 
         length = my_tree.length
         my_tree = AVLNode.insert(root=my_tree, key=val)
+        assert my_tree is not None
+        inserted_values.append(val)
 
         assert my_tree.length == length + 1
-        inserted_values.append(val)
         assert isValidBST(my_tree)
         assert my_tree.is_avl()
         assert my_tree.contains(target=val)
 
     aux = my_tree.val
     my_tree = AVLNode.delete(root=my_tree, key=aux)
+
+    assert my_tree is not None
     assert not my_tree.contains(target=aux)
     assert isValidBST(my_tree)
     assert my_tree.is_avl()
 
     my_tree = AVLNode.insert(root=my_tree, key=aux)
+    assert my_tree is not None
     assert my_tree.contains(target=aux)
     assert isValidBST(my_tree)
     assert my_tree.is_avl()
@@ -297,6 +309,7 @@ def test_deletion():
         print(f"before deletion of {val}")
         print("-------------------------")
         my_tree = AVLNode.delete(root=my_tree, key=val)
+        assert my_tree is not None
         print("after")
         print(my_tree)
 
@@ -312,19 +325,24 @@ def test_deletion():
 
 def test_from_list():
     rng = np.random.default_rng()
-    source = rng.integers(low=1, high=1000, size=TEST_SIZE).tolist()
+    source: list[int | None] = rng.integers(low=1, high=1000, size=TEST_SIZE).tolist()
 
-    my_tree: AVLNode = AVLNode.from_list(source)
+    my_tree: AVLNode | None = AVLNode.from_list(source)
+
+    assert my_tree is not None
     assert isValidBST(my_tree)
     assert my_tree.is_avl()
 
     for val in source:
-        assert my_tree.contains(target=val), f"Value {val} should be in the tree."
+        if val is not None:
+            assert my_tree.contains(target=val), f"Value {val} should be in the tree."
 
 
 def test_height():
-    source = [9, 3, 20, None, None, 15, 25]
-    my_tree: AVLNode = AVLNode.from_list(source)
+    source: list[int | None] = [9, 3, 20, None, None, 15, 25]
+    my_tree: AVLNode | None = AVLNode.from_list(source)
+
+    assert my_tree is not None
     assert isValidBST(my_tree)
     assert my_tree.is_avl()
 
@@ -333,6 +351,7 @@ def test_height():
     assert my_tree.height == 2, f"Expected height 2, got {my_tree.height}"
 
     my_tree = AVLNode.insert(root=my_tree, key=10)
+    assert my_tree is not None
     assert isValidBST(my_tree)
     assert my_tree.is_avl()
     # print(my_tree.height)
@@ -340,6 +359,7 @@ def test_height():
     assert my_tree.height == 2, f"Expected height 2 after insertion, got {my_tree.height}"
 
     my_tree = AVLNode.delete(root=my_tree, key=10)
+    assert my_tree is not None
     assert isValidBST(my_tree)
     assert my_tree.is_avl()
     # print(my_tree.height)
@@ -348,9 +368,10 @@ def test_height():
 
 
 def test_length():
-    source = [9, 3, 20, None, None, 15, 25]
+    source: list[int | None] = [9, 3, 20, None, None, 15, 25]
     length = len(list(filter(lambda x: x is not None, source)))
-    my_tree: AVLNode = AVLNode.from_list(source)
+    my_tree: AVLNode | None = AVLNode.from_list(source)
+    assert my_tree is not None
     assert isValidBST(my_tree)
     assert my_tree.is_avl()
     assert my_tree.length == length, f"Expected length {length}, got {my_tree.length}"
@@ -360,6 +381,7 @@ def test_length():
     # print(f"before insertion of {val}")
     # print("-------------------------")
     my_tree = AVLNode.insert(root=my_tree, key=val)
+    assert my_tree is not None
     # print("after")
     # print(my_tree)
     length += 1
@@ -372,6 +394,7 @@ def test_length():
     # print(f"before deletion of {val}")
     # print("-------------------------")
     my_tree = AVLNode.delete(root=my_tree, key=val)
+    assert my_tree is not None
     # print("after")
     # print(my_tree)
     length -= 1
@@ -384,6 +407,7 @@ def test_length():
     # print(f"before deletion of {val}")
     # print("-------------------------")
     my_tree = AVLNode.delete(root=my_tree, key=val)
+    assert my_tree is not None
     # print("after")
     # print(my_tree)
     length -= 1
@@ -415,7 +439,9 @@ def test_in_order_dfs():
             if value is None:
                 continue
             root = AVLNode.bst_insert(root=root, key=value)
+            assert root is not None
             control_root = AVLNode.insert(root=control_root, key=value)
+            assert control_root is not None
 
         assert isValidBST(root=root)
         assert isValidBST(root=control_root)
@@ -425,6 +451,7 @@ def test_in_order_dfs():
         assert is_sorted(control_order)
         while not root.is_avl():
             root = AVLNode.avl_transform_and_validate(node=root)
+            assert root is not None
             order = list(root.dfs_in_order_traverse())
             assert is_sorted(order)
             for a, b in zip(order, control_order):

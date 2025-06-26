@@ -42,16 +42,20 @@ class AVLNode:
             result += AVLNode.display_v1(node.left, new_prefix, True)
         return result
 
+    @staticmethod
     def from_list(values: list[int | None]) -> AVLNode | None:
         if not values:
             return None
         queue = deque(values)
-        value = queue.popleft()
-        root = AVLNode(value)
+
+        root: AVLNode | None = None
 
         while queue:
             value = queue.popleft()
             if value is None:
+                continue
+            if not root:
+                root = AVLNode(val=value)
                 continue
             root = AVLNode.insert(root=root, key=value)
 
@@ -60,10 +64,10 @@ class AVLNode:
     def __init__(self, val: int, left: Optional[AVLNode] = None, right: Optional[AVLNode] = None):
         """Initialize an AVL tree node."""
         self.val = val
-        self.left = left
-        self.right = right
-        self.length = 1
-        self.height = 0
+        self.left: Optional[AVLNode] = left
+        self.right: Optional[AVLNode] = right
+        self.length: int = 1
+        self.height: int = 0
 
     def __repr__(self):
         return AVLNode.display_v1(self).rstrip()
@@ -127,7 +131,7 @@ class AVLNode:
     def binary_search(self, target: int) -> tuple[AVLNode | None, AVLNode | None]:
         """Binary search to find a target value. Returns a tuple of (target, parent)"""
         if not self:
-            return False
+            return None, None
 
         node = self
         parent = None
@@ -143,7 +147,7 @@ class AVLNode:
 
         return node, parent
 
-    def max(self) -> tuple[AVLNode | None, AVLNode | None]:
+    def max(self) -> tuple[AVLNode, AVLNode | None]:
         """Find the maximum value in the AVL tree."""
         parent = None
         node = self
@@ -168,49 +172,14 @@ class AVLNode:
         elif self.right == child:
             self.right = target
 
-    def _delete_root(self) -> None:
-        """Delete the root node of the AVL tree."""
-        if not self.left and not self.right:
-            self.length = 0
-            self.height = 0
-            return None
-
-        if not self.left:
-            temp = self.right
-            self.right = temp.right
-            temp.right = None
-            self.left = temp.left
-            temp.left = None
-            self.val = temp.val
-        elif not self.right:
-            temp = self.left
-            self.left = temp.left
-            temp.left = None
-            self.right = temp.right
-            temp.right = None
-            self.val = temp.val
-        else:
-            max_subnode, max_subnode_parent = self.left.max()
-            if max_subnode is self.left:
-                self.val = max_subnode.val
-                self.left = max_subnode.left
-                max_subnode.left = None
-
-            if max_subnode_parent:
-                max_subnode_parent.right = max_subnode.left
-            max_subnode.left = None
-            self.val = max_subnode.val
-        # self.length -= 1
-        # AVLNode.update_all_stats(node=self)
-
     def is_avl(self):
         result, _ = AVLNode.avl_check(node=self)
         return result
 
     @staticmethod
-    def update_all_stats(node: AVLNode | None) -> tuple[int, int] | None:
+    def update_all_stats(node: AVLNode | None) -> tuple[int, int]:
         if not node:
-            return None
+            return (-1, 0)
 
         left_height, left_length = (
             AVLNode.update_all_stats(node=node.left) if node.left else (-1, 0)
@@ -255,7 +224,7 @@ class AVLNode:
                 parent = node
                 node = node.right
 
-        if node and key == node.val:
+        if not parent or (node and key == node.val):
             return root
 
         if key < parent.val:
@@ -266,7 +235,7 @@ class AVLNode:
         return root
 
     @staticmethod
-    def insert(root: AVLNode, key: int) -> AVLNode:
+    def insert(root: AVLNode | None, key: int) -> AVLNode | None:
         """Insert a new key into the AVL tree."""
         if not root:
             return None
@@ -278,7 +247,7 @@ class AVLNode:
         return root
 
     @staticmethod
-    def _recursive_insert(root: AVLNode, key: int) -> tuple[bool, AVLNode | None]:
+    def _recursive_insert(root: AVLNode | None, key: int) -> tuple[bool, AVLNode | None]:
         """Recursively insert a new key into the AVL tree."""
         if not root:
             return False, root
@@ -287,10 +256,12 @@ class AVLNode:
         if not root.left and key < root.val:
             root.left = AVLNode(val=key)
             root = AVLNode.single_avl_transform(node=root)
+
             return True, root
         if not root.right and key > root.val:
             root.right = AVLNode(val=key)
             root = AVLNode.single_avl_transform(node=root)
+
             return True, root
 
         result_left = False
@@ -302,7 +273,9 @@ class AVLNode:
             result_right, root.right = AVLNode._recursive_insert(root=root.right, key=key)
 
         if result_left or result_right:
-            root = AVLNode.single_avl_transform(node=root)
+            result = AVLNode.single_avl_transform(node=root)
+            if result is not None:
+                root = result
 
         return result_left or result_right, root
 
@@ -319,7 +292,7 @@ class AVLNode:
             parent.swap_child(child=node, target=node.right)
             node.right = None
 
-        else:
+        elif node.left and node.right:
             max_subnode, max_subnode_parent = node.left.max()
             if max_subnode_parent:
                 max_subnode_parent.right = max_subnode.left
@@ -335,23 +308,32 @@ class AVLNode:
         node.right = None
 
     @staticmethod
-    def retrieve_max(node: AVLNode, parent: AVLNode, key: int) -> tuple[AVLNode, AVLNode, AVLNode]:
+    def retrieve_max(
+        node: AVLNode, parent: AVLNode | None, key: int
+    ) -> tuple[AVLNode | None, AVLNode, AVLNode | None]:
         if not node.right:
             if not parent:
-                return parent, node, AVLNode.single_avl_transform(node=node.left)
+                return (
+                    parent,
+                    node,
+                    AVLNode.single_avl_transform(node=node.left) if node.left else None,
+                )
             if node != parent.left:
                 parent.right = None
                 parent.right = node.left
             else:
                 parent.left = node.left
-            return parent, node, AVLNode.single_avl_transform(node=parent)
+            result = AVLNode.single_avl_transform(node=parent)
+            if not result:
+                result = parent
+            return parent, node, result
 
         max_subnode_parent, max_subnode, new_node = AVLNode.retrieve_max(
             node=node.right, parent=node, key=key
         )
 
-        if not parent:
-            return max_subnode_parent, max_subnode, AVLNode.single_avl_transform(node=new_node)
+        if not parent or not new_node:
+            return (max_subnode_parent, max_subnode, AVLNode.single_avl_transform(node=new_node))
 
         if node.height > new_node.height:
             node.right = new_node
@@ -365,7 +347,7 @@ class AVLNode:
             return max_subnode_parent, max_subnode, new_node
 
     @staticmethod
-    def delete(root: AVLNode, key: int) -> AVLNode | None:
+    def delete(root: AVLNode | None, key: int) -> AVLNode | None:
         """Delete a key from the AVL tree."""
         if not root:
             return None
@@ -394,7 +376,7 @@ class AVLNode:
         return root
 
     @staticmethod
-    def _recursive_delete(root: AVLNode, key: int) -> tuple[bool, AVLNode | None]:
+    def _recursive_delete(root: AVLNode | None, key: int) -> tuple[bool, AVLNode | None]:
         """Delete a key from the AVL tree."""
         if not root:
             return False, root
@@ -409,7 +391,9 @@ class AVLNode:
             if not temp_left:
                 root.left = temp_right
                 root.left = AVLNode.single_avl_transform(root.left)
-                root = AVLNode.single_avl_transform(root)
+                result = AVLNode.single_avl_transform(root)
+                if result is not None:
+                    root = result
                 return True, root
 
             max_subnode_parent, max_subnode, temp_left = AVLNode.retrieve_max(
@@ -420,7 +404,9 @@ class AVLNode:
                 max_subnode.right = temp_right
                 max_subnode = AVLNode.single_avl_transform(node=max_subnode)
                 root.left = max_subnode
-                root = AVLNode.single_avl_transform(root)
+                result = AVLNode.single_avl_transform(root)
+                if result is not None:
+                    root = result
                 return True, root
 
             max_subnode.left = temp_left
@@ -432,7 +418,9 @@ class AVLNode:
             max_subnode = AVLNode.single_avl_transform(max_subnode)
 
             root.left = max_subnode
-            root = AVLNode.single_avl_transform(root)
+            result = AVLNode.single_avl_transform(root)
+            if result is not None:
+                root = result
 
             return True, root
 
@@ -461,15 +449,19 @@ class AVLNode:
                 return True, root
 
             max_subnode.left = temp_left
-            max_subnode.left = AVLNode.single_avl_transform(node=max_subnode.left)
+            if max_subnode.left is not None:
+                max_subnode.left = AVLNode.single_avl_transform(node=max_subnode.left)
 
             max_subnode.right = temp_right
-            max_subnode.right = AVLNode.single_avl_transform(node=max_subnode.right)
+            if max_subnode.right is not None:
+                max_subnode.right = AVLNode.single_avl_transform(node=max_subnode.right)
 
-            max_subnode = AVLNode.single_avl_transform(max_subnode)
+            if max_subnode is not None:
+                max_subnode = AVLNode.single_avl_transform(max_subnode)
 
             root.right = max_subnode
-            root = AVLNode.single_avl_transform(root)
+            if root is not None:
+                root = AVLNode.single_avl_transform(root)
 
             return True, root
 
@@ -525,7 +517,7 @@ class AVLNode:
         return node
 
     @staticmethod
-    def avl_transform(node: AVLNode) -> AVLNode | None:
+    def avl_transform(node: AVLNode | None) -> AVLNode | None:
         if not node:
             return None
 
@@ -582,7 +574,7 @@ class AVLNode:
         return node
 
     @staticmethod
-    def single_avl_transform(node: AVLNode) -> AVLNode | None:
+    def single_avl_transform(node: AVLNode | None) -> AVLNode | None:
         if not node:
             return None
 
@@ -631,8 +623,10 @@ class AVLNode:
         if not node:
             return None
 
-        node.left = AVLNode.avl_transform_and_validate(node=node.left)
-        node.right = AVLNode.avl_transform_and_validate(node=node.right)
+        node.left = AVLNode.avl_transform_and_validate(node=node.left) if node.left else node.left
+        node.right = (
+            AVLNode.avl_transform_and_validate(node=node.right) if node.right else node.right
+        )
         balance = node.balance()
 
         order = list(node.dfs_in_order_traverse())
