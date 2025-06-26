@@ -190,7 +190,7 @@ class BSTNode:
         return root
 
     @staticmethod
-    def insert(root: BSTNode, key: int) -> tuple[BSTNode, BSTNode]:
+    def insert(root: BSTNode, key: int) -> BSTNode:
         """Insert a new key into the binary search tree."""
         node: BSTNode | None = root
         parent: BSTNode | None = None
