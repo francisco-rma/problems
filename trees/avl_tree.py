@@ -262,30 +262,23 @@ class AVLNode:
             parent.left = AVLNode(key)
         elif key > parent.val:
             parent.right = AVLNode(key)
-        AVLNode.update_all_stats(root)
+
         return root
 
     @staticmethod
     def insert(root: AVLNode, key: int) -> AVLNode:
         """Insert a new key into the AVL tree."""
-        node, parent = root.binary_search(target=key)
+        if not root:
+            return None
 
-        if node and key == node.val:
+        if key == root.val:
             return root
 
-        # root.length += 1
-
-        if key < parent.val:
-            parent.left = AVLNode(key)
-        elif key > parent.val:
-            parent.right = AVLNode(key)
-
-        root = AVLNode.avl_transform(node=root)
-        # parent = AVLNode.avl_transform(node=parent)
+        _, root = AVLNode._recursive_insert(root=root, key=key)
         return root
 
     @staticmethod
-    def rinsert(root: AVLNode, key: int) -> tuple[bool, AVLNode | None]:
+    def _recursive_insert(root: AVLNode, key: int) -> tuple[bool, AVLNode | None]:
         """Recursively insert a new key into the AVL tree."""
         if not root:
             return False, root
@@ -304,9 +297,9 @@ class AVLNode:
         result_right = False
 
         if root.left and key < root.val:
-            result_left, root.left = AVLNode.rinsert(root=root.left, key=key)
+            result_left, root.left = AVLNode._recursive_insert(root=root.left, key=key)
         if root.right and key > root.val:
-            result_right, root.right = AVLNode.rinsert(root=root.right, key=key)
+            result_right, root.right = AVLNode._recursive_insert(root=root.right, key=key)
 
         if result_left or result_right:
             root = AVLNode.single_avl_transform(node=root)
@@ -395,13 +388,13 @@ class AVLNode:
             else:
                 return None
 
-        _, root = AVLNode.rdelete(root=root, key=key)
+        _, root = AVLNode._recursive_delete(root=root, key=key)
         root = AVLNode.single_avl_transform(node=root)
 
         return root
 
     @staticmethod
-    def rdelete(root: AVLNode, key: int) -> tuple[bool, AVLNode | None]:
+    def _recursive_delete(root: AVLNode, key: int) -> tuple[bool, AVLNode | None]:
         """Delete a key from the AVL tree."""
         if not root:
             return False, root
@@ -482,7 +475,7 @@ class AVLNode:
 
         if root.val > key:
             result_left, root.left = (
-                AVLNode.rdelete(root=root.left, key=key) if root.left else (False, None)
+                AVLNode._recursive_delete(root=root.left, key=key) if root.left else (False, None)
             )
             if result_left:
                 root = AVLNode.single_avl_transform(node=root)
@@ -490,7 +483,7 @@ class AVLNode:
 
         if root.val < key:
             result_right, root.right = (
-                AVLNode.rdelete(root=root.right, key=key) if root.right else (False, None)
+                AVLNode._recursive_delete(root=root.right, key=key) if root.right else (False, None)
             )
             if result_right:
                 root = AVLNode.single_avl_transform(node=root)

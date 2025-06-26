@@ -114,7 +114,7 @@ from binary_search_tree import BSTNode
 from valid_bst import isValidBST
 
 
-N = 1 * 10**6
+N = 1 * 10**5
 
 
 def is_sorted(arr):
@@ -173,7 +173,7 @@ def avl_bst_benchmark():
     # Insert
     t0 = time.time()
     for v in values:
-        _, root = AVLNode.rinsert(root=root, key=v)
+        root = AVLNode.insert(root=root, key=v)
     t1 = time.time()
     print(f"AVL insert {N} values: {t1-t0:.4f}s")
 

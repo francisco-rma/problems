@@ -238,7 +238,7 @@ def test_recursive_insertion():
         print(f"Insertion target: {insertion_target}")
         print(f"Before: \n{my_tree}")
         start = time.time()
-        inserted, my_tree = AVLNode.rinsert(root=my_tree, key=insertion_target)
+        inserted, my_tree = AVLNode._recursive_insert(root=my_tree, key=insertion_target)
         print(f"duration: {time.time()-start} - length: {my_tree.length}")
         print(f"inserted: {inserted}")
         print(f"After: \n{my_tree}")
