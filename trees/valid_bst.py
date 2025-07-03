@@ -1,7 +1,7 @@
 from __future__ import annotations
 from collections import deque
 from typing import Optional
-from avl_tree import AVLNode
+from trees.avl_tree import AVLNode
 
 
 class TreeNode:
