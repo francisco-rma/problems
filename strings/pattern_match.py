@@ -3,6 +3,8 @@ def wordsPatternsMatch(words, patterns):
         i, j = 0, 0
 
         for char in word:
+            if j >= len(pattern):
+                break
             check = char == pattern[j] or pattern[j] == "."
 
             if check:
@@ -32,8 +34,8 @@ def wordsPatternsMatch(words, patterns):
     return result
 
 
-words = ["grape", "banana", "melon", "apple"]
-patterns = ["a..le", ".anana", "x..", "..ape", "m.lon"]
+words = ["grape", "banana", "melon", "apple", "orange", "expensive"]
+patterns = ["a..le", ".anana", "x..", "..ape", "m.lon", "ex.ensive"]
 
 
 result = wordsPatternsMatch(words=words, patterns=patterns)
