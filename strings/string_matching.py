@@ -15,8 +15,8 @@ def naive_string_match(text: str, pattern: str) -> list[int]:
         if text[s : s + m] == pattern:
             result.append(s)
             s += m
-            continue
-        s += 1
+        else:
+            s += 1
     return result
 
 
