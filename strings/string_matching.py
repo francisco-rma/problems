@@ -1,29 +1,23 @@
 from collections import defaultdict
-from typing import Optional
 import re
 
 
-def naive_string_match(source: str, pattern: str) -> tuple[bool, Optional[int]]:
+def naive_string_match(text: str, pattern: str) -> list[int]:
     """
     Check if the source string matches the pattern exactly.
     """
-    i, j = 0, 0
-
-    for idx, char in enumerate(source):
-        if j >= len(pattern):
-            break
-
-        check = char == pattern[j]
-
-        if check:
-            j += 1
-        else:
-            i = idx + 1
-            j = 0
-
-    result = j >= len(pattern)
-
-    return result, i
+    if len(pattern) == 0:
+        return []
+    n, m = len(text), len(pattern)
+    result: list[int] = []
+    s = 0
+    while s <= (n - m):
+        if text[s : s + m] == pattern:
+            result.append(s)
+            s += m
+            continue
+        s += 1
+    return result
 
 
 def extract_sample(
@@ -42,10 +36,11 @@ result = defaultdict(set)
 for pattern in patterns:
     result[pattern]
     for word in words:
-        is_match, offset = naive_string_match(source=word, pattern=pattern)
-
+        results = naive_string_match(text=word, pattern=pattern)
+        is_match = len(results) > 0
         if is_match:
-            assert word[offset : offset + len(pattern)] == pattern
+            for offset in results:
+                assert word[offset : offset + len(pattern)] == pattern
             result[pattern].add(word)
 
 for pattern, matches in result.items():
