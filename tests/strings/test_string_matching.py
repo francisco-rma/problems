@@ -23,7 +23,7 @@ def test_naive_string_match_multiple():
     pattern = "abc"
     result = naive_string_match(text, pattern)
     print(result)
-    assert result == [0, 3, 6]  # Only first non-overlapping match due to break
+    assert result == [0, 3, 6]
 
 
 def test_naive_string_match_empty_pattern():
