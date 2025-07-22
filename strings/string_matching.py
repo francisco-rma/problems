@@ -1,5 +1,17 @@
 from collections import defaultdict
 import re
+import random
+
+
+def random_string(size: int, seed: int = None) -> str:
+    """
+    Generate a random string of given size. Optionally seedable for reproducibility.
+    """
+    import string
+
+    rng = random.Random(seed)
+    alphabet = string.ascii_lowercase + string.digits
+    return "".join(rng.choices(alphabet, k=size))
 
 
 def naive_string_match(text: str, pattern: str) -> list[int]:
@@ -80,3 +92,13 @@ def ex1():
     text = "000010001010001"
     result = naive_string_match(text, pattern)
     print(f"Pattern '{pattern}' found at positions: {result}")
+
+
+source = random_string(10000)
+pattern = random_string(2)
+
+print(f"Source: {source}")
+print(f"Pattern: {pattern}")
+
+result = naive_string_match(source, pattern)
+print(f"Pattern found at positions: {result}")
