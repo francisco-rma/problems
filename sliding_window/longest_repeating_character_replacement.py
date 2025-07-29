@@ -1,36 +1,37 @@
-from string import ascii_uppercase
-
-
-def char_count(src: str):
-    count = {char: 0 for char in ascii_uppercase}
-    for _, value in enumerate(src):
-        if value in count:
-            count[value] += 1
-        else:
-            count[value] = 1
-    return count
+from collections import Counter
 
 
 def characterReplacement(s: str, k: int) -> int:
     result = 0
     i, j = 0, 0
+    charCount = Counter(s[i : j + 1])
+    max_frequency = charCount[s[i]]
 
     while j < len(s):
-        charCount = char_count(s[i : j + 1])
-        max_char = max(ascii_uppercase, key=charCount.get)
+        print(charCount)
         windowlen = j - i + 1
-        swaps = windowlen - charCount[max_char]
+        swaps = windowlen - max_frequency
         if swaps <= k:
             j += 1
+            if j >= len(s):
+                result = max(result, j - i)
+                break
+            if s[j] in charCount:
+                charCount[s[j]] += 1
+            else:
+                charCount[s[j]] = 1
+            max_frequency = max(max_frequency, charCount[s[j]])
             result = max(result, j - i)
         else:
+            if s[i] in charCount:
+                charCount[s[i]] -= 1
             i += 1
 
     return result
 
 
-samples = ["AAABABB"]
-k = 1
+samples = ["ABAB"]
+k = 2
 
 for sample in samples:
     result = characterReplacement(s=sample, k=k)
