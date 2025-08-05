@@ -32,15 +32,6 @@ def naive_string_match(text: str, pattern: str) -> list[int]:
     return result
 
 
-def horner_rule(text: str, idx: int) -> int:
-    if idx < 0 or idx >= len(text):
-        return 0
-    ord_val = ord(text[idx])
-    hr = horner_rule(text, idx - 1)
-    exponent = len(text) - idx - 1
-    return (10**exponent) * ord_val + hr
-
-
 def extract_sample(
     path: str, split_pattern: str = r"[\s:;.,()\[\]{}\"'=<>!#@\\/\|\-\+\*\&%$^`~]+"
 ) -> list[str]:
