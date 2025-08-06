@@ -12,23 +12,21 @@ def test_horner_rule():
         control = sum([ord(sample[i]) * (10 ** (size - i - 1)) for i in range(size)])
         test = horner_rule(sample)
 
-        print(f"{control} - control")
-        print(f"{test} - test")
         assert test == control
-
         i += 1
 
 
-def test_rabin_karp():
-    attempts = 10000
+def test_rabin_karp(attempts: int = 10000, sample_size: int = 1000, target_size: int = 15):
     i = 0
-    size = 1000
-    target_size = 10
     while i < attempts:
-        target = random.choices(population=ascii_lowercase, k=target_size)
+        target = "".join(random.choices(population=ascii_lowercase, k=target_size))
         target_set = set(target)
-        sample = random.choices(
-            population=list(filter(lambda x: x not in target_set, ascii_lowercase)), k=size
+
+        sample = "".join(
+            random.choices(
+                population=list(filter(lambda x: x not in target_set, ascii_lowercase)),
+                k=sample_size,
+            )
         )
 
         control = bool(random.choices(population=[True, False], k=1)[0])
@@ -42,11 +40,7 @@ def test_rabin_karp():
                 case 2:
                     sample = sample[: len(sample) // 2] + target + sample[len(sample) // 2 :]
 
-        test = rabin_karp(s=target, t=sample)
+        test = rabin_karp(pattern=target, text=sample)
 
         assert test == control
-
-        print(f"{control} - control")
-        print(f"{test} - test")
-
         i += 1
