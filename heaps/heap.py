@@ -7,14 +7,9 @@ class Heap:
     def __init__(self, source: list[Number], order="min"):
         n = len(source)
         self.source = source
+        self.order = order
 
-        def sift_up(self, idx: Number):
-            pass
-
-        def sift_down(self, start_idx: Number, pos: Number):
-            pass
-
-        match order:
+        match self.order:
             case "max":
                 self.sift_up: Callable = self._siftup_max
                 self.sift_down: Callable = self._siftdown_max
@@ -186,3 +181,52 @@ class Heap:
     def heap_push(self, value: Number):
         self.source.append(value)
         return self.sift_down(start_idx=0, pos=len(self) - 1)
+
+    def is_valid(self) -> bool:
+        match self.order:
+            case "max":
+                return self.is_valid_max_heap(self.source)
+            case "min":
+                return self.is_valid_min_heap(self.source)
+
+    @staticmethod
+    def is_valid_min_heap(source: list[int]):
+        upper_bound = len(source)
+        idx = 0
+        node = source[idx]
+
+        while idx < upper_bound:
+            left_child_idx = 2 * idx + 1
+            right_child_idx = 2 * idx + 2
+
+            if left_child_idx < upper_bound:
+                break
+
+            assert source[left_child_idx] >= node
+
+            if right_child_idx < upper_bound:
+                break
+
+            assert source[right_child_idx] >= node
+        return True
+
+    @staticmethod
+    def is_valid_max_heap(source: list[int]):
+        upper_bound = len(source)
+        idx = 0
+        node = source[idx]
+
+        while idx < upper_bound:
+            left_child_idx = 2 * idx + 1
+            right_child_idx = 2 * idx + 2
+
+            if left_child_idx < upper_bound:
+                break
+
+            assert source[left_child_idx] <= node
+
+            if right_child_idx < upper_bound:
+                break
+
+            assert source[right_child_idx] <= node
+        return True
