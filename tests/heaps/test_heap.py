@@ -2,7 +2,7 @@ import random
 import time
 import numpy as np
 from heaps.heap import Heap
-from heaps.k_closest_points import kClosest
+from heaps.k_closest_points import k_closest
 from heaps.is_valid_heap import is_valid_max_heap, is_valid_min_heap
 
 POP_SIZE = 10**5
@@ -10,7 +10,6 @@ SAMPLE_COUNT = 10**4
 
 
 def test_valid_heap():
-    # Build a heap
     source: list[int | None] = [17, 9, 50, 23, 76, 5, 12, 30, 60]
     heap: Heap = Heap(source, order="min")
     assert heap is not None

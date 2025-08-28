@@ -1,10 +1,9 @@
 from __future__ import annotations
 from typing import Callable
-from numbers import Number
 
 
 class Heap:
-    def __init__(self, source: list[Number], order="min"):
+    def __init__(self, source, order="min"):
         n = len(source)
         self.source = source
         self.order = order
@@ -65,7 +64,7 @@ class Heap:
             result += line.center(max_width) + "\n"
         return result
 
-    def _siftdown_min(self, start_idx: Number, pos: Number) -> Number:
+    def _siftdown_min(self, start_idx: int, pos: int) -> int:
         siftee = self[pos]
 
         while pos > start_idx:
@@ -82,7 +81,7 @@ class Heap:
         self[pos] = siftee
         return pos
 
-    def _siftdown_max(self, start_idx: Number, pos: Number) -> Number:
+    def _siftdown_max(self, start_idx: int, pos: int) -> int:
         siftee = self[pos]
 
         while pos > start_idx:
@@ -156,7 +155,7 @@ class Heap:
         self[idx] = new_item
         self._siftdown_min(start_idx=start_idx, pos=idx)
 
-    def heap_pop(self) -> Number:
+    def heap_pop(self):
         leaf = self.source.pop()
 
         if self.source:
@@ -167,7 +166,7 @@ class Heap:
 
         return leaf
 
-    def heap_pop_early(self) -> Number:
+    def heap_pop_early(self):
         leaf = self.source.pop()
 
         if self.source:
@@ -178,7 +177,7 @@ class Heap:
 
         return leaf
 
-    def heap_push(self, value: Number):
+    def heap_push(self, value):
         self.source.append(value)
         return self.sift_down(start_idx=0, pos=len(self) - 1)
 
