@@ -182,11 +182,14 @@ class Heap:
         return self.sift_down(start_idx=0, pos=len(self) - 1)
 
     def is_valid(self) -> bool:
+        if not self.source or len(self.source) == 0:
+            return True
+
         match self.order:
             case "max":
-                return self.is_valid_max_heap(self.source)
+                return Heap.is_valid_max_heap(self.source)
             case "min":
-                return self.is_valid_min_heap(self.source)
+                return Heap.is_valid_min_heap(self.source)
 
     @staticmethod
     def is_valid_min_heap(source: list[int]):
@@ -194,19 +197,22 @@ class Heap:
         idx = 0
         node = source[idx]
 
-        while idx < upper_bound:
+        while idx < upper_bound // 2:
             left_child_idx = 2 * idx + 1
             right_child_idx = 2 * idx + 2
 
-            if left_child_idx < upper_bound:
+            if left_child_idx >= upper_bound:
                 break
 
             assert source[left_child_idx] >= node
 
-            if right_child_idx < upper_bound:
+            if right_child_idx >= upper_bound:
                 break
 
             assert source[right_child_idx] >= node
+
+            idx += 1
+
         return True
 
     @staticmethod
@@ -215,17 +221,20 @@ class Heap:
         idx = 0
         node = source[idx]
 
-        while idx < upper_bound:
+        while idx < upper_bound // 2:
             left_child_idx = 2 * idx + 1
             right_child_idx = 2 * idx + 2
 
-            if left_child_idx < upper_bound:
+            if left_child_idx >= upper_bound:
                 break
 
             assert source[left_child_idx] <= node
 
-            if right_child_idx < upper_bound:
+            if right_child_idx >= upper_bound:
                 break
 
             assert source[right_child_idx] <= node
+
+            idx += 1
+
         return True
