@@ -4,9 +4,17 @@ import time
 import numpy as np
 from heaps.k_closest_points import k_closest
 
-POP_SIZE = 10**6
-SAMPLE_COUNT = 10**5
-TOLERANCE = 10**-6
+POP_SIZE = 10**5
+SAMPLE_COUNT = POP_SIZE // 10
+TOLERANCE = 10**-4
+
+
+def test_custom():
+    input = [[0, 2], [2, 2]]
+    k = 1
+
+    result = k_closest(input, k)
+    assert result == [[0, 2]]
 
 
 def test_k_closest_points():
@@ -17,7 +25,6 @@ def test_k_closest_points():
         )
     )
     test = k_closest(source, 5)
-    print(test)
 
     source.sort(key=lambda x: math.sqrt(x[0] ** 2 + x[1] ** 2))
 

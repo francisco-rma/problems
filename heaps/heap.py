@@ -22,6 +22,15 @@ class Heap:
         for i in range(n // 2, -1, -1):
             self.sift_up(i)
 
+        if self.limit is not None and len(self.source) > self.limit:
+            result = []
+            i = 0
+            while i < self.limit:
+                result.append(self.heap_pop())
+                i += 1
+
+            self.source = result
+
     def __len__(self):
         return len(self.source)
 
