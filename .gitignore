@@ -16,3 +16,5 @@
 *.csv
 build/
 pipfile
+dsa_vault/
+.obsidian/

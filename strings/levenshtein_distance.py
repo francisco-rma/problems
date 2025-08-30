@@ -1,26 +1,6 @@
 import urllib.request
 import pandas as pd
 
-from utils import decorators
-
-
-def levenshtein_distance(p: str, q: str) -> int:
-    if len(p) == 0:
-        return len(q)
-
-    elif len(q) == 0:
-        return len(p)
-
-    elif p[0] == q[0]:
-        return levenshtein_distance(p[1:], q[1:])
-
-    else:
-        return 1 + min(
-            levenshtein_distance(p[1:], q),
-            levenshtein_distance(p, q[1:]),
-            levenshtein_distance(p[1:], q[1:]),
-        )
-
 
 def lev(p: str, q: str) -> int:
     m = len(p)
@@ -42,21 +22,11 @@ def lev(p: str, q: str) -> int:
             var1 = d[i - 1][j] + 1
             var2 = d[i][j - 1] + 1
             var3 = d[i - 1][j - 1] + substitution_cost
-
-            # print(f"\nDeletion: {var1}")
-            # print(f"Insertion: {var2}")
-            # print(f"Substitution: {var3}")
-
             d[i][j] = min(var1, var2, var3)
-            # print(f"Result: {d[i][j]}\n")
 
-    # print(p, "  ", q)
-    # for row in d:
-    #     print(row)
     return d[m][n]
 
 
-@decorators.print_runtime
 def random_words(size=100):
 
     path = "https://www.mit.edu/~ecprice/wordlist.10000"
@@ -82,3 +52,11 @@ def random_words(size=100):
 
     df: pd.DataFrame = pd.DataFrame(results)
     df.to_csv("results.csv")
+
+
+word1 = "dinitrophenylhydrazine"
+word2 = "acetylphenylhydrazine"
+
+result = lev(word1, word2)
+
+print(result)

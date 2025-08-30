@@ -3,17 +3,13 @@ from typing import Callable
 
 
 class Heap:
-    def __init__(self, source: list[int], order="min"):
+    def __init__(self, source, order="min", limit=None):
         n = len(source)
         self.source = source
+        self.order = order
+        self.limit = limit
 
-        def sift_up(self, idx: int):
-            pass
-
-        def sift_down(self, start_idx: int, pos: int):
-            pass
-
-        match order:
+        match self.order:
             case "max":
                 self.sift_up: Callable = self._siftup_max
                 self.sift_down: Callable = self._siftdown_max
@@ -25,6 +21,15 @@ class Heap:
             return
         for i in range(n // 2, -1, -1):
             self.sift_up(i)
+
+        if self.limit is not None and len(self.source) > self.limit:
+            result = []
+            i = 0
+            while i < self.limit:
+                result.append(self.heap_pop())
+                i += 1
+
+            self.source = result
 
     def __len__(self):
         return len(self.source)
@@ -160,7 +165,7 @@ class Heap:
         self[idx] = new_item
         self._siftdown_min(start_idx=start_idx, pos=idx)
 
-    def heap_pop(self) -> int:
+    def heap_pop(self):
         leaf = self.source.pop()
 
         if self.source:
@@ -171,7 +176,7 @@ class Heap:
 
         return leaf
 
-    def heap_pop_early(self) -> int:
+    def heap_pop_early(self):
         leaf = self.source.pop()
 
         if self.source:
@@ -182,6 +187,68 @@ class Heap:
 
         return leaf
 
-    def heap_push(self, value: int):
+    def heap_push(self, value):
+        if self.limit is not None:
+            assert len(self.source) <= self.limit
+            if len(self.source) == self.limit:
+                self.source.pop()
         self.source.append(value)
         return self.sift_down(start_idx=0, pos=len(self) - 1)
+
+    def is_valid(self) -> bool:
+        if not self.source or len(self.source) == 0:
+            return True
+
+        match self.order:
+            case "max":
+                return Heap.is_valid_max_heap(self.source)
+            case "min":
+                return Heap.is_valid_min_heap(self.source)
+
+    @staticmethod
+    def is_valid_min_heap(source: list[int]):
+        upper_bound = len(source)
+        idx = 0
+        node = source[idx]
+
+        while idx < upper_bound // 2:
+            left_child_idx = 2 * idx + 1
+            right_child_idx = 2 * idx + 2
+
+            if left_child_idx >= upper_bound:
+                break
+
+            assert source[left_child_idx] >= node
+
+            if right_child_idx >= upper_bound:
+                break
+
+            assert source[right_child_idx] >= node
+
+            idx += 1
+
+        return True
+
+    @staticmethod
+    def is_valid_max_heap(source: list[int]):
+        upper_bound = len(source)
+        idx = 0
+        node = source[idx]
+
+        while idx < upper_bound // 2:
+            left_child_idx = 2 * idx + 1
+            right_child_idx = 2 * idx + 2
+
+            if left_child_idx >= upper_bound:
+                break
+
+            assert source[left_child_idx] <= node
+
+            if right_child_idx >= upper_bound:
+                break
+
+            assert source[right_child_idx] <= node
+
+            idx += 1
+
+        return True

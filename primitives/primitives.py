@@ -1,3 +1,8 @@
+from array import array
+from functools import reduce
+import operator
+
+
 def get_leftmost_bit(x: int) -> int:
     count = 0
     while x > 0:
@@ -138,5 +143,21 @@ def is_power_of_two(x):
 #     assert reference_result == bit_erasure_result
 #     assert reference_result == bit_grouping_result
 
+# =======================================================
+# =======================================================
+
+# =======================================================
+# XOR tricks
+# =======================================================
+
+# Difference trick
+control_range = array("I", range(2))
+test_range = array("I", range(4))
+
+print("control_range: ", control_range)
+print("test_range: ", test_range)
+
+result = reduce(operator.xor, test_range) ^ reduce(operator.xor, control_range)
+print(result)
 # =======================================================
 # =======================================================
