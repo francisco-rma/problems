@@ -69,6 +69,22 @@ def test_heap_push():
         i += 1
 
 
+def test_heap_push_limited():
+    limit = 5
+    source = random.sample(population=range(POP_SIZE), k=SAMPLE_COUNT)
+    heap = Heap(source=[], order="min", limit=limit)
+
+    assert heap.limit is not None and heap.limit == limit
+
+    i = 0
+    while source:
+        item = source.pop()
+        idx = heap.heap_push(item)
+        assert heap[idx] == item
+        assert len(heap) <= heap.limit
+        i += 1
+
+
 def test_min_stream():
     sample = random.sample(population=range(POP_SIZE), k=SAMPLE_COUNT)
     heap = Heap(source=sample.copy(), order="min")

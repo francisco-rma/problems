@@ -3,10 +3,11 @@ from typing import Callable
 
 
 class Heap:
-    def __init__(self, source, order="min"):
+    def __init__(self, source, order="min", limit=None):
         n = len(source)
         self.source = source
         self.order = order
+        self.limit = limit
 
         match self.order:
             case "max":
@@ -178,6 +179,10 @@ class Heap:
         return leaf
 
     def heap_push(self, value):
+        if self.limit is not None:
+            assert len(self.source) <= self.limit
+            if len(self.source) == self.limit:
+                self.source.pop()
         self.source.append(value)
         return self.sift_down(start_idx=0, pos=len(self) - 1)
 
