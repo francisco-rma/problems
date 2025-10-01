@@ -90,10 +90,10 @@ class TreeNode:
 
         return root
 
-    def right_side_view(self) -> list[int]:
-        root: Optional[TreeNode] = self
+    @staticmethod
+    def right_side_view(root: Optional[TreeNode]) -> list[int]:
         if not root:
-            return
+            return []
 
         queue = deque([(root.right, 2), (root.left, 2)])
         result = [root.val]
@@ -129,31 +129,8 @@ class TreeNode:
         return result
 
 
-def right_side_traverse(root: Optional[TreeNode]):
-    if not root:
-        return []
-
-    if not root.right and not root.left:
-        return [root.val]
-
-    result = []
-    result_right = []
-    if root.right:
-        assert type(root.right) == TreeNode
-        result_right = right_side_traverse(root.right)
-
-    result += result_right
-
-    result_left = []
-    if root.left and len(result_right) == 1:
-        assert type(root.left) == TreeNode
-        result_left = right_side_traverse(root.left)
-
-    return [root.val] + result_right + result_left
-
-
 root: TreeNode = TreeNode.lst_from_list(values=[6, 1, None, None, 3, 2, 5, None, None, 4])
 print(root)
 
-result = root.right_side_view()
+result = TreeNode.right_side_view(root)
 print(result)
