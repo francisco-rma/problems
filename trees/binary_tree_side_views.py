@@ -1,0 +1,159 @@
+from __future__ import annotations
+from collections import deque
+import math
+from typing import Optional
+
+
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+    def __repr__(self):
+        # Pretty print the tree with connections
+        def display(node, prefix="", is_left=True) -> str:
+            if not node:
+                return ""
+            result = ""
+            if node.right:
+                new_prefix = prefix + ("│   " if is_left else "    ")
+                result += display(node.right, new_prefix, False)
+            result += prefix
+            if prefix:
+                result += "└── " if is_left else "┌── "
+            result += f"{node.val}\n"
+            if node.left:
+                new_prefix = prefix + ("    " if is_left else "│   ")
+                result += display(node.left, new_prefix, True)
+            return result
+
+        return display(self).rstrip()
+
+    @staticmethod
+    def lst_from_list(values: list[int | None]) -> TreeNode | None:
+        if not values:
+            return None
+        queue = deque(values)
+        value = queue.popleft()
+        root = TreeNode(value)
+        nodes: deque[TreeNode] = deque()
+
+        nodes.append(root)
+
+        while queue:
+            cur_node = nodes.popleft()
+
+            left_val = queue.popleft()
+            if left_val:
+                cur_node.left = TreeNode(left_val)
+                nodes.append(cur_node.left)
+
+            if queue:
+                right_val = queue.popleft()
+                if right_val:
+                    cur_node.right = TreeNode(right_val)
+                    nodes.append(cur_node.right)
+
+        return root
+
+    @staticmethod
+    def rst_from_list(values: list[int | None]) -> TreeNode | None:
+        if not values:
+            return None
+        queue = deque(values)
+        value = queue.popleft()
+
+        while queue and value is None:
+            value = queue.popleft()
+
+        if value is None:
+            return None
+        root: TreeNode = TreeNode(value)
+        nodes: deque[TreeNode] = deque()
+
+        nodes.append(root)
+
+        while queue:
+            cur_node = nodes.popleft()
+
+            right_val = queue.popleft()
+            if right_val:
+                cur_node.right = TreeNode(right_val)
+                nodes.append(cur_node.right)
+
+            if queue:
+                left_val = queue.popleft()
+                if left_val:
+                    cur_node.left = TreeNode(left_val)
+                    nodes.append(cur_node.left)
+
+        return root
+
+    def right_side_view(self) -> list[int]:
+        root: Optional[TreeNode] = self
+        if not root:
+            return
+
+        queue = deque([(root.right, 2), (root.left, 2)])
+        result = [root.val]
+
+        traversed_levels = set([1])
+
+        i = 0
+        while queue:
+            i += 1
+            node, level = queue.popleft()
+            if not node:
+                continue
+
+            assert type(node) == TreeNode
+            assert type(level) == int
+
+            if node.right:
+                queue.append((node.right, level + 1))
+            if node.left:
+                queue.append((node.left, level + 1))
+
+            if level not in traversed_levels:
+                result.append(node.val)
+                traversed_levels.add(level)
+
+        return result
+
+    def rightSideView(self, root: Optional[TreeNode]) -> list[int]:
+        if not root:
+            return []
+
+        result = root.right_side_view()
+        return result
+
+
+def right_side_traverse(root: Optional[TreeNode]):
+    if not root:
+        return []
+
+    if not root.right and not root.left:
+        return [root.val]
+
+    result = []
+    result_right = []
+    if root.right:
+        assert type(root.right) == TreeNode
+        result_right = right_side_traverse(root.right)
+
+    result += result_right
+
+    result_left = []
+    if root.left and len(result_right) == 1:
+        assert type(root.left) == TreeNode
+        result_left = right_side_traverse(root.left)
+
+    return [root.val] + result_right + result_left
+
+
+root: TreeNode = TreeNode.lst_from_list(values=[6, 1, None, None, 3, 2, 5, None, None, 4])
+print(root)
+
+result = root.right_side_view()
+print(result)
