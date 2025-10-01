@@ -121,6 +121,37 @@ class TreeNode:
 
         return result
 
+    @staticmethod
+    def left_side_view(root: Optional[TreeNode]) -> list[int]:
+        if not root:
+            return []
+
+        queue = deque([(root.left, 2), (root.right, 2)])
+        result = [root.val]
+
+        traversed_levels = set([1])
+
+        i = 0
+        while queue:
+            i += 1
+            node, level = queue.popleft()
+            if not node:
+                continue
+
+            assert type(node) == TreeNode
+            assert type(level) == int
+
+            if node.left:
+                queue.append((node.left, level + 1))
+            if node.right:
+                queue.append((node.right, level + 1))
+
+            if level not in traversed_levels:
+                result.append(node.val)
+                traversed_levels.add(level)
+
+        return result
+
     def rightSideView(self, root: Optional[TreeNode]) -> list[int]:
         if not root:
             return []
@@ -129,8 +160,22 @@ class TreeNode:
         return result
 
 
-root: TreeNode = TreeNode.lst_from_list(values=[6, 1, None, None, 3, 2, 5, None, None, 4])
-print(root)
+if __name__ == "__main__":
+    samples = [
+        [1, 2, 3, None, 5, None, 4],
+        [1, 2, 3, 4, None, None, None, 5],
+        [1, None, 3],
+        [],
+        [None],
+        [1, 2, 3],
+        [1, 2, 3, 4, 5, 6, 7],
+    ]
 
-result = TreeNode.right_side_view(root)
-print(result)
+    for sample in samples:
+        root: TreeNode = TreeNode.lst_from_list(values=sample)
+        print(f"\nRoot:\n{root}")
+
+        result_right = TreeNode.right_side_view(root)
+        print("result_right: ", result_right)
+        result_left = TreeNode.left_side_view(root)
+        print("result_left: ", result_left)
