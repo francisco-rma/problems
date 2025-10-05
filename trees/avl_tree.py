@@ -26,7 +26,7 @@ class AVLNode:
         if prefix:
             result += "└── " if is_left else "┌── "
 
-        balance = node.balance()
+        balance = node.get_balance()
         if balance == -1:
             result += f"{YELLOW}"
         elif balance == 0:
@@ -111,7 +111,7 @@ class AVLNode:
         if self.right:
             yield from self.right.dfs_in_order_traverse()
 
-    def balance(self):
+    def get_balance(self):
         left_height = self.left.height if self.left else -1
         right_height = self.right.height if self.right else -1
         return right_height - left_height
@@ -526,7 +526,7 @@ class AVLNode:
 
         AVLNode.update_single_stats(node=node)
 
-        balance = node.balance()
+        balance = node.get_balance()
 
         # balanced node
         if -1 <= balance <= 1:
@@ -538,7 +538,7 @@ class AVLNode:
         # left heavy node
         elif balance < -1:
             assert node.left is not None
-            left_balance = node.left.balance()
+            left_balance = node.left.get_balance()
 
             # left heavy or balanced left child
             if left_balance <= 0:
@@ -555,7 +555,7 @@ class AVLNode:
         # right heavy node
         elif balance > 1:
             assert node.right is not None
-            right_balance = node.right.balance()
+            right_balance = node.right.get_balance()
 
             # right heavy or balanced right child
             if right_balance >= 0:
@@ -579,7 +579,7 @@ class AVLNode:
             return None
 
         AVLNode.update_single_stats(node=node)
-        balance = node.balance()
+        balance = node.get_balance()
 
         # balanced node
         if -1 <= balance <= 1:
@@ -587,7 +587,7 @@ class AVLNode:
         # left heavy node
         elif balance < -1:
             assert node.left is not None
-            left_balance = node.left.balance()
+            left_balance = node.left.get_balance()
             # left heavy or balanced left child
             if left_balance <= 0:
                 node = AVLNode._right_rotate(node)
@@ -603,7 +603,7 @@ class AVLNode:
         # right heavy node
         elif balance > 1:
             assert node.right is not None
-            right_balance = node.right.balance()
+            right_balance = node.right.get_balance()
             # right heavy or balanced right child
             if right_balance >= 0:
                 node = AVLNode._left_rotate(node)
@@ -627,7 +627,7 @@ class AVLNode:
         node.right = (
             AVLNode.avl_transform_and_validate(node=node.right) if node.right else node.right
         )
-        balance = node.balance()
+        balance = node.get_balance()
 
         order = list(node.dfs_in_order_traverse())
 
@@ -638,7 +638,7 @@ class AVLNode:
         # left heavy node
         elif balance < -1:
             assert node.left is not None
-            left_balance = node.left.balance()
+            left_balance = node.left.get_balance()
 
             # left heavy or balanced left child
             if left_balance <= 0:
@@ -651,7 +651,7 @@ class AVLNode:
         # right heavy node
         elif balance > 1:
             assert node.right is not None
-            right_balance = node.right.balance()
+            right_balance = node.right.get_balance()
 
             # right heavy or balanced right child
             if right_balance >= 0:
