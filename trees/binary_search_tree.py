@@ -211,3 +211,55 @@ class BSTNode:
         elif key > parent.val:
             parent.right = BSTNode(key)
         return root
+
+
+if __name__ == "__main__":
+    import random
+    import time
+    import cProfile
+
+    N = 8 * 10**2
+
+    def bst_benchmark():
+        print("\n[ BST BENCHMARK ]")
+        population = range(1, N * 10)
+
+        # values = random.sample(population=population, k=N)
+        values = list(range(N))
+        root = BSTNode(0)
+
+        # Insert
+        t0 = time.time()
+        for v in values:
+            root = BSTNode.insert(root=root, key=v)
+        t1 = time.time()
+        print(f"BST insert {N} values: {t1-t0:.4f}s")
+
+        # In-order traversal
+        def in_order(node: BSTNode):
+            if not node:
+                return []
+            return in_order(node.left) + [node.val] + in_order(node.right)
+
+        t0 = time.time()
+        order = in_order(root)
+        t1 = time.time()
+        print(f"BST in-order traversal: {t1-t0:.4f}s, sorted: {order == sorted(set(order))}")
+
+        # Search
+        t0 = time.time()
+        for v in values:
+            _, _ = root.binary_search(target=v)
+        t1 = time.time()
+        print(f"BST full search: {t1-t0:.4f}s")
+
+        # Delete
+        random.shuffle(values)
+        t0 = time.time()
+        for v in values:
+            root = BSTNode.delete(root, v)
+        t1 = time.time()
+        print(f"BST delete {N} values: {t1-t0:.4f}s")
+        print("BST benchmark complete.\n")
+
+    cProfile.run("bst_benchmark()")

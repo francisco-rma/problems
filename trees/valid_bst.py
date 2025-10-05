@@ -1,7 +1,6 @@
 from __future__ import annotations
 from collections import deque
 from typing import Optional
-from trees.avl_tree import AVLNode
 
 
 class TreeNode:
@@ -64,7 +63,7 @@ class TreeNode:
         return root
 
 
-def validation_walk(node: TreeNode | AVLNode, min: float, max: float) -> bool:
+def validation_walk(node: TreeNode, min: float, max: float) -> bool:
     if not node:
         return True
 
@@ -77,7 +76,7 @@ def validation_walk(node: TreeNode | AVLNode, min: float, max: float) -> bool:
     return left_valid and right_valid
 
 
-def isValidBST(root: Optional[TreeNode | AVLNode]) -> bool:
+def isValidBST(root: Optional[TreeNode]) -> bool:
     if not root or not root.val:
         return True
     return validation_walk(root, float("-inf"), float("inf"))
