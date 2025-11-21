@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from collections import deque
 from typing import Optional
 
@@ -61,7 +62,9 @@ class AVLNode:
 
         return root
 
-    def __init__(self, val: int, left: Optional[AVLNode] = None, right: Optional[AVLNode] = None):
+    def __init__(
+        self, val: int, left: Optional[AVLNode] = None, right: Optional[AVLNode] = None
+    ):
         """Initialize an AVL tree node."""
         self.val = val
         self.left: Optional[AVLNode] = left
@@ -198,7 +201,9 @@ class AVLNode:
         if not node:
             return (-1, 0)
 
-        left_height, left_length = (node.left.height, node.left.length) if node.left else (-1, 0)
+        left_height, left_length = (
+            (node.left.height, node.left.length) if node.left else (-1, 0)
+        )
 
         right_height, right_length = (
             (node.right.height, node.right.length) if node.right else (-1, 0)
@@ -247,7 +252,9 @@ class AVLNode:
         return root
 
     @staticmethod
-    def _recursive_insert(root: AVLNode | None, key: int) -> tuple[bool, AVLNode | None]:
+    def _recursive_insert(
+        root: AVLNode | None, key: int
+    ) -> tuple[bool, AVLNode | None]:
         """Recursively insert a new key into the AVL tree."""
         if not root:
             return False, root
@@ -270,7 +277,9 @@ class AVLNode:
         if root.left and key < root.val:
             result_left, root.left = AVLNode._recursive_insert(root=root.left, key=key)
         if root.right and key > root.val:
-            result_right, root.right = AVLNode._recursive_insert(root=root.right, key=key)
+            result_right, root.right = AVLNode._recursive_insert(
+                root=root.right, key=key
+            )
 
         if result_left or result_right:
             result = AVLNode.single_avl_transform(node=root)
@@ -296,7 +305,9 @@ class AVLNode:
             max_subnode, max_subnode_parent = node.left.max()
             if max_subnode_parent:
                 max_subnode_parent.right = max_subnode.left
-                max_subnode_parent = AVLNode.single_avl_transform(node=max_subnode_parent)
+                max_subnode_parent = AVLNode.single_avl_transform(
+                    node=max_subnode_parent
+                )
 
             if max_subnode is not node.left:
                 max_subnode.left = node.left
@@ -333,7 +344,11 @@ class AVLNode:
         )
 
         if not parent or not new_node:
-            return (max_subnode_parent, max_subnode, AVLNode.single_avl_transform(node=new_node))
+            return (
+                max_subnode_parent,
+                max_subnode,
+                AVLNode.single_avl_transform(node=new_node),
+            )
 
         if node.height > new_node.height:
             node.right = new_node
@@ -353,7 +368,9 @@ class AVLNode:
             return None
         if root.val == key:
             if root.left:
-                _, new_root, temp_left = AVLNode.retrieve_max(node=root.left, parent=None, key=key)
+                _, new_root, temp_left = AVLNode.retrieve_max(
+                    node=root.left, parent=None, key=key
+                )
                 temp_right = root.right
 
                 root.left = None
@@ -376,7 +393,9 @@ class AVLNode:
         return root
 
     @staticmethod
-    def _recursive_delete(root: AVLNode | None, key: int) -> tuple[bool, AVLNode | None]:
+    def _recursive_delete(
+        root: AVLNode | None, key: int
+    ) -> tuple[bool, AVLNode | None]:
         """Delete a key from the AVL tree."""
         if not root:
             return False, root
@@ -467,7 +486,9 @@ class AVLNode:
 
         if root.val > key:
             result_left, root.left = (
-                AVLNode._recursive_delete(root=root.left, key=key) if root.left else (False, None)
+                AVLNode._recursive_delete(root=root.left, key=key)
+                if root.left
+                else (False, None)
             )
             if result_left:
                 root = AVLNode.single_avl_transform(node=root)
@@ -475,7 +496,9 @@ class AVLNode:
 
         if root.val < key:
             result_right, root.right = (
-                AVLNode._recursive_delete(root=root.right, key=key) if root.right else (False, None)
+                AVLNode._recursive_delete(root=root.right, key=key)
+                if root.right
+                else (False, None)
             )
             if result_right:
                 root = AVLNode.single_avl_transform(node=root)
@@ -623,9 +646,15 @@ class AVLNode:
         if not node:
             return None
 
-        node.left = AVLNode.avl_transform_and_validate(node=node.left) if node.left else node.left
+        node.left = (
+            AVLNode.avl_transform_and_validate(node=node.left)
+            if node.left
+            else node.left
+        )
         node.right = (
-            AVLNode.avl_transform_and_validate(node=node.right) if node.right else node.right
+            AVLNode.avl_transform_and_validate(node=node.right)
+            if node.right
+            else node.right
         )
         balance = node.get_balance()
 
@@ -683,15 +712,15 @@ class AVLNode:
 
 
 if __name__ == "__main__":
+    import cProfile
+    import random
     import time
     from collections import deque
-    import random
-    import cProfile
 
     from binary_search_tree import BSTNode
     from valid_bst import isValidBST
 
-    N = 8 * 10**2
+    N = 8 * 10**4
 
     def is_sorted(arr):
         return all(arr[i] <= arr[i + 1] for i in range(len(arr) - 1))
@@ -700,8 +729,8 @@ if __name__ == "__main__":
         print("\n[ BST BENCHMARK ]")
         population = range(1, N * 10)
 
-        # values = random.sample(population=population, k=N)
-        values = list(range(N))
+        values = random.sample(population=population, k=N)
+        # values = list(range(N))
         root = BSTNode(0)
 
         # Insert
@@ -709,7 +738,7 @@ if __name__ == "__main__":
         for v in values:
             root = BSTNode.insert(root=root, key=v)
         t1 = time.time()
-        print(f"BST insert {N} values: {t1-t0:.4f}s")
+        print(f"BST insert {N} values: {t1 - t0:.4f}s")
 
         # In-order traversal
         def in_order(node: BSTNode):
@@ -720,14 +749,16 @@ if __name__ == "__main__":
         t0 = time.time()
         order = in_order(root)
         t1 = time.time()
-        print(f"BST in-order traversal: {t1-t0:.4f}s, sorted: {order == sorted(set(order))}")
+        print(
+            f"BST in-order traversal: {t1 - t0:.4f}s, sorted: {order == sorted(set(order))}"
+        )
 
         # Search
         t0 = time.time()
         for v in values:
             _, _ = root.binary_search(target=v)
         t1 = time.time()
-        print(f"BST full search: {t1-t0:.4f}s")
+        print(f"BST full search: {t1 - t0:.4f}s")
 
         # Delete
         random.shuffle(values)
@@ -735,7 +766,7 @@ if __name__ == "__main__":
         for v in values:
             root = BSTNode.delete(root, v)
         t1 = time.time()
-        print(f"BST delete {N} values: {t1-t0:.4f}s")
+        print(f"BST delete {N} values: {t1 - t0:.4f}s")
         print("BST benchmark complete.\n")
 
     def avl_bst_benchmark():
@@ -751,7 +782,7 @@ if __name__ == "__main__":
         for v in values:
             root = AVLNode.insert(root=root, key=v)
         t1 = time.time()
-        print(f"AVL insert {N} values: {t1-t0:.4f}s")
+        print(f"AVL insert {N} values: {t1 - t0:.4f}s")
 
         # In-order traversal
         def in_order(node: AVLNode):
@@ -762,14 +793,16 @@ if __name__ == "__main__":
         t0 = time.time()
         order = in_order(root)
         t1 = time.time()
-        print(f"AVL in-order traversal: {t1-t0:.4f}s, sorted: {order == sorted(set(order))}")
+        print(
+            f"AVL in-order traversal: {t1 - t0:.4f}s, sorted: {order == sorted(set(order))}"
+        )
 
         # Search
         t0 = time.time()
         for v in values:
             _, _ = root.binary_search(target=v)
         t1 = time.time()
-        print(f"AVL full search: {t1-t0:.4f}s")
+        print(f"AVL full search: {t1 - t0:.4f}s")
 
         # Delete
         random.shuffle(values)
@@ -777,7 +810,7 @@ if __name__ == "__main__":
         for v in values:
             root = AVLNode.delete(root, v)
         t1 = time.time()
-        print(f"AVL delete {N} values: {t1-t0:.4f}s")
+        print(f"AVL delete {N} values: {t1 - t0:.4f}s")
         print("AVL benchmark complete.\n")
 
     def generate_samples() -> tuple[AVLNode, AVLNode]:
@@ -822,5 +855,5 @@ if __name__ == "__main__":
 
         return root, avl_root
 
-    # cProfile.run("bst_benchmark()")
+    cProfile.run("bst_benchmark()")
     cProfile.run("avl_bst_benchmark()")
