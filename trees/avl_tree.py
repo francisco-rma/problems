@@ -179,6 +179,26 @@ class AVLNode:
         result, _ = AVLNode.avl_check(node=self)
         return result
 
+    def to_list(self) -> list[int]:
+        if not self.val:
+            return []
+        result = [0] * self.length
+
+        lvl = 1
+        i = 0
+
+        for node, level in self.bfs_traverse():
+            if level != lvl:
+                lvl = level
+                i = 0
+            idx = 2 ** (level - 1) + i - 1
+            if not node or not node.val or idx >= self.length:
+                break
+            result[idx] = node.val
+            i += 1
+
+        return result
+
     @staticmethod
     def update_all_stats(node: AVLNode | None) -> tuple[int, int]:
         if not node:
@@ -720,7 +740,7 @@ if __name__ == "__main__":
     from binary_search_tree import BSTNode
     from valid_bst import isValidBST
 
-    N = 8 * 10**4
+    N = 2 * 10**1
 
     def is_sorted(arr):
         return all(arr[i] <= arr[i + 1] for i in range(len(arr) - 1))
@@ -855,5 +875,16 @@ if __name__ == "__main__":
 
         return root, avl_root
 
-    cProfile.run("bst_benchmark()")
-    cProfile.run("avl_bst_benchmark()")
+    # cProfile.run("bst_benchmark()")
+    # cProfile.run("avl_bst_benchmark()")
+
+    root, avl_root = generate_samples()
+
+    print(f"Type: {type(root)}\nLenght:{root.length}\n", root)
+    print(f"Type: {type(avl_root)}\nLenght:{avl_root.length}\n", avl_root)
+
+    print("\n" + "-" * 10 + "\n")
+
+    print("Standard bst array", [node.val for node, _ in root.bfs_traverse()])
+
+    print("AVL bst array", avl_root.to_list())
