@@ -1,7 +1,6 @@
 import math
 import random
-import time
-import numpy as np
+
 from heaps.k_closest_points import k_closest
 
 POP_SIZE = 10**5
