@@ -1,6 +1,6 @@
 import random
 
-from heaps.heap import Heap, MinHeap
+from heaps.heap import MaxHeap, MinHeap
 
 POP_SIZE = 10**5
 SAMPLE_COUNT = POP_SIZE // 10
@@ -16,7 +16,7 @@ def test_valid_heap():
 def test_max_heap():
     sample = random.sample(population=range(POP_SIZE), k=SAMPLE_COUNT)
     max_val = max(sample)
-    heap = Heap(sample, order="max")
+    heap = MaxHeap(sample)
 
     assert heap[0] == max_val
 
@@ -104,19 +104,20 @@ def test_min_stream():
 
 def test_max_stream():
     sample = random.sample(population=range(POP_SIZE), k=SAMPLE_COUNT)
-    hp: MinHeap = MinHeap(source=sample.copy())
+    heap: MaxHeap = MaxHeap(source=sample.copy())
 
-    stream = [random.randint(0, 100) for _ in range(len(hp))]
+    stream = [random.randint(0, 100) for _ in range(len(heap))]
 
     for i, instruction in enumerate(stream):
-        if len(hp) == 0 or instruction % 2 != 0:
-            cur_size = len(hp)
-            idx = hp.heap_push(stream[i])
-            assert hp[idx] == stream[i]
-            assert len(hp) == cur_size + 1
+        if len(heap) == 0 or instruction % 2 != 0:
+            cur_size = len(heap)
+            idx = heap.heap_push(stream[i])
+            assert heap[idx] == stream[i]
+            assert len(heap) == cur_size + 1
         else:
-            cur_size = len(hp)
-            result = hp.heap_pop()
-            if len(hp) > 0:
-                assert result >= hp[0]
-            assert len(hp) == cur_size - 1
+            cur_size = len(heap)
+            result = heap.heap_pop()
+            print(heap)
+            if len(heap) > 0:
+                assert result >= heap[0]
+            assert len(heap) == cur_size - 1
