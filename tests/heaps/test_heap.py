@@ -117,7 +117,6 @@ def test_max_stream():
         else:
             cur_size = len(heap)
             result = heap.heap_pop()
-            print(heap)
             if len(heap) > 0:
                 assert result >= heap[0]
             assert len(heap) == cur_size - 1
