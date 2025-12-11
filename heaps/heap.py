@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import random
+
 
 def max_heapify(source: MaxHeap, idx: int):
     n = source.limit if source.limit is not None else len(source)
@@ -312,8 +314,8 @@ class MinHeap:
 
 
 if __name__ == "__main__":
-    source = [4, 1, 3, 2, 16, 9, 10, 14, 8, 7]
+    source = random.sample(population=range(100), k=10)
     print(source)
     hp = MaxHeap(source, limit=len(source))
-    print(hp)
     print(hp.source)
+    print(hp)
