@@ -2,39 +2,38 @@ from __future__ import annotations
 
 
 def max_heapify(source: MaxHeap, idx: int):
+    n = source.limit if source.limit is not None else len(source)
     left_idx = (2 * idx) + 1
     right_idx = (2 * idx) + 2
     largest = right_idx
-    if source.limit and left_idx <= source.limit and source[left_idx] > source[idx]:
+
+    if left_idx < n and source[left_idx] > source[idx]:
         largest = left_idx
     else:
         largest = idx
 
-    if (
-        source.limit
-        and right_idx <= source.limit
-        and source[right_idx] > source[largest]
-    ):
+    if right_idx < n and source[right_idx] > source[largest]:
         largest = right_idx
 
     if largest != idx:
         source[idx], source[largest] = source[largest], source[idx]
         max_heapify(source, largest)
 
-    return source
+    return
 
 
 class MaxHeap:
     def __init__(self, source, limit=None):
         n = len(source)
-        self.limit = limit
-        self.source = source
+        self.limit: int | None = limit
+        self.source: list[int] = source
 
         if n == 0:
             return
 
         for i in range(n // 2, -1, -1):
-            self.sift_up(i)
+            max_heapify(self, i)
+            # self.sift_up(i)
 
         if self.limit is not None and len(self.source) > self.limit:
             result = []
@@ -310,3 +309,11 @@ class MinHeap:
             idx += 1
 
         return True
+
+
+if __name__ == "__main__":
+    source = [4, 1, 3, 2, 16, 9, 10, 14, 8, 7]
+    print(source)
+    hp = MaxHeap(source, limit=len(source))
+    print(hp)
+    print(hp.source)
