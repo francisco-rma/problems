@@ -10,5 +10,4 @@ def k_closest(points: list[list[int]], k: int) -> list[list[int]]:
     while heap:
         _, x, y = heap.heap_pop()
         result.append([x, y])
-    print(result)
     return result
