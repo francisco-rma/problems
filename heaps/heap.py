@@ -7,19 +7,19 @@ def max_heapify(source: MaxHeap, idx: int):
     n = source.limit if source.limit is not None else len(source)
     left_idx = (2 * idx) + 1
     right_idx = (2 * idx) + 2
-    largest = right_idx
+    target_idx = right_idx
 
     if left_idx < n and source[left_idx] > source[idx]:
-        largest = left_idx
+        target_idx = left_idx
     else:
-        largest = idx
+        target_idx = idx
 
-    if right_idx < n and source[right_idx] > source[largest]:
-        largest = right_idx
+    if right_idx < n and source[right_idx] > source[target_idx]:
+        target_idx = right_idx
 
-    if largest != idx:
-        source[idx], source[largest] = source[largest], source[idx]
-        max_heapify(source, largest)
+    if target_idx != idx:
+        source[idx], source[target_idx] = source[target_idx], source[idx]
+        max_heapify(source, target_idx)
 
     return
 
