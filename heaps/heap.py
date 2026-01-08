@@ -50,6 +50,10 @@ class MaxHeap:
         return len(self.source)
 
     def __getitem__(self, index):
+        if index is None:
+            raise ValueError(f"Index is {index}")
+        if index >= len(self):
+            raise IndexError("Index out of bounds")
         return self.source[index]
 
     def __setitem__(self, index, value):
@@ -104,9 +108,15 @@ class MaxHeap:
         if self.limit is not None:
             assert len(self.source) <= self.limit
             if len(self.source) == self.limit:
+                min_idx = self.find_min_idx()
+                self[min_idx], self[-1] = self[-1], self[min_idx]
+                self.sift_down(start_idx=0, pos=min_idx)
                 self.source.pop()
+
         self.source.append(value)
-        return self.sift_down(start_idx=0, pos=len(self) - 1)
+        result = self.sift_down(start_idx=0, pos=len(self) - 1)
+        assert self.is_valid()
+        return result
 
     def sift_down(self, start_idx: int, pos: int) -> int:
         siftee = self[pos]
@@ -142,6 +152,15 @@ class MaxHeap:
 
         self[idx] = new_item
         self.sift_down(start_idx=start_idx, pos=idx)
+
+    def find_min_idx(self):
+        min = float("+inf")
+        min_idx = None
+        for idx, value in enumerate(self):
+            if value[1] < min:
+                min = value[1]
+                min_idx = idx
+        return min_idx
 
     def is_valid(self) -> bool:
         upper_bound = len(self.source)
@@ -247,6 +266,9 @@ class MinHeap:
         if self.limit is not None:
             assert len(self.source) <= self.limit
             if len(self.source) == self.limit:
+                max_idx = self.find_max_idx()
+                self[max_idx], self[-1] = self[-1], self[max_idx]
+                self.sift_down(start_idx=0, pos=max_idx)
                 self.source.pop()
         self.source.append(value)
         return self.sift_down(start_idx=0, pos=len(self) - 1)
@@ -285,6 +307,17 @@ class MinHeap:
 
         self[idx] = new_item
         self.sift_down(start_idx=start_idx, pos=idx)
+
+    def find_max_idx(self):
+        max = float("-inf")
+        max_idx = None
+        for idx, value in enumerate(self):
+            if isinstance(value, list):
+                value = value[1]
+            if value > max:
+                max = value
+                max_idx = idx
+        return max_idx
 
     def is_valid(self) -> bool:
         upper_bound = len(self.source)
