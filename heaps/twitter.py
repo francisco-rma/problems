@@ -86,6 +86,11 @@ class Twitter:
             followee.followers.remove(followerId)
 
 
+# TODO
+# implement all of these as heap test cases
+# (making sure the pop deletes the smallest item)
+
+
 def case1():
     twitter = Twitter()
     twitter.postTweet(1, 10)
