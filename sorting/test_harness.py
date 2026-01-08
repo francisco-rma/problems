@@ -8,10 +8,12 @@ import time
 import tracemalloc
 
 import matplotlib.pyplot as plt
-import merge_sort
-import quicksort
+from bubble_sort import bubble_sort
+from insertion_sort import insertion_sort
+from merge_sort import merge_sort
+from quicksort import quicksort
 
-order = 7
+order = 4
 order_delta = 2
 
 
@@ -50,7 +52,7 @@ def validity_check():
 
         arr_to_sort = arr.copy()
         start = time.time()
-        quicksort.quicksort(arr_to_sort)
+        quicksort(arr_to_sort)
         end = time.time()
         quicksort_results.append((end - start, size))
         assert is_sorted(arr_to_sort)
@@ -58,7 +60,7 @@ def validity_check():
 
         arr_to_sort = arr.copy()
         start = time.time()
-        arr_to_sort = merge_sort.merge_sort(arr_to_sort)
+        arr_to_sort = merge_sort(arr_to_sort)
         end = time.time()
         result = end - start
         mergesort_results.append((result, size))
@@ -86,17 +88,23 @@ def validity_check():
 
 # validity_check()
 
-size = 10**order
-population = range(-1 * (10**order), 10**order)
-arr = random.choices(population=population, k=size)
-print(f"Testing with array of size {size}...")
-print(f"Array: {arr[:5]}")
+if __name__ == "__main__":
+    size = 10**order
+    population = range(-1 * (10**order), 10**order)
+    arr = random.choices(population=population, k=size)
+    print(f"Testing with array of size {size}...")
+    print(f"Array: {arr[:5]}")
 
-cProfile.run("quicksort.quicksort(arr.copy())")
-cProfile.run("merge_sort.merge_sort(arr.copy())")
+    cProfile.run("quicksort(arr.copy())")
+    cProfile.run("merge_sort(arr.copy())")
+    cProfile.run("insertion_sort(arr.copy())")
+    cProfile.run("bubble_sort(arr.copy())")
 
-exec_time, mem_usage = benchmark(quicksort.quicksort, arr.copy())
-exec_time, mem_usage = benchmark(merge_sort.merge_sort, arr.copy())
+    exec_time, mem_usage = benchmark(quicksort, arr.copy())
+    exec_time, mem_usage = benchmark(merge_sort, arr.copy())
+    exec_time, mem_usage = benchmark(insertion_sort, arr.copy())
+    exec_time, mem_usage = benchmark(bubble_sort, arr.copy())
+
 
 # =======================================================
 # =======================================================
