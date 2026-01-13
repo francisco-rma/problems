@@ -1,5 +1,6 @@
 from bisect import insort_right
-from random import randint
+from random import choices, randint
+from time import perf_counter, time
 
 from heap import MaxHeap, MinHeap
 
@@ -75,10 +76,19 @@ def basic_test():
     heapMedianFinder = HeapMedianFinder()
 
     i = 0
-    while i < 1000:
+    while i < 10_000:
+        print(f"#{i}...")
         value = randint(0, 1_000_000)
+
+        start = perf_counter()
         bisectMedianFinder.addNum(value)
+        end = perf_counter()
+        print(f"Bisect insertion time: {(end - start):.4f} seconds")
+
+        start = perf_counter()
         heapMedianFinder.addNum(value)
+        end = perf_counter()
+        print(f"Heap insertion time: {(end - start):.4f} seconds")
 
         assert bisectMedianFinder.findMedian() == heapMedianFinder.findMedian()
         i += 1
