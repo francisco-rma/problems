@@ -1,5 +1,3 @@
-from collections import deque
-
 from heaps.heap import MaxHeap
 
 
