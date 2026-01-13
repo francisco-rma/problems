@@ -1,6 +1,6 @@
 from bisect import insort_right
-from random import choices, randint
-from time import perf_counter, time
+from random import randint
+from time import perf_counter
 
 from heap import MaxHeap, MinHeap
 
