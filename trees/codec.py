@@ -1,5 +1,4 @@
 # Definition for a binary tree node.
-from collections import deque
 from typing import Optional
 
 
