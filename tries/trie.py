@@ -1,47 +1,113 @@
+from __future__ import annotations
+
 from collections import deque
+from string import ascii_lowercase
+from typing import Optional
+
+CYAN = "\033[96m"
+YELLOW = "\033[93m"
+GREEN = "\033[92m"
+RED = "\033[91m"
+BLUE = "\033[94m"
+RESET = "\033[0m"
+BOLD = "\033[1m"
 
 
-class Trie:
-    def __init__(self, val: int = 0):
-        self.val: int = val
-        self.children: list[Trie] = [None] * 128
+class PrefixTree:
+    def __init__(self):
+        self.values: list[Optional] = [None] * len(ascii_lowercase)
+        self.transitive = True
 
-    # TODO FIX
+    @staticmethod
+    def display_v1(node: PrefixTree, prefix="", is_left=True) -> str: ...
+
     def __repr__(self):
-        queue = deque([self])
-        val = ""
-        level = 1
+        def display(node: PrefixTree, prefix="", is_left=True) -> str:
+            result = ""
+            for i in range(len(ascii_lowercase) - 1, -1, -1):
+                child = node.values[i]
+                if child is not None:
+                    new_prefix = prefix + ("│   " if is_left else "    ")
+                    result += display(child, new_prefix, False)
+                    result += prefix
+                    if prefix:
+                        result += "└── " if is_left else "┌── "
+                    char = ascii_lowercase[i]
+                    if child.transitive:
+                        result += f"{CYAN}{char}{RESET}\n"
+                    else:
+                        result += f"{GREEN}{char}{RESET}\n"
+            return result
 
-        while queue:
-            node, level = queue.pop()
-            test = list(filter(bool, node.children))
-            for item in test:
-                val += f"\nLevel {level} : {chr(item.val)}\n"
-                queue.appendleft(item, level + 1)
+        return display(self).rstrip()
 
-        return val
+    def index_map(self, char: str) -> int:
+        return ord(char) - ord("a")
 
-    def insert(self, key: str):
+    def insert(self, word: str) -> None:
+        queue = deque(map(self.index_map, word))
         node = self
-        queue = deque(map(ord, key))
-        level = 1
         while queue:
-            idx = queue.popleft()
-            if node.children[idx] is None:
-                node.children[idx] = Trie(idx)
-            node = node.children[idx]
-            level += 1
+            char_idx = queue.popleft()
+            if node.values[char_idx] is None:
+                node.values[char_idx] = PrefixTree()
+            node = node.values[char_idx]
+        node.transitive = False
 
-    def search(self, key: str) -> str:
-        queue = deque(map(ord, key))
+    def search(self, word: str) -> bool:
+        queue = deque(map(self.index_map, word))
         node = self
-        level = 1
         while queue:
-            idx = queue.popleft()
-            if node.children[idx] is None:
-                return key[:level]
+            char_idx = queue.popleft()
+            if node.values[char_idx] is None:
+                return False
+            node = node.values[char_idx]
+        return not node.transitive
 
-            node = node.children[idx]
-            level += 1
+    def startsWith(self, prefix: str) -> bool:
+        queue = deque(map(self.index_map, prefix))
+        node = self
+        while queue:
+            char_idx = queue.popleft()
+            if node.values[char_idx] is None:
+                return False
+            node = node.values[char_idx]
+        return True
 
-        return key[:level]
+
+def basic_test():
+    trie = PrefixTree()
+    trie.insert("dog")
+    trie.insert("god")
+    trie.insert("goodbye")
+
+    assert trie.search("dog") is True
+    assert trie.search("god") is True
+    assert trie.search("goodbye") is True
+    assert trie.search("good") is False
+
+    assert trie.startsWith("go") is True
+    assert trie.startsWith("god") is True
+    assert trie.startsWith("gode") is False
+    assert trie.startsWith("do") is True
+    assert trie.startsWith("bad") is False
+
+    trie.insert("hello")
+    trie.insert("hey")
+    trie.insert("goodbye")
+    trie.insert("heat")
+
+    assert trie.search("helicopter") is False
+    assert trie.search("goodmorning") is False
+    assert trie.search("zebra") is False
+
+    assert trie.startsWith("he") is True
+    assert trie.startsWith("go") is True
+    assert trie.startsWith("ze") is False
+
+    print("✓ Passed basic tests")
+    print(trie)
+
+
+if __name__ == "__main__":
+    basic_test()
