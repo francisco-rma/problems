@@ -1,27 +1,29 @@
 import numpy as np
+import pydot
 
 
 def adj_matrix(source: list[tuple[int, int]]):
+    individuals = set()
+    for a, b in source:
+        individuals.add(a)
+        individuals.add(b)
+
     connections: dict[int, list[int]] = {}
     for a, b in source:
         if a not in connections:
             connections[a] = []
+        if b not in connections:
+            connections[b] = []
         connections[a].append(b)
-    print(connections)
-    labels = list(connections.keys())
+
+    labels = sorted(list(individuals))
+    population = range(len(labels))
 
     matrix = np.zeros((len(labels), len(labels)))
 
-    for i in range(len(labels)):
-        for j in range(len(labels)):
+    for i in population:
+        for j in population:
             if labels[j] in connections[labels[i]]:
-                matrix[i, j] = 1
+                matrix[i, j] += 1
 
-    print(matrix)
-
-
-source = [(1, 3), (2, 4), (3, 4), (4, 5)]
-print("source:")
-print(source, "\n")
-
-adj_matrix(source)
+    return matrix

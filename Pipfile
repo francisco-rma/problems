@@ -12,3 +12,6 @@ matplotlib = "*"
 python_version = "3"
 
 [dev-packages]
+networkx = {extras = ["default"], version = "*"}
+treelib = "*"
+pydot = "*"

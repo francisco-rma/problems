@@ -18,3 +18,4 @@ build/
 pipfile
 dsa_vault/
 .obsidian/
+.vscode/

@@ -2,32 +2,46 @@
 # Test harness
 # =======================================================
 
+import cProfile
 import random
 import time
-import merge_sort
-import quicksort
-import matplotlib.pyplot as plt
-import cProfile
 import tracemalloc
 
-# =======================================================
-# Quicksort
-# =======================================================
+import matplotlib.pyplot as plt
+from bubble_sort import bubble_sort
+from insertion_sort import insertion_sort
+from merge_sort import merge_sort
+from quicksort import quicksort
+
+order = 4
+order_delta = 2
 
 
 def is_sorted(arr):
     return all(arr[i] <= arr[i + 1] for i in range(len(arr) - 1))
 
 
-order = 5
-order_delta = 2
+def benchmark(func, source):
+    tracemalloc.start()
+    start = time.time()
+    func(source)
+    end = time.time()
+    current, peak = tracemalloc.get_traced_memory()
+    tracemalloc.stop()
+    print(f"{func} execution time:{(end - start):.4f} seconds")
+    print(
+        f"{func} memory usage: current={current / 1024:.2f} KB, peak={peak / 1024:.2f} KB"
+    )
+    return end - start, peak
 
 
 def validity_check():
     """Checks for merge_sort and quick_sort if the resulting array is sorted and contains all original elements."""
     # population = range(-1 * (10 ** (order + 1)), 10 ** (order + 1))
     population = range(-1 * (10 ** (order - 1)), 10 ** (order - 1))
-    sizes = range(10**order, 10 ** (order + order_delta), 10 ** (order + order_delta - 1))
+    sizes = range(
+        10**order, 10 ** (order + order_delta), 10 ** (order + order_delta - 1)
+    )
 
     quicksort_results = []
     mergesort_results = []
@@ -38,7 +52,7 @@ def validity_check():
 
         arr_to_sort = arr.copy()
         start = time.time()
-        quicksort.quicksort(arr_to_sort)
+        quicksort(arr_to_sort)
         end = time.time()
         quicksort_results.append((end - start, size))
         assert is_sorted(arr_to_sort)
@@ -46,7 +60,7 @@ def validity_check():
 
         arr_to_sort = arr.copy()
         start = time.time()
-        arr_to_sort = merge_sort.merge_sort(arr_to_sort)
+        arr_to_sort = merge_sort(arr_to_sort)
         end = time.time()
         result = end - start
         mergesort_results.append((result, size))
@@ -72,34 +86,25 @@ def validity_check():
     plt.show()
 
 
-validity_check()
+# validity_check()
 
-size = 10**order
-population = range(-1 * (10 ** (order + 1)), 10 ** (order + 1))
-arr = random.choices(population=population, k=size)
-print(f"Testing with array of size {size}...")
-print(f"Array: {arr[:5]}")
+if __name__ == "__main__":
+    size = 10**order
+    population = range(-1 * (10**order), 10**order)
+    arr = random.choices(population=population, k=size)
+    print(f"Testing with array of size {size}...")
+    print(f"Array: {arr[:5]}")
 
-cProfile.run("quicksort.quicksort(arr.copy())")
-cProfile.run("merge_sort.merge_sort(arr.copy())")
+    cProfile.run("quicksort(arr.copy())")
+    cProfile.run("merge_sort(arr.copy())")
+    cProfile.run("insertion_sort(arr.copy())")
+    cProfile.run("bubble_sort(arr.copy())")
 
-copy = arr.copy()
-tracemalloc.start()
-sorted_arr = merge_sort.merge_sort(copy)
-current, peak = tracemalloc.get_traced_memory()
-snapshot = tracemalloc.take_snapshot()
-tracemalloc.stop()
-# print(f"Mergesort snapshot:{snapshot.statistics('lineno')}")
-print(f"Mergesort memory usage: current={current / 1024:.2f} KB, peak={peak / 1024:.2f} KB")
+    exec_time, mem_usage = benchmark(quicksort, arr.copy())
+    exec_time, mem_usage = benchmark(merge_sort, arr.copy())
+    exec_time, mem_usage = benchmark(insertion_sort, arr.copy())
+    exec_time, mem_usage = benchmark(bubble_sort, arr.copy())
 
-copy = arr.copy()
-tracemalloc.start()
-quicksort.quicksort(copy)
-current, peak = tracemalloc.get_traced_memory()
-snapshot = tracemalloc.take_snapshot()
-tracemalloc.stop()
-# print(f"Quicksort snapshot:{snapshot.statistics('lineno')}")
-print(f"Quicksort memory usage: current={current / 1024:.2f} KB, peak={peak / 1024:.2f} KB")
 
 # =======================================================
 # =======================================================
