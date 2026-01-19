@@ -15,7 +15,7 @@ BOLD = "\033[1m"
 
 class PrefixTree:
     def __init__(self):
-        self.values: list[Optional] = [None] * len(ascii_lowercase)
+        self.values: list[Optional[PrefixTree]] = [None] * len(ascii_lowercase)
         self.transitive = True
 
     @staticmethod
@@ -49,9 +49,11 @@ class PrefixTree:
         node = self
         while queue:
             char_idx = queue.popleft()
+            assert node is not None
             if node.values[char_idx] is None:
                 node.values[char_idx] = PrefixTree()
             node = node.values[char_idx]
+        assert node is not None
         node.transitive = False
 
     def search(self, word: str) -> bool:
